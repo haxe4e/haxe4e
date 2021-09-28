@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension point="org.eclipse.ui.startup">
+      <startup class="org.haxe4e.Haxe4EStartupListener" />
+   </extension>
+
+   <extension point="org.eclipse.core.runtime.products" id="ide">
+      <!-- this is referenced in haxe4e.product as [plugin_id].[product_id], i.e. "org.haxe4e.ide" -->
+      <!-- https://www.eclipse.org/articles/Article-Branding/branding-your-application.html -->
+      <product application="org.eclipse.ui.ide.workbench" name="Haxe4E IDE">
+         <property name="appName" value="Haxe4E IDE"/>
+      </product>
+   </extension>
+
+   <!-- ===================================== -->
+   <!-- Content Type                          -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+         id="org.haxe4e.content.base"
+         base-type="org.eclipse.core.runtime.text"
+         name="Haxe"
+         priority="high" />
+
+      <content-type
+         id="org.haxe4e.content.haxe"
+         base-type="org.haxe4e.content.base"
+         file-extensions="hx,dump"
+         name="%Label_Haxe_File"
+         priority="high" />
+      <file-association
+         content-type="org.haxe4e.content.haxe"
+         file-extensions="hx,dump" />
+
+      <content-type
+         id="org.haxe4e.content.hxml"
+         base-type="org.haxe4e.content.base"
+         file-extensions="hxml"
+         name="%Label_Haxe_Build_File"
+         priority="high" />ba
+      <file-association
+         content-type="org.haxe4e.content.hxml"
+         file-extensions="hxml" />
+
+      <content-type
+         id="org.haxe4e.content.hlcode"
+         base-type="org.haxe4e.content.base"
+         name="%Label_HashLink_Dump_File"
+         priority="high" />
+      <file-association
+         content-type="org.haxe4e.content.hlcode"
+         file-names="hlcode.txt" />
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Keywords                              -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.ui.keywords">
+      <keyword id="org.haxe4e.prefs.keyword.haxe" label="haxe" />
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Preferences                           -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.ui.preferencePages">
+      <page
+         id="org.haxe4e.preferencePage"
+         class="org.haxe4e.prefs.HaxeSDKPreferencePage"
+         name="Haxe">
+         <keywordReference id="org.haxe4e.prefs.keyword.haxe" />
+      </page>
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Language Server                       -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.lsp4e.languageServer">
+      <server id="org.haxe4e.langserv"
+         class="org.haxe4e.langserver.HaxeLangServerLauncher"
+         clientImpl="org.haxe4e.langserver.HaxeLangServerClientImpl"
+         label="%Label_Haxe_Language_Server"
+      />
+      <contentTypeMapping id="org.haxe4e.langserv" contentType="org.haxe4e.content.haxe" />
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Text Editor                           -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.ui.editors">
+      <editor
+         class="org.haxe4e.editor.HaxeEditor"
+         contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+         default="true"
+         extensions="hx,dump"
+         id="org.haxe4e.editor.HaxeEditor"
+         icon="src/main/resources/images/navigator/haxe_file.png"
+         name="%Label_Haxe_Editor">
+         <contentTypeBinding contentTypeId="org.haxe4e.content.haxe" />
+      </editor>
+      <editorContentTypeBinding contentTypeId="org.haxe4e.content.haxe" editorId="org.haxe4e.editor.HaxeEditor" />
+      <editorContentTypeBinding contentTypeId="org.haxe4e.content.hxml" editorId="org.eclipse.ui.genericeditor.GenericEditor" />
+      <editorContentTypeBinding contentTypeId="org.haxe4e.content.hlcode" editorId="org.eclipse.ui.genericeditor.GenericEditor" />
+   </extension>
+
+   <extension point="org.eclipse.ui.genericeditor.icons">
+      <icon contentType="org.haxe4e.content.haxe" icon="src/main/resources/images/navigator/haxe_file.png" />
+      <icon contentType="org.haxe4e.content.hxml" icon="platform:/plugin/org.eclipse.ui.externaltools/icons/full/obj16/builder.png" />
+      <icon contentType="org.haxe4e.content.hlcode" icon="platform:/plugin/org.eclipse.ui.editors/icons/full/obj16/file_obj.png" />
+   </extension>
+
+   <extension point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+         class="org.haxe4e.editor.HaxeFileLoadingListener"
+         contentTypeId="org.haxe4e.content.haxe" />
+   </extension>
+   <extension point="org.eclipse.ui.genericeditor.presentationReconcilers">
+      <presentationReconciler
+         class="org.haxe4e.editor.HaxeFileSpellCheckingReconciler"
+         contentType="org.haxe4e.content.haxe" />
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Compare/Merge Viewers                 -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.compare.contentViewers">
+      <contentTypeBinding contentViewerId="org.eclipse.ui.genericeditor.compareViewer" contentTypeId="org.haxe4e.content.haxe" />
+      <contentTypeBinding contentViewerId="org.eclipse.ui.genericeditor.compareViewer" contentTypeId="org.haxe4e.content.hxml" />
+      <contentTypeBinding contentViewerId="org.eclipse.ui.genericeditor.compareViewer" contentTypeId="org.haxe4e.content.hlcode" />
+   </extension>
+   <extension point="org.eclipse.compare.contentMergeViewers">
+      <contentTypeBinding contentMergeViewerId="org.eclipse.ui.genericeditor.compareViewer" contentTypeId="org.haxe4e.content.haxe" />
+      <contentTypeBinding contentMergeViewerId="org.eclipse.ui.genericeditor.compareViewer" contentTypeId="org.haxe4e.content.hxml" />
+      <contentTypeBinding contentMergeViewerId="org.eclipse.ui.genericeditor.compareViewer" contentTypeId="org.haxe4e.content.hlcode" />
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Outline Configuration                 -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.ui.navigator.navigatorContent">
+      <!-- https://help.eclipse.org/latest/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Fguide%2Fcnf_config.htm -->
+      <!-- https://git.eclipse.org/r/plugins/gitiles/lsp4e/lsp4e/+/refs/heads/master/org.eclipse.lsp4e/src/org/eclipse/lsp4e/outline/SymbolInformationPropertyTester.java -->
+      <navigatorContent
+         id="org.haxe4e.content.haxe.outline"
+         contentProvider="org.eclipse.lsp4e.outline.LSSymbolsContentProvider"
+         labelProvider="org.haxe4e.navigation.HaxeOutlineSymbolsProvider"
+         activeByDefault="true"
+         priority="high"
+         name="Haxe Symbols">
+         <triggerPoints>
+            <!-- activates this outline provider only for haxe files -->
+            <test property="org.haxe4e.fileinfo.contentTypeId" value="org.haxe4e.content.haxe" />
+         </triggerPoints>
+      </navigatorContent>
+   </extension>
+   <extension point="org.eclipse.ui.navigator.viewer">
+      <viewer viewerId="org.eclipse.lsp4e.outline" />
+      <viewerContentBinding viewerId="org.eclipse.lsp4e.outline">
+         <includes>
+            <contentExtension pattern="org.haxe4e.content.haxe.outline" />
+         </includes>
+      </viewerContentBinding>
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Syntax Highlighting                   -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.tm4e.registry.grammars">
+      <grammar path="src/main/resources/langcfg/haxe.tmLanguage" scopeName="source.hx" />
+      <grammar path="src/main/resources/langcfg/hxml.tmLanguage" scopeName="source.hxml" />
+      <grammar path="src/main/resources/langcfg/hlcode.tmLanguage" scopeName="source.hlcode" />
+      <scopeNameContentTypeBinding contentTypeId="org.haxe4e.content.haxe" scopeName="source.hx" />
+      <scopeNameContentTypeBinding contentTypeId="org.haxe4e.content.hxml" scopeName="source.hxml" />
+      <scopeNameContentTypeBinding contentTypeId="org.haxe4e.content.hlcode" scopeName="source.hlcode" />
+   </extension>
+   <extension point="org.eclipse.tm4e.languageconfiguration.languageConfigurations">
+      <languageConfiguration contentTypeId="org.haxe4e.content.haxe" path="src/main/resources/langcfg/haxe.language-configuration.json" />
+      <languageConfiguration contentTypeId="org.haxe4e.content.hxml" path="src/main/resources/langcfg/hxml.language-configuration.json" />
+   </extension>
+   <extension point="org.eclipse.tm4e.ui.themes">
+      <themeAssociation scopeName="source.hx" themeId="org.eclipse.tm4e.ui.themes.EclipseLight" />
+      <themeAssociation scopeName="source.hxml" themeId="org.eclipse.tm4e.ui.themes.EclipseLight" />
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Property Tester                       -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <!-- https://wiki.eclipse.org/Platform_Expression_Framework -->
+      <propertyTester
+         class="org.haxe4e.util.FileTypePropertyTester"
+         id="org.haxe4e.util.FileTypePropertyTester"
+         namespace="org.haxe4e.fileinfo"
+         properties="contentTypeId,fileExtension"
+         type="java.lang.Object">
+      </propertyTester>
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Wizards                               -->
+   <!-- ===================================== -->
+   <!-- https://wiki.eclipse.org/FAQ_How_do_I_add_my_wizard_to_the_New,_Import,_or_Export_menu_categories%3F -->
+   <!-- https://www.vogella.com/tutorials/EclipseWizards/article.html -->
+   <extension point="org.eclipse.ui.newWizards">
+      <category id="org.haxe4e.wizards" name="Haxe" />
+      <wizard
+         category="org.haxe4e.wizards"
+         class="org.haxe4e.project.NewHaxeFileWizard"
+         icon="src/main/resources/images/navigator/haxe_file.png"
+         id="org.haxe4e.wizards.newHaxeFile"
+         name="%Label_Haxe_File"
+         project="false">
+         <description>%NewHaxeFile_Descr</description>
+         <selection class="org.eclipse.core.resources.IResource" />
+         <keywordReference id="org.haxe4e.prefs.keyword.haxe" />
+      </wizard>
+      <wizard
+         category="org.haxe4e.wizards"
+         class="org.haxe4e.project.NewHaxeProjectWizard"
+         icon="src/main/resources/images/navigator/haxe_project.png"
+         id="org.haxe4e.wizards.newHaxeProject"
+         name="%Label_Haxe_Project"
+         project="true">
+         <description>%NewHaxeProject_Descr</description>
+         <selection class="org.eclipse.core.resources.IResource" />
+         <keywordReference id="org.haxe4e.prefs.keyword.haxe" />
+      </wizard>
+      <!--<primaryWizard id="org.haxe4e.wizards.newHaxeFile" />-->
+   </extension>
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="*">
+         <!-- register Wizard directly under main menu "File -> New" -->
+         <newWizardShortcut id="org.haxe4e.wizards.newHaxeFile" />
+         <newWizardShortcut id="org.haxe4e.wizards.newHaxeProject" />
+      </perspectiveExtension>
+   </extension>
+   <extension point="org.eclipse.ui.navigator.navigatorContent">
+      <!-- register Wizard in Project Explorer's popup menu under "New -> Haxe File" -->
+      <commonWizard
+         menuGroupId="org.haxe4e"
+         type="new"
+         wizardId="org.haxe4e.wizards.newHaxeFile">
+         <enablement>
+            <reference definitionId="org.haxe4e.project.nature.isConfigured" />
+         </enablement>
+      </commonWizard>
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Project Nature                        -->
+   <!-- ===================================== -->
+   <!-- https://www.vogella.com/tutorials/EclipseProjectNatures/article.html -->
+   <!-- https://help.eclipse.org/latest/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Fguide%2FresAdv_natures.htm -->
+   <extension point="org.eclipse.core.resources.natures"
+      id="org.haxe4e.project.nature"
+      name="Haxe Project Nature">
+      <runtime>
+         <run class="org.haxe4e.project.HaxeProjectNature" />
+      </runtime>
+   </extension>
+   <extension point="org.eclipse.ui.commands">
+      <command id="org.haxe4e.commands.project_nature_add" name="Convert to Haxe Project" />
+      <command id="org.haxe4e.commands.project_nature_remove" name="Remove Haxe Project Nature" />
+   </extension>
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+         class="org.haxe4e.project.HaxeProjectNature$AddNatureHandler"
+         commandId="org.haxe4e.commands.project_nature_add" />
+      <handler
+         class="org.haxe4e.project.HaxeProjectNature$RemoveNatureHandler"
+         commandId="org.haxe4e.commands.project_nature_remove" />
+   </extension>
+   <extension point="org.eclipse.ui.ide.projectNatureImages">
+      <image
+         icon="src/main/resources/images/navigator/haxe_project_overlay.png"
+         id="org.haxe4e.project.nature.icon"
+         natureId="org.haxe4e.project.nature" />
+   </extension>
+   <extension point="org.eclipse.core.expressions.definitions">
+      <definition id="org.haxe4e.project.nature.isConfigured">
+         <!-- expression to check if a project or project resource has the Haxe project nature -->
+         <adapt type="org.eclipse.core.resources.IResource">
+            <test
+               property="org.eclipse.core.resources.projectNature"
+               value="org.haxe4e.project.nature" />
+         </adapt>
+      </definition>
+   </extension>
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution locationURI="popup:org.eclipse.ui.projectConfigure">
+         <!-- add entries to project popup menu "Configure -> ... -->
+         <command
+            commandId="org.haxe4e.commands.project_nature_add"
+            icon="src/main/resources/images/logo/haxe_icon.png">
+            <visibleWhen>
+               <iterate>
+                  <not>
+                     <reference definitionId="org.haxe4e.project.nature.isConfigured" />
+                  </not>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+            commandId="org.haxe4e.commands.project_nature_remove"
+            icon="src/main/resources/images/logo/haxe_icon_gray.png">
+            <visibleWhen>
+               <iterate>
+                  <reference definitionId="org.haxe4e.project.nature.isConfigured" />
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension point="org.eclipse.ui.decorators">
+      <decorator
+         id="org.haxe4e.navigation.HaxeResourcesDecorator"
+         class="org.haxe4e.navigation.HaxeResourcesDecorator"
+         label="Haxe Source Directories Decorator"
+         lightweight="false"
+         location="REPLACE"
+         state="true">
+         <enablement>
+            <objectClass name="org.eclipse.core.resources.IFolder" />
+         </enablement>
+      </decorator>
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Project Settings                      -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.ui.propertyPages">
+      <page
+         class="org.haxe4e.project.HaxeProjectPropertyPage"
+         id="org.haxe4e.project.settings"
+         name="Haxe">
+         <filter name="nature" value="org.haxe4e.project.nature" />
+         <filter name="open" value="true" />
+         <keywordReference id="org.haxe4e.prefs.keyword.haxe" />
+      </page>
+   </extension>
+   <extension point="org.eclipse.ui.ide.projectConfigurators">
+      <projectConfigurator
+         class="org.haxe4e.project.HaxeProjectImportConfigurator"
+         label="%Label_Haxe_Project" />
+   </extension>
+   <extension point="org.eclipse.ui.importWizards">
+      <wizard
+         category="org.haxe4e.wizards"
+         class="org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard"
+         icon="src/main/resources/images/logo/haxe_icon.png"
+         id="org.haxe4e.wizards.importProject"
+         name="%Label_Haxe_Project" />
+      <category id="org.haxe4e.wizards" name="Haxe" />
+   </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Launch Configuration                  -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <!-- enable Run/Launch buttons in Resource Perspective -->
+         <actionSet id="org.eclipse.debug.ui.launchActionSet" />
+      </perspectiveExtension>
+   </extension>
+   <extension point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+         id="org.haxe4e.launch.haxe"
+         delegate="org.haxe4e.launch.LaunchConfig"
+         modes="run,debug"
+         name="%Label_Haxe_Program"
+         sourceLocatorId="org.eclipse.lsp4e.debug.sourceLocator"
+         sourcePathComputerId="org.eclipse.lsp4e.debug.sourcePathComputer" />
+   </extension>
+   <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+         id="org.haxe4e.launch.haxe.tabGroup"
+         class="org.haxe4e.launch.LaunchTabGroup"
+         type="org.haxe4e.launch.haxe"
+         description="%HaxeLaunchGroup_Description" />
+   </extension>
+   <extension point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+         id="org.haxe4e.launch.haxe.shortcut.run_as"
+         class="org.haxe4e.launch.RunProjectShortcut"
+         label="%Label_Haxe_Program"
+         icon="src/main/resources/images/logo/haxe_icon.png"
+         modes="run,debug">
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                  <count value="1" />
+                  <iterate>
+                     <reference definitionId="org.haxe4e.project.nature.isConfigured" />
+                  </iterate>
+               </with>
+            </enablement>
+         </contextualLaunch>
+      </shortcut>
+      <shortcut
+         id="org.haxe4e.launch.haxe.shortcut.file"
+         class="org.haxe4e.launch.RunHxmlFileShortcut"
+         label="%Label_Haxe_Program"
+         icon="src/main/resources/images/logo/haxe_icon.png"
+         modes="run,debug">
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                  <count value="1" />
+                  <iterate>
+                     <and>
+                        <adapt type="org.eclipse.core.resources.IFile" />
+                        <test property="org.eclipse.debug.ui.matchesPattern" value="**.hxml" />
+                     </and>
+                  </iterate>
+               </with>
+            </enablement>
+         </contextualLaunch>
+      </shortcut>
+   </extension>
+   <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+         id="org.haxe4e.launch.haxe.image"
+         configTypeID="org.haxe4e.launch.haxe"
+         icon="src/main/resources/images/logo/haxe_icon.png" />
+   </extension>
+   <extension point="org.eclipse.debug.ui.launchGroups">
+      <launchGroup
+         id="org.haxe4e.launch.haxe.group"
+         label="%Label_Haxe_LaunchGroup"
+         bannerImage="src/main/resources/images/logo/haxe_wizard_banner.png"
+         image="src/main/resources/images/logo/haxe_icon.png"
+         mode="run" />
+   </extension>
+   <extension point="org.eclipse.core.runtime.adapters">
+      <factory
+         class="org.eclipse.core.runtime.IAdaptable"
+         adaptableType="org.eclipse.core.resources.IResource">
+         <!-- https://insights.sigasi.com/tech/run-menu-item-strangely-disappearing-context-menu/ -->
+         <adapter type="org.eclipse.debug.ui.actions.ILaunchable" />
+      </factory>
+   </extension>
+
+</plugin>

@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Haxe4E Tests
+Bundle-SymbolicName: org.haxe4e.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Vegard IT GmbH
+Fragment-Host: org.haxe4e
+Automatic-Module-Name: org.haxe4e.tests
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: org.junit,
+ org.eclipse.jdt.ui,
+ org.eclipse.reddeer.go,
+ assertj-core

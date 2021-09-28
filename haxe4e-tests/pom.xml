@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!--
+   Copyright 2021 by the Haxe4E authors.
+   SPDX-License-Identifier: EPL-2.0
+
+   @author Sebastian Thomschke
+-->
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>org.haxe4e</groupId>
+      <artifactId>org.haxe4e.parent</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+   </parent>
+
+   <name>haxe4e-tests</name>
+   <artifactId>org.haxe4e.tests</artifactId>
+   <packaging>eclipse-test-plugin</packaging>
+
+   <properties>
+      <tycho-surefire-plugin.platformArgs></tycho-surefire-plugin.platformArgs>
+   </properties>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.eclipse.tycho</groupId>
+            <artifactId>tycho-surefire-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>default-test</id>
+                  <!-- https://www.eclipse.org/tycho/sitedocs/tycho-surefire-plugin/test-mojo.html -->
+                  <goals>
+                     <goal>test</goal>
+                  </goals>
+                  <!-- https://stackoverflow.com/questions/28721925/is-it-possible-to-configure-tycho-surefire-to-run-in-the-test-phase -->
+                  <phase>integration-test</phase>
+                  <configuration>
+                     <!-- https://wiki.eclipse.org/Tycho/FAQ#How_to_use_SWTBot_or_some_UI_tool_for_testing.3F -->
+                     <useUIHarness>true</useUIHarness>
+                     <useUIThread>false</useUIThread>
+
+                     <argLine>-Xmx512m ${tycho-surefire-plugin.platformArgs}</argLine>
+
+                     <failIfNoTests>true</failIfNoTests>
+                     <enableAssertions>true</enableAssertions>
+                     <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>
+                     <showEclipseLog>false</showEclipseLog>
+
+                     <product>org.eclipse.platform.ide</product>
+                     <application>org.eclipse.ui.ide.workbench</application>
+<!--
+
+                     <dependencies combine.children="append">
+                        <dependency>
+                           <type>p2-installable-unit</type>
+                           <artifactId>org.eclipse.platform</artifactId>
+                           <version>0.0.0</version>
+                        </dependency>
+                        <dependency>
+                           <type>p2-installable-unit</type>
+                           <artifactId>org.eclipse.jdt.ui</artifactId>
+                           <version>0.0.0</version>
+                        </dependency>
+                        <dependency>
+                           <type>p2-installable-unit</type>
+                           <artifactId>org.eclipse.jdt.junit</artifactId>
+                           <version>0.0.0</version>
+                        </dependency>
+                        <dependency>
+                           <type>p2-installable-unit</type>
+                           <artifactId>org.eclipse.e4.rcp.feature.group</artifactId>
+                           <version>0.0.0</version>
+                        </dependency>
+                     </dependencies>-->
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+
+   <profiles>
+      <profile>
+         <id>macosx</id>
+         <activation>
+            <os>
+               <family>mac</family>
+            </os>
+         </activation>
+         <properties>
+            <tycho-surefire-plugin.platformArgs>-XstartOnFirstThread</tycho-surefire-plugin.platformArgs>
+         </properties>
+      </profile>
+   </profiles>
+</project>

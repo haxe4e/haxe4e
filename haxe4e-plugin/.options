@@ -1,0 +1,6 @@
+# Debugging options for the haxe4e plug-in
+
+org.haxe4e/trace/langserv/init_options=false
+org.haxe4e/trace/langserv/io=false
+org.haxe4e/trace/langserv/method_results=false
+org.haxe4e/trace/spellcheck/regions=false

@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+<!--
+   Copyright 2021 by the Haxe4E authors.
+   SPDX-License-Identifier: EPL-2.0
+
+   @author Sebastian Thomschke
+-->
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>org.haxe4e</groupId>
+      <artifactId>org.haxe4e.parent</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+   </parent>
+
+   <name>haxe4e-plugin</name>
+   <artifactId>org.haxe4e</artifactId>
+   <packaging>eclipse-plugin</packaging>
+
+   <properties>
+      <!--
+      [WARNING] Rule 0: org.apache.maven.plugins.enforcer.BanCircularDependencies failed with message:
+      Circular Dependency found. Your project's groupId:artifactId combination must not exist in the list of direct or transitive dependencies.
+        org.haxe4e:org.haxe4e
+       -->
+      <skip.enforcer.basic-checks>true</skip.enforcer.basic-checks>
+      <skip.enforcer.dependency-convergence>false</skip.enforcer.dependency-convergence>
+
+      <!--
+      if set to true during maven build (e.g. -Dupdate-language-grammar=true), new versions of the grammar files will be downloaded
+      -->
+      <update-language-grammar>false</update-language-grammar>
+   </properties>
+
+   <build>
+      <resources>
+         <resource>
+            <directory>src/main/resources</directory>
+            <targetPath>src/main/resources</targetPath>
+            <filtering>false</filtering>
+         </resource>
+      </resources>
+      <plugins>
+         <plugin>
+            <groupId>com.googlecode.maven-download-plugin</groupId>
+            <artifactId>download-maven-plugin</artifactId>
+            <!-- https://github.com/maven-download-plugin/maven-download-plugin/releases -->
+            <version>1.6.7</version>
+            <executions>
+               <!-- *.hx lang config -->
+               <execution>
+                  <id>haxe-language-configuration.json</id>
+                  <phase>generate-resources</phase>
+                  <goals>
+                     <goal>wget</goal>
+                  </goals>
+                  <configuration>
+                     <uri>https://raw.githubusercontent.com/vshaxe/vshaxe/master/configurations/haxe.language-configuration.json</uri>
+                     <outputDirectory>src/main/resources/langcfg</outputDirectory>
+                     <skipCache>true</skipCache>
+                     <overwrite>${update-language-grammar}</overwrite>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>haxe.tmLanguage</id>
+                  <phase>generate-resources</phase>
+                  <goals>
+                     <goal>wget</goal>
+                  </goals>
+                  <configuration>
+                     <uri>https://raw.githubusercontent.com/vshaxe/haxe-TmLanguage/master/haxe.tmLanguage</uri>
+                     <outputDirectory>src/main/resources/langcfg</outputDirectory>
+                     <skipCache>true</skipCache>
+                     <overwrite>${update-language-grammar}</overwrite>
+                  </configuration>
+               </execution>
+
+               <!-- *.hxml lang config -->
+               <execution>
+                  <id>hxml.language-configuration.json</id>
+                  <phase>generate-resources</phase>
+                  <goals>
+                     <goal>wget</goal>
+                  </goals>
+                  <configuration>
+                     <uri>https://raw.githubusercontent.com/vshaxe/vshaxe/master/configurations/hxml.language-configuration.json</uri>
+                     <outputDirectory>src/main/resources/langcfg</outputDirectory>
+                     <skipCache>true</skipCache>
+                     <overwrite>${update-language-grammar}</overwrite>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>hxml.tmLanguage</id>
+                  <phase>generate-resources</phase>
+                  <goals>
+                     <goal>wget</goal>
+                  </goals>
+                  <configuration>
+                     <uri>https://raw.githubusercontent.com/vshaxe/haxe-TmLanguage/master/hxml.tmLanguage</uri>
+                     <outputDirectory>src/main/resources/langcfg</outputDirectory>
+                     <skipCache>true</skipCache>
+                     <overwrite>${update-language-grammar}</overwrite>
+                  </configuration>
+               </execution>
+
+               <!-- hlcode.text lang config -->
+               <execution>
+                  <id>hlcode.tmLanguage</id>
+                  <phase>generate-resources</phase>
+                  <goals>
+                     <goal>wget</goal>
+                  </goals>
+                  <configuration>
+                     <uri>https://raw.githubusercontent.com/vshaxe/haxe-TmLanguage/master/hlcode.tmLanguage</uri>
+                     <outputDirectory>src/main/resources/langcfg</outputDirectory>
+                     <skipCache>true</skipCache>
+                     <overwrite>${update-language-grammar}</overwrite>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>align message bundle path</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>run</goal>
+                  </goals>
+                  <configuration>
+                     <target>
+                        <!-- https://ant.apache.org/manual/Tasks/replace.html -->
+                        <replace file="${project.build.directory}/MANIFEST.MF" token="Bundle-Localization: src/main/java/" value="Bundle-Localization: "
+                           summary="true" failOnNoReplacements="true" />
+
+                        <!-- https://ant.apache.org/manual/Tasks/zip.html -->
+                        <!-- https://stackoverflow.com/q/28111296/5116073 -->
+                        <zip destfile="tmp.jar" level="9" whenempty="fail" update="false">
+                           <zipfileset src="${project.build.directory}/org.haxe4e_${qualifiedVersion}.jar">
+                              <exclude name="META-INF/MANIFEST.MF" />
+                              <exclude name="META-INF/maven/**" />
+                              <exclude name="**/*.md.html" />
+                              <exclude name="THIRD-PARTY.txt" />
+                           </zipfileset>
+                           <zipfileset dir="${project.build.directory}" includes="MANIFEST.MF" fullpath="META-INF/MANIFEST.MF" />
+                        </zip>
+                        <move file="tmp.jar" tofile="${project.build.directory}/org.haxe4e_${qualifiedVersion}.jar" />
+                     </target>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+</project>
