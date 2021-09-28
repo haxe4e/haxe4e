@@ -1,0 +1,14 @@
+# source paths
+-cp src
+-D foo -p "dir/another src"
+--class-path 'dir/yet another src'
+#--class-path commented-out-src
+# libraries
+-lib lib1
+-D bar -L lib2
+--library lib3:1.0.0
+#--library commented-out-lib:1.0.0
+#target config
+--interp
+-D eval-stack
+-main MyMain

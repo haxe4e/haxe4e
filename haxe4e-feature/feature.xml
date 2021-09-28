@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright 2021 by the Haxe4E authors.
+   SPDX-License-Identifier: EPL-2.0
+
+   @author Sebastian Thomschke
+-->
+<feature
+      id="org.haxe4e.feature"
+      label="%label"
+      version="1.0.0.qualifier"
+      provider-name="%providerName"
+      plugin="org.haxe4e"
+      license-feature="org.eclipse.license"
+      license-feature-version="2.0.2.qualifier">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.externaltools"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.genericeditor"/>
+      <import plugin="org.eclipse.ui.navigator"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.lsp4e"/>
+      <import plugin="org.eclipse.lsp4e.debug"/>
+      <import plugin="org.eclipse.lsp4j"/>
+      <import plugin="org.eclipse.lsp4j.debug"/>
+      <import plugin="org.eclipse.lsp4j.jsonrpc"/>
+      <import plugin="org.eclipse.tm4e.core"/>
+      <import plugin="org.eclipse.tm4e.ui"/>
+      <import plugin="org.eclipse.tm4e.languageconfiguration"/>
+      <import plugin="org.eclipse.tm4e.registry"/>
+      <import plugin="org.eclipse.wildwebdeveloper.embedder.node"/>
+      <import plugin="net.sf.jstuff.core" version="5.15.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.ui" version="3.23.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="org.haxe4e"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.lang3"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.fasterxml.jackson.core.jackson-annotations"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.fasterxml.jackson.core.jackson-core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.fasterxml.jackson.core.jackson-databind"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.jstuff.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.commons-io"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.diffplug.osgi.extension.sun.misc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+</feature>
