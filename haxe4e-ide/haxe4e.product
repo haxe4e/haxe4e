@@ -15,7 +15,6 @@
 
    <windowImages/>
 
-
    <launcher name="Haxe4E">
       <win useIco="false">
          <bmp/>
@@ -314,7 +313,7 @@ version(s), and exceptions or additional permissions here}.&quot;
    </plugins>
 
    <features>
-      <feature id="org.haxe4e.feature" installMode="root"/>
+      <feature id="org.haxe4e.feature"/>
       <feature id="org.eclipse.platform"/>
       <feature id="org.eclipse.emf.ecore"/>
       <feature id="org.eclipse.equinox.p2.user.ui"/>
@@ -332,6 +331,8 @@ version(s), and exceptions or additional permissions here}.&quot;
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.tm4e.feature"/>
       <feature id="org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped" installMode="root"/>
+      <feature id="org.eclipse.wildwebdeveloper.feature" installMode="root"/>
+      <feature id="org.eclipse.wildwebdeveloper.xml.feature" installMode="root"/>
    </features>
 
    <configurations>
