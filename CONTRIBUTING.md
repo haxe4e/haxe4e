@@ -8,6 +8,7 @@ We want to make contributing as easy and transparent as possible.
 ## Code of Conduct
 
 Our code of conduct is described in [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+Please follow it in all your interactions with the project.
 
 
 ## Issues
@@ -27,6 +28,6 @@ By contributing your code, you agree to license your contribution under the [Ecl
 
 ### Source Code Formatting
 
-Before committing your code format it using the [vegardit.com Eclipse formatter rules](https://github.com/vegardit/vegardit-maven-parent/blob/main/src/etc/eclipse-formatter.xml).
+Before committing your code ensure it is formatted according the [vegardit.com Eclipse formatter rules](https://github.com/vegardit/vegardit-maven-parent/blob/main/src/etc/eclipse-formatter.xml).
 
 IntelliJ users can use the [Eclipse Code Formatter](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter) plugin to import and use the formatter settings.
