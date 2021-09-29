@@ -122,38 +122,56 @@
                </execution>
             </executions>
          </plugin>
-         <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>align message bundle path</id>
-                  <phase>package</phase>
-                  <goals>
-                     <goal>run</goal>
-                  </goals>
-                  <configuration>
-                     <target>
-                        <!-- https://ant.apache.org/manual/Tasks/replace.html -->
-                        <replace file="${project.build.directory}/MANIFEST.MF" token="Bundle-Localization: src/main/java/" value="Bundle-Localization: "
-                           summary="true" failOnNoReplacements="true" />
-
-                        <!-- https://ant.apache.org/manual/Tasks/zip.html -->
-                        <!-- https://stackoverflow.com/q/28111296/5116073 -->
-                        <zip destfile="tmp.jar" level="9" whenempty="fail" update="false">
-                           <zipfileset src="${project.build.directory}/org.haxe4e_${qualifiedVersion}.jar">
-                              <exclude name="META-INF/MANIFEST.MF" />
-                              <exclude name="META-INF/maven/**" />
-                              <exclude name="**/*.md.html" />
-                              <exclude name="THIRD-PARTY.txt" />
-                           </zipfileset>
-                           <zipfileset dir="${project.build.directory}" includes="MANIFEST.MF" fullpath="META-INF/MANIFEST.MF" />
-                        </zip>
-                        <move file="tmp.jar" tofile="${project.build.directory}/org.haxe4e_${qualifiedVersion}.jar" />
-                     </target>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
       </plugins>
    </build>
+
+   <profiles>
+      <profile>
+         <id>outside-eclipse</id>
+         <activation>
+            <property>
+               <name>!eclipse.application</name>
+            </property>
+         </activation>
+         <properties>
+            <webClassifier>classes</webClassifier>
+         </properties>
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-antrun-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>align message bundle path</id>
+                        <phase>package</phase>
+                        <goals>
+                           <goal>run</goal>
+                        </goals>
+                        <configuration>
+                           <target>
+                              <!-- https://ant.apache.org/manual/Tasks/replace.html -->
+                              <replace file="${project.build.directory}/MANIFEST.MF" token="Bundle-Localization: src/main/java/"
+                                 value="Bundle-Localization: " summary="true" failOnNoReplacements="true" />
+
+                              <!-- https://ant.apache.org/manual/Tasks/zip.html -->
+                              <!-- https://stackoverflow.com/q/28111296/5116073 -->
+                              <zip destfile="tmp.jar" level="9" whenempty="fail" update="false">
+                                 <zipfileset src="${project.build.directory}/org.haxe4e_${qualifiedVersion}.jar">
+                                    <exclude name="META-INF/MANIFEST.MF" />
+                                    <exclude name="META-INF/maven/**" />
+                                    <exclude name="**/*.md.html" />
+                                    <exclude name="THIRD-PARTY.txt" />
+                                 </zipfileset>
+                                 <zipfileset dir="${project.build.directory}" includes="MANIFEST.MF" fullpath="META-INF/MANIFEST.MF" />
+                              </zip>
+                              <move file="tmp.jar" tofile="${project.build.directory}/org.haxe4e_${qualifiedVersion}.jar" />
+                           </target>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
 </project>
