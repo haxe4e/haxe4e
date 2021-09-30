@@ -40,7 +40,7 @@ jobs:
       with:
         path: |
           ~/.m2/repository
-          !~/.m2/repository/org/haxe4e
+          !~/.m2/**/*SNAPSHOT*
         key: ${{ runner.os }}-mvnrepo-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-mvnrepo-
