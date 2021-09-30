@@ -90,7 +90,7 @@ public class HaxeBuildFileSelectionGroup extends Composite {
                return false;
 
             if (res instanceof IFile //
-               && res.getFileExtension().equals(Constants.HAXE_BUILD_FILE_EXTENSION) //
+               && Constants.HAXE_BUILD_FILE_EXTENSION.equals(res.getFileExtension()) //
             ) {
                buildFiles.add(res.getFullPath().makeRelativeTo(projectFullPath).toPortableString());
             }
