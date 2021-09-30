@@ -31,7 +31,9 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.jface.notifications"/>
       <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.ui.editors"/>
@@ -50,8 +52,7 @@
       <import plugin="org.eclipse.tm4e.languageconfiguration"/>
       <import plugin="org.eclipse.tm4e.registry"/>
       <import plugin="org.eclipse.wildwebdeveloper.embedder.node"/>
-      <import plugin="net.sf.jstuff.core" version="5.15.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.ui" version="3.23.0" match="greaterOrEqual"/>
+      <import plugin="net.sf.jstuff.core" version="5.16.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -101,14 +102,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.diffplug.osgi.extension.sun.misc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
          unpack="false"/>
 
 </feature>

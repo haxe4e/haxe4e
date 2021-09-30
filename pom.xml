@@ -57,19 +57,6 @@
       <skip.enforcer.enforce-bytecode-version>true</skip.enforcer.enforce-bytecode-version>
    </properties>
 
-   <repositories>
-      <repository>
-         <id>jstuff-snapshots</id>
-         <url>https://raw.githubusercontent.com/sebthom/jstuff/mvn-snapshots-repo/</url>
-         <releases>
-            <enabled>false</enabled>
-         </releases>
-         <snapshots>
-            <enabled>true</enabled>
-         </snapshots>
-      </repository>
-   </repositories>
-
    <modules>
       <module>haxe4e-plugin</module>
       <module>haxe4e-feature</module>
@@ -249,14 +236,6 @@
                   </environment>
                </environments>
                <dependency-resolution>
-                  <extraRequirements>
-                     <requirement>
-                        <!-- https://github.com/diffplug/osgiX -->
-                        <id>com.diffplug.osgi.extension.sun.misc</id>
-                        <type>eclipse-plugin</type>
-                        <versionRange>0.0.0</versionRange>
-                     </requirement>
-                  </extraRequirements>
                   <profileProperties>
                      <org.eclipse.justj.buildtime>true</org.eclipse.justj.buildtime>
                   </profileProperties>

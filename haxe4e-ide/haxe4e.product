@@ -333,6 +333,9 @@ version(s), and exceptions or additional permissions here}.&quot;
       <feature id="org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped" installMode="root"/>
       <feature id="org.eclipse.wildwebdeveloper.feature" installMode="root"/>
       <feature id="org.eclipse.wildwebdeveloper.xml.feature" installMode="root"/>
+      <feature id="de.jcup.batcheditor" installMode="root"/>
+      <feature id="de.anbos.eclipse.easyshell.feature" installMode="root"/>
+      <feature id="org.eclipse.shellwax.feature" installMode="root"/>
    </features>
 
    <configurations>

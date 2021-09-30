@@ -4,5 +4,4 @@
       <category name="Haxe Language Support"/>
    </feature>
    <category-def name="Haxe Language Support" label="Haxe programming language support for the Eclipse IDE"/>
-   <bundle id="com.diffplug.osgi.extension.sun.misc"/>
 </site>

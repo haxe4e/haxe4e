@@ -37,7 +37,7 @@ Require-Bundle: com.fasterxml.jackson.core.jackson-annotations,
  org.eclipse.tm4e.languageconfiguration,
  org.eclipse.tm4e.registry,
  org.eclipse.wildwebdeveloper.embedder.node,
- org.apache.commons.lang3,
  org.apache.commons.commons-io,
+ org.apache.commons.lang3,
  net.sf.jstuff.core;bundle-version="5.16.0"
 Bundle-ClassPath: .

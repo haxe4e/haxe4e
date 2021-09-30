@@ -25,6 +25,7 @@ import org.haxe4e.model.HaxeBuildFile;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.project.HaxeProjectNature;
 import org.haxe4e.util.LOG;
+import org.haxe4e.util.StatusUtils;
 
 /**
  * @author Sebastian Thomschke
@@ -63,8 +64,8 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
 
                if (haxedepsFolder.exists()) {
                   if (!haxedepsFolder.isVirtual())
-                     return Status.error("Cannot update project dependency tree. Physical folder with name " + HAXE_DEPS_MAGIC_FOLDER_NAME
-                        + " exists!");
+                     return StatusUtils.createError("Cannot update project dependency tree. Physical folder with name "
+                        + HAXE_DEPS_MAGIC_FOLDER_NAME + " exists!");
                } else {
                   haxedepsFolder.create(IResource.VIRTUAL, true, monitor);
                }
@@ -88,7 +89,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
                }
                return Status.OK_STATUS;
             } catch (final CoreException | IOException ex) {
-               return Status.error("Failed to update project dependency tree", ex);
+               return StatusUtils.createError(ex, "Failed to update project dependency tree");
             }
          }
       };
