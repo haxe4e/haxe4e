@@ -13,7 +13,7 @@
    <parent>
       <groupId>com.vegardit.maven</groupId>
       <artifactId>vegardit-maven-parent</artifactId>
-      <version>2.4.33</version>
+      <version>2.4.35</version>
    </parent>
 
    <name>haxe4e-parent</name>
@@ -47,6 +47,14 @@
       ]
       -->
       <skip.dependency-scope-maven-plugin.check>true</skip.dependency-scope-maven-plugin.check>
+
+      <!-- to prevent dozen of warnings like:
+      [WARNING] System artifact: p2.eclipse-plugin:org.eclipse.mylyn.commons.notifications.ui:jar:1.17.2.v20200813-0821:system has no file attached
+
+      Try downloading the file manually from the project website.
+      -->
+      <skip.enforcer.ban-duplicate-classes>true</skip.enforcer.ban-duplicate-classes>
+      <skip.enforcer.enforce-bytecode-version>true</skip.enforcer.enforce-bytecode-version>
    </properties>
 
    <repositories>
