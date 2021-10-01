@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
-import org.haxe4e.Constants;
 import org.haxe4e.util.LOG;
 
 import net.sf.jstuff.core.collection.Sets;
@@ -47,10 +46,9 @@ public final class HaxeProjectImportConfigurator implements ProjectConfigurator 
 
             @Override
             public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-               switch (file.getFileName().toString()) {
-                  case Constants.DEFAULT_HAXE_BUILD_FILE:
-                  case "haxelib.json":
-                     haxeProjects.add(file.getParent().toFile());
+               final String fileName = file.getFileName().toString();
+               if (fileName.endsWith(".hxml") || "haxelib.json".equals(fileName)) {
+                  haxeProjects.add(file.getParent().toFile());
                }
                return FileVisitResult.CONTINUE;
             }
