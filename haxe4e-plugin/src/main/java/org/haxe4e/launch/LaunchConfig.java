@@ -110,7 +110,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                   try {
                      project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
                   } catch (final CoreException e) {
-                     e.printStackTrace();
+                     org.haxe4e.util.LOG.error(e);
                   }
                }
             );
