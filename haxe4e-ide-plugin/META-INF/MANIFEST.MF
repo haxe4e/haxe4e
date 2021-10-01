@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Haxe IDE Customizaton Plugin
-Bundle-SymbolicName: org.haxe4e.ide.plugin;singleton:=true
-Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: The Haxe4E Project
-Automatic-Module-Name: org.haxe4e.ide.plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-11
-Bundle-ClassPath: .

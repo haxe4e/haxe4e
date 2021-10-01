@@ -124,9 +124,6 @@ jobs:
         hub release create "latest" \
           --message "latest" \
           --attach "haxe4e-updatesite/target/org.haxe4e.plugin.updatesite.zip" \
-          --attach "haxe4e-ide/target/products/org.haxe4e.ide-linux.gtk.x86_64.tar.gz" \
-          --attach "haxe4e-ide/target/products/org.haxe4e.ide-macosx.cocoa.x86_64.tar.gz" \
-          --attach "haxe4e-ide/target/products/org.haxe4e.ide-win32.win32.x86_64.zip" \
           --prerelease
 
 
