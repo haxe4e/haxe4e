@@ -25,6 +25,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
+import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.util.LOG;
 import org.haxe4e.util.ui.Buttons;
 import org.haxe4e.util.ui.GridDatas;
@@ -65,7 +66,13 @@ public class HaxeBuildFileSelectionGroup extends Composite {
       btnBrowseBuildFile.setEnabled(false);
       Buttons.onSelected(btnBrowseBuildFile, this::onBuildFileButton);
 
-      project.subscribe(p -> btnBrowseBuildFile.setEnabled(p != null));
+      project.subscribe(p -> {
+         btnBrowseBuildFile.setEnabled(p != null);
+         if (p != null) {
+            final HaxeProjectPreference prefs = new HaxeProjectPreference(p);
+            buildFile.set(prefs.getHaxeBuildFile());
+         }
+      });
    }
 
    private AbstractElementListSelectionDialog createSelectBuildFileDialog(final Shell shell, final IProject project,
