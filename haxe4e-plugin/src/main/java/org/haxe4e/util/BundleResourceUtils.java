@@ -6,8 +6,14 @@ package org.haxe4e.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -26,6 +32,25 @@ public final class BundleResourceUtils {
       return URIUtil.toFile(URIUtil.toURI(url));
    }
 
+   public static URL getBundleResourceUrl(final String resource) {
+      final var bundle = Platform.getBundle(Haxe4EPlugin.PLUGIN_ID);
+      return bundle.getResource("src/main/resources/" + resource);
+   }
+   
+   public static InputStream getBundleResourceAsStream(final String resource) throws IOException {
+      final var url = getBundleResourceUrl(resource);
+      final URLConnection con = url.openConnection();
+      return con.getInputStream(); // responsibility of caller to close stream when done
+   }
+   
+   public static String getBundleResourceAsString(final String resource) throws IOException {
+      final var stream = getBundleResourceAsStream(resource);
+      final var writer = new StringWriter();
+      IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
+      stream.close();
+      return writer.toString();
+   }
+   
    private BundleResourceUtils() {
    }
 }
