@@ -19,7 +19,12 @@ on:
         required: false
         default: ''
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -41,7 +46,7 @@ jobs:
         path: |
           ~/.m2/repository
           !~/.m2/**/*SNAPSHOT*
-        key: ${{ runner.os }}-mvnrepo-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-mvnrepo-${{ hashFiles('**/pom.xml') }}-${{ hashFiles('build.target') }}
         restore-keys: |
           ${{ runner.os }}-mvnrepo-
 
@@ -49,6 +54,7 @@ jobs:
       uses: stCarolas/setup-maven@v4.2
       with:
         maven-version: 3.8.2
+
 
     - name: Build with Maven
       id: maven-build
@@ -84,7 +90,9 @@ jobs:
 
         mv haxe4e-updatesite/target/org.haxe4e.updatesite-*.zip haxe4e-updatesite/target/org.haxe4e.plugin.updatesite.zip
 
+
     - name: "Delete previous 'latest' release"
+      if: github.ref == 'refs/heads/main'
       run: |
         set -eu
 
@@ -104,7 +112,9 @@ jobs:
            curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -fsSL -X DELETE "$tag_url"
         fi
 
-    - name: "Create 'latest' Release"
+
+    - name: "Create 'latest' release"
+      if: github.ref == 'refs/heads/main'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
@@ -118,6 +128,25 @@ jobs:
           --attach "haxe4e-ide/target/products/org.haxe4e.ide-macosx.cocoa.x86_64.tar.gz" \
           --attach "haxe4e-ide/target/products/org.haxe4e.ide-win32.win32.x86_64.zip" \
           --prerelease
+
+
+    - name: Deploy p2 update site
+      if: github.ref == 'refs/heads/main'
+      run: |
+        set -eux
+
+        cd /tmp
+        git clone https://${{ github.actor }}:${{ github.token }}@github.com/haxe4e/haxe4e/ --single-branch --branch updatesite updatesite
+        cd updatesite
+        # https://github.community/t/github-actions-bot-email-address/17204
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git reset --hard HEAD^
+        mv $GITHUB_WORKSPACE/haxe4e-updatesite/target/repository/* .
+        git add --all
+        git commit -am "deploy p2 update site"
+        git push origin updatesite --force
+
 
     - name: "Delete intermediate build artifacts"
       uses: geekyeggo/delete-artifact@1-glob-support # https://github.com/GeekyEggo/delete-artifact/
