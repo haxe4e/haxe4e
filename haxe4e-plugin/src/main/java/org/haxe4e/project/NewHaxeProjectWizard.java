@@ -7,9 +7,7 @@ package org.haxe4e.project;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URISyntaxException;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -81,11 +79,11 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
                final var prefs = new HaxeProjectPreference(newProject);
                prefs.setAlternateHaxeSDK(newHaxeProjectPage.selectedAltSDK.get());
                prefs.save();
-               
+
                // may want system to create different types of projects, for now this is better than empty
                createFile(newProject, monitor, "/templates/new-project/default/build.hxml", "build.hxml");
                createFile(newProject, monitor, "/templates/new-project/default/src/Main.hx", "src/Main.hx");
-               
+
                newProject.open(monitor);
             } catch (final Exception ex) {
                throw new InvocationTargetException(ex);
@@ -116,42 +114,41 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
       }
 
       BasicNewResourceWizard.selectAndReveal(newProject, UI.getActiveWorkbenchWindow());
-
       return true;
    }
 
-   protected void createFile(final IProject project, final IProgressMonitor monitor,
-                             final String from, final String to)
-                                throws CoreException, IOException, URISyntaxException {
+   private void createFile(final IProject project, final IProgressMonitor monitor, final String from, final String to) throws CoreException,
+      IOException {
       createFile(project, monitor, from, to, false);
    }
-   
-   protected void createFile(final IProject project, final IProgressMonitor monitor,
-                             final String from, final String to, final boolean isBinary)
-                                throws CoreException, IOException, URISyntaxException {
-      final IFile f = project.getFile(to);
+
+   private void createFile(final IProject project, final IProgressMonitor monitor, final String from, final String to,
+      final boolean isBinary) throws CoreException, IOException {
+      final var f = project.getFile(to);
       createParents(f, monitor);
-      
+
       if (isBinary) {
-         f.create(BundleResourceUtils.getBundleResourceAsStream(from), true, monitor);
+         try (var is = BundleResourceUtils.getBundleResourceAsStream(from)) {
+            f.create(is, true, monitor);
+         }
       } else {
          f.create(new ByteArrayInputStream(BundleResourceUtils.getBundleResourceAsString(from).getBytes()), true, monitor);
       }
    }
-   
-   protected void createParents(final IFile f, final IProgressMonitor monitor) throws CoreException {
-      final IContainer dir = f.getParent();
+
+   private void createParents(final IFile f, final IProgressMonitor monitor) throws CoreException {
+      final var dir = f.getParent();
       if (!dir.exists()) {
          if (dir instanceof IFolder) {
-            final IFolder folder = (IFolder) dir;
+            final var folder = (IFolder) dir;
             createParents(folder, monitor);
          }
       }
    }
-   
-   protected void createParents(final IFolder f, final IProgressMonitor monitor) throws CoreException {
+
+   private void createParents(final IFolder f, final IProgressMonitor monitor) throws CoreException {
       if (!f.exists()) {
-         final IContainer parent = f.getParent();
+         final var parent = f.getParent();
          if (parent instanceof IFolder) {
             createParents((IFolder) parent, monitor);
          }

@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
@@ -36,13 +35,13 @@ public final class BundleResourceUtils {
       final var bundle = Platform.getBundle(Haxe4EPlugin.PLUGIN_ID);
       return bundle.getResource("src/main/resources/" + resource);
    }
-   
+
    public static InputStream getBundleResourceAsStream(final String resource) throws IOException {
       final var url = getBundleResourceUrl(resource);
-      final URLConnection con = url.openConnection();
+      final var con = url.openConnection();
       return con.getInputStream(); // responsibility of caller to close stream when done
    }
-   
+
    public static String getBundleResourceAsString(final String resource) throws IOException {
       final var stream = getBundleResourceAsStream(resource);
       final var writer = new StringWriter();
@@ -50,7 +49,7 @@ public final class BundleResourceUtils {
       stream.close();
       return writer.toString();
    }
-   
+
    private BundleResourceUtils() {
    }
 }
