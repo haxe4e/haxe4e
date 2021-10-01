@@ -16,7 +16,7 @@
       <version>1.0.0-SNAPSHOT</version>
    </parent>
 
-   <name>haxe4e-feature</name>
-   <artifactId>org.haxe4e.feature</artifactId>
+   <name>haxe4e-ide-feature</name>
+   <artifactId>org.haxe4e.ide.feature</artifactId>
    <packaging>eclipse-feature</packaging>
 </project>

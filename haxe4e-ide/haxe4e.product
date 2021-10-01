@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Haxe4E IDE" uid="org.haxe4e.ide" id="org.haxe4e.ide" application="org.eclipse.ui.ide.workbench" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Haxe4E IDE" uid="org.haxe4e.ide" id="org.haxe4e.ide.plugin.product" application="org.eclipse.ui.ide.workbench" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+
+   <aboutInfo>
+      <text>
+         Haxe4E - Eclipse based Haxe IDE
+      </text>
+   </aboutInfo>
 
    <configIni use="default">
    </configIni>
@@ -9,17 +15,27 @@
    <launcherArgs>
       <programArgs>-clearPersistedState
       </programArgs>
+      <vmArgs>-Djava.net.preferIPv4Stack=true
+-Dfile.encoding=UTF-8
+-XX:+HeapDumpOnOutOfMemoryError
+-Xverify:none
+      </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>
 
-   <windowImages/>
+   <windowImages i16="src/main/resources/images/logo/haxe_logo16x16.png" i32="src/main/resources/images/logo/haxe_logo32x32.png" i48="src/main/resources/images/logo/haxe_logo48x48.png" i64="src/main/resources/images/logo/haxe_logo64x64.png" i128="src/main/resources/images/logo/haxe_logo128x128.png" i256="src/main/resources/images/logo/haxe_logo256x256.png"/>
+
 
    <launcher name="Haxe4E">
-      <win useIco="false">
+      <linux icon="haxe4e-ide/src/main/resources/images/logo/haxe_logo256x256.xpm"/>
+      <macosx icon="haxe4e-ide/src/main/resources/images/logo/haxe_logo256x256.icns"/>
+      <win useIco="true">
+         <ico path="haxe4e-ide/src/main/resources/images/logo/haxe_logo.ico"/>
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
@@ -313,6 +329,7 @@ version(s), and exceptions or additional permissions here}.&quot;
    </plugins>
 
    <features>
+      <feature id="org.haxe4e.ide.feature"/>
       <feature id="org.haxe4e.feature"/>
       <feature id="org.eclipse.platform"/>
       <feature id="org.eclipse.emf.ecore"/>
@@ -347,6 +364,7 @@ version(s), and exceptions or additional permissions here}.&quot;
    </configurations>
 
    <repositories>
+      <repository location="https://github.com/haxe4e/haxe4e/releases/download/latest/org.haxe4e.plugin.updatesite.zip" enabled="true" />
       <repository location="https://github.com/haxe4e/haxe4e/releases/download/latest/org.haxe4e.plugin.updatesite.zip" enabled="true" />
    </repositories>
 

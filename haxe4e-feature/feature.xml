@@ -7,9 +7,9 @@
 -->
 <feature
       id="org.haxe4e.feature"
-      label="%label"
+      label="%name"
       version="1.0.0.qualifier"
-      provider-name="%providerName"
+      provider-name="The Haxe4E Project"
       plugin="org.haxe4e"
       license-feature="org.eclipse.license"
       license-feature-version="2.0.2.qualifier">

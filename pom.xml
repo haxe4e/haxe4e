@@ -62,6 +62,8 @@
       <module>haxe4e-feature</module>
       <module>haxe4e-tests</module>
       <module>haxe4e-updatesite</module>
+      <module>haxe4e-ide-plugin</module>
+      <module>haxe4e-ide-feature</module>
       <module>haxe4e-ide</module>
    </modules>
 

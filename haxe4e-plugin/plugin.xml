@@ -5,14 +5,6 @@
       <startup class="org.haxe4e.Haxe4EStartupListener" />
    </extension>
 
-   <extension point="org.eclipse.core.runtime.products" id="ide">
-      <!-- this is referenced in haxe4e.product as [plugin_id].[product_id], i.e. "org.haxe4e.ide" -->
-      <!-- https://www.eclipse.org/articles/Article-Branding/branding-your-application.html -->
-      <product application="org.eclipse.ui.ide.workbench" name="Haxe4E IDE">
-         <property name="appName" value="Haxe4E IDE"/>
-      </product>
-   </extension>
-
    <!-- ===================================== -->
    <!-- Content Type                          -->
    <!-- ===================================== -->
@@ -451,5 +443,4 @@
          <adapter type="org.eclipse.debug.ui.actions.ILaunchable" />
       </factory>
    </extension>
-
 </plugin>
