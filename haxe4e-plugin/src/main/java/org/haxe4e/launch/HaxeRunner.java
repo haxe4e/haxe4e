@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -20,6 +21,7 @@ import org.haxe4e.util.StatusUtils;
 import org.haxe4e.util.ui.Dialogs;
 
 import net.sf.jstuff.core.io.Processes;
+import net.sf.jstuff.core.io.Processes.ProcessWrapper;
 
 /**
  * @author Sebastian Thomschke
@@ -27,7 +29,7 @@ import net.sf.jstuff.core.io.Processes;
 public final class HaxeRunner {
 
    public static void launchHxmlFile(final ILaunch launch, final Path haxeCompiler, final Path hxmlFile, final Path workDir,
-      final Map<String, String> envVars, final boolean appendEnvVars) {
+      final Map<String, String> envVars, final boolean appendEnvVars, final Consumer<ProcessWrapper> action) {
       final var job = Job.create(NLS.bind(Messages.Launch_RunningFile, hxmlFile), runnable -> {
          try {
             final var proc = Processes.builder(haxeCompiler.toAbsolutePath()) //
@@ -39,6 +41,7 @@ public final class HaxeRunner {
                   env.putAll(envVars);
                }) //
                .withWorkingDirectory(workDir) //
+               .onExit(action) //
                .start();
             launch.addProcess(DebugPlugin.newProcess(launch, proc.getProcess(), Messages.Label_Haxe_Terminal));
          } catch (final IOException ex) {
@@ -48,6 +51,11 @@ public final class HaxeRunner {
       job.schedule();
    }
 
+   public static void launchHxmlFile(final ILaunch launch, final Path haxeCompiler, final Path hxmlFile, final Path workDir,
+      final Map<String, String> envVars, final boolean appendEnvVars) {
+      launchHxmlFile(launch, haxeCompiler, hxmlFile, workDir, envVars, appendEnvVars, null);
+   }
+   
    public static void launchHxmlFile(final Path haxeCompiler, final Path hxmlFile, final Path workDir) {
       final var run = new Launch(null, ILaunchManager.RUN_MODE, null);
       DebugPlugin.getDefault().getLaunchManager().addLaunch(run);
