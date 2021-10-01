@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -104,7 +105,14 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                hxmlFilePath, //
                cwd, //
                envVars, //
-               appendEnvVars //
+               appendEnvVars, //
+               action -> { //
+                  try {
+                     project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+                  } catch (final CoreException e) {
+                     org.haxe4e.util.LOG.error(e);
+                  }
+               }
             );
             return;
          default:
