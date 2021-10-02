@@ -5,7 +5,6 @@
 package org.haxe4e.launch;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -86,7 +85,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                .getMap();
 
             try {
-               final var evalDebuggerJS = BundleResourceUtils.extractBundleResource("src/main/resources/langsrv/haxe-eval-debugger.js");
+               final var evalDebuggerJS = BundleResourceUtils.extractBundleResource("langsrv/haxe-eval-debugger.js");
                final List<String> debugCmdArgs = Collections.singletonList(evalDebuggerJS.getAbsolutePath());
 
                final var builder = new DSPLaunchDelegateLaunchBuilder(config, ILaunchManager.DEBUG_MODE, launch, monitor);
@@ -94,7 +93,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                builder.setMonitorDebugAdapter(config.getAttribute(DSPPlugin.ATTR_DSP_MONITOR_DEBUG_ADAPTER, true));
                builder.setDspParameters(initOptions);
                new DSPLaunchDelegate() {}.launch(builder);
-            } catch (final IOException | URISyntaxException ex) {
+            } catch (final IOException ex) {
                Dialogs.showStatus("Failed to start debug session", StatusUtils.createError(ex), true);
             }
             return;
@@ -112,8 +111,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                   } catch (final CoreException e) {
                      org.haxe4e.util.LOG.error(e);
                   }
-               }
-            );
+               });
             return;
          default:
             UI.run(() -> MessageDialog.openError(null, "Unsupported launch mode", "Launch mode [" + mode + "] is not supported."));

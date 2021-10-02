@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -48,8 +47,8 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
     */
    private static final boolean TRACE_METHOD_RESULTS = Platform.getDebugBoolean("org.haxe4e/trace/langserv/method_results");
 
-   public HaxeLangServerLauncher() throws IOException, URISyntaxException {
-      final var languageServerJS = BundleResourceUtils.extractBundleResource("src/main/resources/langsrv/haxe-language-server.js");
+   public HaxeLangServerLauncher() throws IOException {
+      final var languageServerJS = BundleResourceUtils.extractBundleResource("langsrv/haxe-language-server.js");
       setWorkingDirectory(SystemUtils.getUserDir().getAbsolutePath());
       setCommands(Arrays.asList( //
          NodeJSManager.getNodeJsLocation().getAbsolutePath(), //

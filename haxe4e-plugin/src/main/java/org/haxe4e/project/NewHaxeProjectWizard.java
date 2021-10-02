@@ -81,8 +81,8 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
                prefs.save();
 
                // may want system to create different types of projects, for now this is better than empty
-               createFile(newProject, monitor, "/templates/new-project/default/build.hxml", "build.hxml");
-               createFile(newProject, monitor, "/templates/new-project/default/src/Main.hx", "src/Main.hx");
+               createFile(newProject, monitor, "templates/new-project/default/build.hxml", "build.hxml");
+               createFile(newProject, monitor, "templates/new-project/default/src/Main.hx", "src/Main.hx");
 
                newProject.open(monitor);
             } catch (final Exception ex) {

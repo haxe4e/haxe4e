@@ -18,36 +18,70 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.haxe4e.Haxe4EPlugin;
+import org.osgi.framework.Bundle;
+
+import net.sf.jstuff.core.validation.Args;
 
 /**
  * @author Sebastian Thomschke
  */
 public final class BundleResourceUtils {
 
-   public static File extractBundleResource(final String resource) throws IOException, URISyntaxException {
-      final var bundle = Platform.getBundle(Haxe4EPlugin.PLUGIN_ID);
-      var url = FileLocator.find(bundle, new Path(resource), null);
+   private static final String RESOURCE_PATH_PREFIX = "src/main/resources/";
+
+   /**
+    * @throws IllegalArgumentException if given resource cannot be found
+    */
+   public static File extractBundleResource(String resource) throws IOException {
+      Args.notBlank("resource", resource);
+
+      resource = RESOURCE_PATH_PREFIX + resource;
+      var url = FileLocator.find(getBundle(), new Path(resource), null);
+      if (url == null)
+         throw new IllegalArgumentException("Resource not found: " + resource);
       url = FileLocator.toFileURL(url); // extract the file
-      return URIUtil.toFile(URIUtil.toURI(url));
+      try {
+         return URIUtil.toFile(URIUtil.toURI(url));
+      } catch (final URISyntaxException ex) {
+         throw new IOException(ex);
+      }
    }
 
-   public static URL getBundleResourceUrl(final String resource) {
-      final var bundle = Platform.getBundle(Haxe4EPlugin.PLUGIN_ID);
-      return bundle.getResource("src/main/resources/" + resource);
+   public static Bundle getBundle() {
+      return Platform.getBundle(Haxe4EPlugin.PLUGIN_ID);
    }
 
+   /**
+    * @throws IllegalArgumentException if given resource cannot be found
+    */
    public static InputStream getBundleResourceAsStream(final String resource) throws IOException {
       final var url = getBundleResourceUrl(resource);
       final var con = url.openConnection();
       return con.getInputStream(); // responsibility of caller to close stream when done
    }
 
+   /**
+    * @throws IllegalArgumentException if given resource cannot be found
+    */
    public static String getBundleResourceAsString(final String resource) throws IOException {
-      final var stream = getBundleResourceAsStream(resource);
-      final var writer = new StringWriter();
-      IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
-      stream.close();
-      return writer.toString();
+      try (var stream = getBundleResourceAsStream(resource)) {
+         final var writer = new StringWriter();
+         IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
+         return writer.toString();
+      }
+   }
+
+   /**
+    * @throws IllegalArgumentException if given resource cannot be found
+    */
+   public static URL getBundleResourceUrl(String resource) {
+      Args.notBlank("resource", resource);
+      resource = RESOURCE_PATH_PREFIX + resource;
+
+      final var url = getBundle().getEntry(resource);
+      if (url == null)
+         throw new IllegalArgumentException("Resource not found: " + resource);
+      return url;
    }
 
    private BundleResourceUtils() {
