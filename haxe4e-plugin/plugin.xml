@@ -443,4 +443,17 @@
          <adapter type="org.eclipse.debug.ui.actions.ILaunchable" />
       </factory>
    </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Perspective                           -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.haxe4e.perspective.HaxePerspective"
+            icon="src/main/resources/images/logo/haxe_icon.png"
+            id="org.haxe4e.perspective"
+            name="Haxe">
+      </perspective>
+   </extension>
 </plugin>
