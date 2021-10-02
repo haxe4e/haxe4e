@@ -155,12 +155,38 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    }
 
    @JsonIgnore
+   public Processes.Builder getCompilerProcessBuilder(final boolean cleanEnv) {
+      final var neko = getNekoVM();
+      Assert.notNull(neko, "No Neko VM found.");
+
+      return Processes.builder(getCompilerExecutable()) //
+         .withEnvironment(env -> {
+            if (cleanEnv) {
+               env.clear();
+            }
+            env.merge("PATH", path.toString(), //
+               (oldValue, haxelibPath) -> haxelibPath + File.pathSeparator + oldValue //
+            );
+            env.merge("PATH", neko.getPath().toString(), //
+               (oldValue, nekoPath) -> nekoPath + File.pathSeparator + oldValue //
+            );
+
+            env.put(ENV_HAXEPATH, path);
+            env.put(ENV_HAXE_STD_PATH, getStandardLibDir());
+
+            // if specified haxelib will install libs to <haxepath>/lib/...
+            // if not specified haxelib will install libs to <user_home>/haxelib/...
+            env.put(ENV_HAXELIB_PATH, getHaxelibsDir());
+         });
+   }
+
+   @JsonIgnore
    public Path getHaxelibExecutable() {
       return path.resolve(SystemUtils.IS_OS_WINDOWS ? "haxelib.exe" : "haxelib");
    }
 
    @JsonIgnore
-   public Processes.Builder getHaxelibProcessBuilder(final String... args) {
+   public Processes.Builder getHaxelibProcessBuilder(final Object... args) {
       final var neko = getNekoVM();
       Assert.notNull(neko, "No Neko VM found.");
 

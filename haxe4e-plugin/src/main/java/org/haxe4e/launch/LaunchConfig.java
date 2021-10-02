@@ -85,7 +85,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                .getMap();
 
             try {
-               final var evalDebuggerJS = BundleResourceUtils.extractBundleResource("langsrv/haxe-eval-debugger.js");
+               final var evalDebuggerJS = BundleResourceUtils.extractBundleResource("langsrv/haxe-eval-debugger.min.js");
                final List<String> debugCmdArgs = Collections.singletonList(evalDebuggerJS.getAbsolutePath());
 
                final var builder = new DSPLaunchDelegateLaunchBuilder(config, ILaunchManager.DEBUG_MODE, launch, monitor);
@@ -100,7 +100,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
          case ILaunchManager.RUN_MODE:
             HaxeRunner.launchHxmlFile( //
                launch, //
-               haxeSDK.getCompilerExecutable(), //
+               haxeSDK, //
                hxmlFilePath, //
                cwd, //
                envVars, //
