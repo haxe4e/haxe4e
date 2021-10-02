@@ -210,9 +210,7 @@
             <configuration>
                <pomDependencies>ignore</pomDependencies>
 
-               <!-- https://www.eclipse.org/justj/?page=documentation#products -->
-               <!-- major version must match the one selected in build.target file -->
-               <executionEnvironment>org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped-11</executionEnvironment>
+               <executionEnvironment>JavaSE-${java.version}</executionEnvironment>
 
                <target>
                   <file>../build.target</file>
@@ -234,11 +232,6 @@
                      <arch>x86_64</arch>
                   </environment>
                </environments>
-               <dependency-resolution>
-                  <profileProperties>
-                     <org.eclipse.justj.buildtime>true</org.eclipse.justj.buildtime>
-                  </profileProperties>
-               </dependency-resolution>
             </configuration>
          </plugin>
          <plugin>
