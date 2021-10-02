@@ -16,6 +16,7 @@
       <version>1.0.0-SNAPSHOT</version>
    </parent>
 
+   <name>haxe4e-updatesite</name>
    <artifactId>org.haxe4e.updatesite</artifactId>
    <packaging>eclipse-repository</packaging>
 </project>
