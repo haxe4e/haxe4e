@@ -48,7 +48,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    private static final boolean TRACE_METHOD_RESULTS = Platform.getDebugBoolean("org.haxe4e/trace/langserv/method_results");
 
    public HaxeLangServerLauncher() throws IOException {
-      final var languageServerJS = BundleResourceUtils.extractBundleResource("langsrv/haxe-language-server.js");
+      final var languageServerJS = BundleResourceUtils.extractBundleResource("langsrv/haxe-language-server.min.js");
       setWorkingDirectory(SystemUtils.getUserDir().getAbsolutePath());
       setCommands(Arrays.asList( //
          NodeJSManager.getNodeJsLocation().getAbsolutePath(), //
