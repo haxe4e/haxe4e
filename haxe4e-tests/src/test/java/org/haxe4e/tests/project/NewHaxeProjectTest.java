@@ -22,7 +22,6 @@ import org.haxe4e.localization.Messages;
 import org.haxe4e.project.HaxeProjectNature;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,7 +30,6 @@ import org.junit.runner.RunWith;
  */
 @RunWith(RedDeerSuite.class)
 @SuppressWarnings("unused")
-@Ignore
 public class NewHaxeProjectTest {
 
    private CleanWorkspaceRequirement cwr = new CleanWorkspaceRequirement();
