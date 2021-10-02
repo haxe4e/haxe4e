@@ -111,11 +111,7 @@ Haxe4E would not have been possible without the following technologies and learn
 
 ## <a name="license"></a>License
 
-Files in [haxe4e-plugin/src/main/resources/langcfg](haxe4e-plugin/src/main/resources/langcfg) and
-[haxe4e-plugin/src/main/resources/langsrv](haxe4e-plugin/src/main/resources/langsrv) are licensed under the
-[The MIT License (MIT)](haxe4e-plugin/src/main/resources/langcfg/LICENSE.txt).
-
-All other files in this repository are released under the [Eclipse Public License 2.0](LICENSE.txt).
+If not otherwise specified (see below), files in this repository fall under the [Eclipse Public License 2.0](LICENSE.txt).
 
 Individual files contain the following tag instead of the full license text:
 ```
@@ -123,3 +119,9 @@ SPDX-License-Identifier: EPL-2.0
 ```
 
 This enables machine processing of license information based on the SPDX License Identifiers that are available here: https://spdx.org/licenses/.
+
+An exception is made for:
+1. files in readable text which contain their own license information, or
+2. files in a directory containing a separate `LICENSE.txt` file, or
+3. files where an accompanying file exists in the same directory with a `.LICENSE.txt` suffix added to the base-name of the original file.
+   For example `foobar.js` is may be accompanied by a `foobar.LICENSE.txt` license file.
