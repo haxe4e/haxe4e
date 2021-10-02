@@ -72,7 +72,8 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
 
                final var depsToCheck = new HaxeBuildFile(buildFile.getLocation().toFile()) //
                   .getDirectDependencies(prefs.getEffectiveHaxeSDK(), monitor).stream() //
-                  .collect(Collectors.toMap(d -> d.meta.name + "-" + d.meta.version, Function.identity()));
+                  .collect(Collectors.toMap(d -> d.meta.name + " [" + (d.isDevVersion ? "dev" : d.meta.version) + "]", Function
+                     .identity()));
 
                for (final var folder : haxedepsFolder.members()) {
                   final var dep = depsToCheck.get(folder.getName());

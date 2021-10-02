@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.collection.EvictingDeque;
+import net.sf.jstuff.core.io.Processes.ProcessState;
 import net.sf.jstuff.core.validation.Args;
 
 /**
@@ -27,47 +28,43 @@ public final class Haxelib implements Comparable<Haxelib> {
       Args.notNull("sdk", sdk);
       Args.exists("sdk.getLibsDir()", sdk.getHaxelibsDir());
 
-      Path libLocation = null;
-
       /*
        * determine expected location on file system
        */
       monitor.setTaskName("Locating haxelib " + name + "...");
       if (Strings.isNotEmpty(version)) {
-         libLocation = sdk.getHaxelibsDir().resolve(name).resolve(Strings.replace(version, ".", ","));
+         final var libLocation = sdk.getHaxelibsDir().resolve(name).resolve(Strings.replace(version, ".", ","));
+         if (Files.exists(libLocation))
+            return new Haxelib(libLocation, false);
       } else {
          final var devFile = sdk.getHaxelibsDir().resolve(name).resolve(".dev");
          if (Files.exists(devFile)) {
             try (var stream = Files.lines(devFile)) {
                final var path = stream.findFirst().orElse(null);
                if (path != null) {
-                  final var p = Paths.get(path);
-                  if (Files.exists(p)) {
-                     libLocation = p;
-                  }
+                  final var libLocation = Paths.get(path);
+                  if (Files.exists(libLocation))
+                     return new Haxelib(libLocation, true);
                }
             }
          }
 
-         if (libLocation == null) {
-            final var currentFile = sdk.getHaxelibsDir().resolve(name).resolve(".current");
-            if (Files.exists(currentFile)) {
-               try (var stream = Files.lines(currentFile)) {
-                  version = stream.findFirst().orElse("");
-                  if (Strings.isNotEmpty(version)) {
-                     libLocation = sdk.getHaxelibsDir().resolve(name).resolve(Strings.replace(version, ".", ","));
-                  }
+         final var currentFile = sdk.getHaxelibsDir().resolve(name).resolve(".current");
+         if (Files.exists(currentFile)) {
+            try (var stream = Files.lines(currentFile)) {
+               version = stream.findFirst().orElse("");
+               if (Strings.isNotEmpty(version)) {
+                  final var libLocation = sdk.getHaxelibsDir().resolve(name).resolve(Strings.replace(version, ".", ","));
+                  if (Files.exists(libLocation))
+                     return new Haxelib(libLocation, false);
                }
             }
          }
       }
 
-      if (libLocation != null && Files.exists(libLocation))
-         return new Haxelib(libLocation);
-
       monitor.setTaskName("Installing haxelib " + name + ":" + version);
       final var out = new EvictingDeque<String>(4);
-      final var processBuilder = sdk.getHaxelibProcessBuilder("install", name, version) //
+      final var haxelibProcessBuilder = sdk.getHaxelibProcessBuilder("install", name, version) //
          .withWorkingDirectory(sdk.getPath()) //
          .withRedirectErrorToOutput() //
          .withRedirectOutput(line -> {
@@ -76,16 +73,13 @@ public final class Haxelib implements Comparable<Haxelib> {
          });
 
       try {
-         switch (processBuilder //
+         final var result = haxelibProcessBuilder //
             .start() //
             .waitForExit(2, TimeUnit.MINUTES) //
             .terminate(10, TimeUnit.SECONDS) //
-            .getState()) {
-            case SUCCEEDED:
-               break;
-            default:
-               throw new IOException("Failed to install haxelib " + name + ":" + version + ":\n" + Strings.join(out));
-         }
+            .getState();
+         if (result != ProcessState.SUCCEEDED)
+            throw new IOException("Failed to install haxelib " + name + ":" + version + ":\n" + Strings.join(out));
       } catch (final InterruptedException ex) {
          Thread.currentThread().interrupt();
          throw new IOException(ex);
@@ -93,12 +87,14 @@ public final class Haxelib implements Comparable<Haxelib> {
       return from(sdk, name, version, monitor);
    }
 
+   public final boolean isDevVersion;
    public final Path location;
    public final HaxelibJSON meta;
 
-   private Haxelib(final Path location) throws IOException {
+   private Haxelib(final Path location, final boolean isDevVersion) throws IOException {
       Args.notNull("location", location);
 
+      this.isDevVersion = isDevVersion;
       this.location = location;
       meta = HaxelibJSON.from(location.resolve("haxelib.json"));
    }
