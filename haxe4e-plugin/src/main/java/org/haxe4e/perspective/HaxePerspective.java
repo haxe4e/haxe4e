@@ -15,6 +15,7 @@ public class HaxePerspective implements IPerspectiveFactory {
    @Override
    public void createInitialLayout(final IPageLayout layout) {
       defineLayout(layout);
+      defineToolbarActions(layout);
       defineMenuActions(layout);
    }
 
@@ -38,8 +39,14 @@ public class HaxePerspective implements IPerspectiveFactory {
       right.addView(IPageLayout.ID_PROP_SHEET);
    }
 
+   public void defineToolbarActions(final IPageLayout layout) {
+      layout.addActionSet("org.eclipse.debug.ui.launchActionSet");
+   }
+
+   /**
+    * Add entries to "Window > Show View > ..."
+    */
    public void defineMenuActions(final IPageLayout layout) {
-      // Add entries to "Window > Show View > ..."
       layout.addShowViewShortcut(IPageLayout.ID_PROJECT_EXPLORER);
       layout.addShowViewShortcut("org.eclipse.ui.console.ConsoleView");
       layout.addShowViewShortcut(IPageLayout.ID_BOOKMARKS);
