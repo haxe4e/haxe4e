@@ -24,7 +24,18 @@ programming language.
 
 ## <a name="installation"></a>Installation
 
-TODO
+If you don't have Eclipse installed you can install [Haxe Studio](https://github.com/haxe4e/haxe-studio) - a custom Eclipse distribution - which has this plugin preinstalled.
+
+To install Haxe4E into an existing Eclipse installation do:
+1. Within Eclipse go to: Help -> Install New Software...
+1. Enter the following update site URL: https://raw.githubusercontent.com/haxe4e/haxe4e/updatesite
+1. Select the `Haxe4E` feature to install.
+1. Ensure that the option `Contact all update sites during install to find required software` is enabled.
+1. Click `Next` twice.
+1. Read/accept the license terms and click `Finish`.
+1. Eclipse will now download the necessary files in the background.
+1. When the download has finished, Eclipse will ask about installing unsigned content. You need to accept if you want to
+1. After installation you will be prompted for a restart of Eclipse, which is recommended.
 
 
 ## <a name="usage"></a>Usage
