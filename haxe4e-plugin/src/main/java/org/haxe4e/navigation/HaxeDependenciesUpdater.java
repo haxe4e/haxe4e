@@ -6,6 +6,7 @@ package org.haxe4e.navigation;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -46,59 +47,82 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
       final var job = new Job("Updating Haxe dependency tree...") {
          @Override
          protected IStatus run(final IProgressMonitor monitor) {
-            try {
-               /*
-                * create haxe dependencies top-level virtual folder
-                */
-               final var haxedepsFolder = haxeProject.getFolder(HAXE_DEPS_MAGIC_FOLDER_NAME);
-
-               final var prefs = new HaxeProjectPreference(haxeProject);
-               final var buildFile = prefs.getEffectiveHaxeBuildFile();
-
-               if (buildFile == null) {
-                  if (haxedepsFolder.exists() && haxedepsFolder.isVirtual()) {
-                     haxedepsFolder.delete(true, monitor);
-                  }
-                  return Status.OK_STATUS;
-               }
-
-               if (haxedepsFolder.exists()) {
-                  if (!haxedepsFolder.isVirtual())
-                     return StatusUtils.createError("Cannot update project dependency tree. Physical folder with name "
-                        + HAXE_DEPS_MAGIC_FOLDER_NAME + " exists!");
-               } else {
-                  haxedepsFolder.create(IResource.VIRTUAL, true, monitor);
-               }
-
-               final var depsToCheck = new HaxeBuildFile(buildFile.getLocation().toFile()) //
-                  .getDirectDependencies(prefs.getEffectiveHaxeSDK(), monitor).stream() //
-                  .collect(Collectors.toMap(d -> d.meta.name + " [" + (d.isDevVersion ? "dev" : d.meta.version) + "]", Function
-                     .identity()));
-
-               for (final var folder : haxedepsFolder.members()) {
-                  final var dep = depsToCheck.get(folder.getName());
-                  if (dep != null && dep.location.equals(folder.getRawLocation().toFile().toPath())) {
-                     depsToCheck.remove(folder.getName());
-                  } else {
-                     // delete obsolete or broken link
-                     folder.delete(true, monitor);
-                  }
-               }
-               for (final var dep : depsToCheck.entrySet()) {
-                  final var folder = haxedepsFolder.getFolder(dep.getKey());
-                  folder.createLink(dep.getValue().location.toUri(), IResource.BACKGROUND_REFRESH, monitor);
-               }
-               return Status.OK_STATUS;
-            } catch (final CoreException | IOException ex) {
-               return StatusUtils.createError(ex, "Failed to update project dependency tree");
-            }
+            return updateHaxeProjectDependencyTree(haxeProject, monitor);
          }
       };
       job.setRule(haxeProject); // synchronize job execution on project
       job.setPriority(Job.BUILD);
       job.schedule();
    }
+   
+   public void onHaxeProjectsConfigChanged(final List<IProject> haxeProjects) {
+      final var job = new Job("Updating Haxe dependency tree...") {
+         @Override
+         protected IStatus run(final IProgressMonitor monitor) {
+            for (final var haxeProject : haxeProjects) {
+               if (HaxeProjectNature.hasNature(haxeProject) == Boolean.TRUE) {
+                  final var status = updateHaxeProjectDependencyTree(haxeProject, monitor);
+                  if (status != Status.OK_STATUS) {
+                     org.haxe4e.util.LOG.error(status);
+                  }
+               }
+            }
+            return Status.OK_STATUS;
+         }
+      };
+      job.setPriority(Job.SHORT);
+      job.schedule();
+   }
 
+   private IStatus updateHaxeProjectDependencyTree(final IProject haxeProject, final IProgressMonitor monitor) {
+      try {
+         /*
+          * create haxe dependencies top-level virtual folder
+          */
+         final var haxedepsFolder = haxeProject.getFolder(HAXE_DEPS_MAGIC_FOLDER_NAME);
+
+         final var prefs = new HaxeProjectPreference(haxeProject);
+         final var buildFile = prefs.getEffectiveHaxeBuildFile();
+
+         if (buildFile == null) {
+            if (haxedepsFolder.exists() && haxedepsFolder.isVirtual()) {
+               haxedepsFolder.delete(true, monitor);
+            }
+            return Status.OK_STATUS;
+         }
+
+         if (haxedepsFolder.exists()) {
+            if (!haxedepsFolder.isVirtual())
+               return StatusUtils.createError("Cannot update project dependency tree. Physical folder with name "
+                  + HAXE_DEPS_MAGIC_FOLDER_NAME + " exists!");
+         } else {
+            haxedepsFolder.create(IResource.VIRTUAL, true, monitor);
+         }
+
+         final var depsToCheck = new HaxeBuildFile(buildFile.getLocation().toFile()) //
+            .getDirectDependencies(prefs.getEffectiveHaxeSDK(), monitor).stream() //
+            .collect(Collectors.toMap(d -> d.meta.name + " [" + (d.isDevVersion ? "dev" : d.meta.version) + "]", Function
+               .identity()));
+
+         for (final var folder : haxedepsFolder.members()) {
+            final var dep = depsToCheck.get(folder.getName());
+            if (dep != null && dep.location.equals(folder.getRawLocation().toFile().toPath())) {
+               depsToCheck.remove(folder.getName());
+            } else {
+               // delete obsolete or broken link
+               folder.delete(true, monitor);
+            }
+         }
+         for (final var dep : depsToCheck.entrySet()) {
+            final var folder = haxedepsFolder.getFolder(dep.getKey());
+            folder.createLink(dep.getValue().location.toUri(), IResource.BACKGROUND_REFRESH, monitor);
+         }
+         return Status.OK_STATUS;
+      } catch (final CoreException | IOException ex) {
+         return StatusUtils.createError(ex, "Failed to update project dependency tree");
+      }
+   }
+   
    @Override
    public void resourceChanged(final IResourceChangeEvent event) {
       if (event.getType() != IResourceChangeEvent.POST_CHANGE)
