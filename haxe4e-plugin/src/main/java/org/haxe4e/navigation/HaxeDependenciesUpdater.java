@@ -70,7 +70,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
             return Status.OK_STATUS;
          }
       };
-      job.setPriority(Job.SHORT);
+      job.setPriority(Job.BUILD);
       job.schedule();
    }
 
