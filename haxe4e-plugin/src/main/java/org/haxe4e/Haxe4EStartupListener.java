@@ -22,7 +22,7 @@ public class Haxe4EStartupListener implements IStartup {
       ResourcesPlugin.getWorkspace().addResourceChangeListener(HaxeDependenciesUpdater.INSTANCE, IResourceChangeEvent.POST_CHANGE);
 
       // refresh haxelib dependencies when workbench first starts
-      for (var project : Projects.getProjectsWithNature(HaxeProjectNature.NATURE_ID)) {
+      for (final var project : Projects.getProjectsWithNature(HaxeProjectNature.NATURE_ID)) {
          HaxeDependenciesUpdater.INSTANCE.onHaxeProjectConfigChanged(project);
       }
    }
