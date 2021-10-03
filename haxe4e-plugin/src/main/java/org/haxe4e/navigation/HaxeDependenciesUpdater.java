@@ -59,9 +59,9 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
       final var job = new Job("Updating Haxe dependency tree...") {
          @Override
          protected IStatus run(final IProgressMonitor monitor) {
-            for (var haxeProject : haxeProjects) {
+            for (final var haxeProject : haxeProjects) {
                if (HaxeProjectNature.hasNature(haxeProject) == Boolean.TRUE) {
-                  var status = updateHaxeProjectDependencyTree(haxeProject, monitor);
+                  final var status = updateHaxeProjectDependencyTree(haxeProject, monitor);
                   if (status != Status.OK_STATUS) {
                      org.haxe4e.util.LOG.error(status);
                   }
