@@ -11,13 +11,10 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.lsp4e.LSPEclipseUtils;
 import org.eclipse.lsp4e.LanguageServiceAccessor;
 import org.eclipse.lsp4e.debug.DSPPlugin;
@@ -27,15 +24,14 @@ import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.eclipse.swt.custom.CaretListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm4e.ui.internal.model.TMModelManager;
-import org.eclipse.tm4e.ui.text.TMPresentationReconciler;
-import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.haxe4e.util.LOG;
 
 /**
  * @author Sebastian Thomschke
  */
 @SuppressWarnings("restriction")
-public final class HaxeEditor extends TextEditor {
+public final class HaxeEditor extends ExtensionBasedTextEditor {
 
    private volatile Position caretPosition;
 
@@ -50,16 +46,6 @@ public final class HaxeEditor extends TextEditor {
          LOG.error(ex);
       }
    };
-
-   public HaxeEditor() {
-      // https://github.com/eclipse/tm4e/wiki/UI#with-texteditor
-      setSourceViewerConfiguration(new SourceViewerConfiguration() {
-         @Override
-         public IPresentationReconciler getPresentationReconciler(final ISourceViewer viewer) {
-            return new TMPresentationReconciler();
-         }
-      });
-   }
 
    @Override
    protected IVerticalRulerColumn createAnnotationRulerColumn(final CompositeRuler ruler) {
