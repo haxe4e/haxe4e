@@ -14,7 +14,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.haxe4e.model.HaxeSDK;
-import org.haxe4e.navigation.HaxeDependenciesUpdater;
+import org.haxe4e.navigation.HaxeDependenciesBuilder;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.util.ui.GridDatas;
 import org.haxe4e.widget.HaxeBuildFileSelectionGroup;
@@ -65,7 +65,7 @@ public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.Proper
       prefs.setAlternateHaxeSDK(selectedAltSDK.get());
       prefs.setHaxeBuildFile(buildFile.get());
       prefs.save();
-      HaxeDependenciesUpdater.INSTANCE.onHaxeProjectConfigChanged(prefs.getProject());
+      HaxeDependenciesBuilder.onHaxeProjectConfigChanged(prefs.getProject());
       return super.performOk();
    }
 

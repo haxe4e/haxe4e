@@ -249,6 +249,18 @@
 
 
    <!-- ===================================== -->
+   <!-- Project Builders                      -->
+   <!-- ===================================== -->
+   <extension point="org.eclipse.core.resources.builders"
+      id="org.haxe4e.builder.dependencies"
+      name="Haxe Dependencies List Builder">
+      <builder hasNature="true">
+         <run class="org.haxe4e.navigation.HaxeDependenciesBuilder" />
+      </builder>
+   </extension>
+
+
+   <!-- ===================================== -->
    <!-- Project Nature                        -->
    <!-- ===================================== -->
    <!-- https://www.vogella.com/tutorials/EclipseProjectNatures/article.html -->
@@ -259,6 +271,7 @@
       <runtime>
          <run class="org.haxe4e.project.HaxeProjectNature" />
       </runtime>
+      <builder id="org.haxe4e.builder.dependencies" />
    </extension>
    <extension point="org.eclipse.ui.commands">
       <command id="org.haxe4e.commands.project_nature_add" name="Convert to Haxe Project" />
@@ -313,6 +326,11 @@
          </command>
       </menuContribution>
    </extension>
+
+
+   <!-- ===================================== -->
+   <!-- Project Decorators                    -->
+   <!-- ===================================== -->
    <extension point="org.eclipse.ui.decorators">
       <decorator
          id="org.haxe4e.navigation.HaxeResourcesDecorator"

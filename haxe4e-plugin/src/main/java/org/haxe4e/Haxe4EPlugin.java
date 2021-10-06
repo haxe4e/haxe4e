@@ -4,8 +4,6 @@
  */
 package org.haxe4e;
 
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -13,7 +11,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.haxe4e.navigation.HaxeDependenciesUpdater;
 import org.osgi.framework.BundleContext;
 
 import net.sf.jstuff.core.Strings;
@@ -78,14 +75,10 @@ public class Haxe4EPlugin extends AbstractUIPlugin {
       getLog().info("starting...");
       super.start(context);
       instance = this;
-
-      ResourcesPlugin.getWorkspace().addResourceChangeListener(HaxeDependenciesUpdater.INSTANCE, IResourceChangeEvent.POST_CHANGE);
    }
 
    @Override
    public void stop(final BundleContext context) throws Exception {
-      ResourcesPlugin.getWorkspace().removeResourceChangeListener(HaxeDependenciesUpdater.INSTANCE);
-
       getLog().info("stopping...");
       instance = null;
       super.stop(context);
