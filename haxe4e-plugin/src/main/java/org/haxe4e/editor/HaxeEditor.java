@@ -6,6 +6,7 @@ package org.haxe4e.editor;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
@@ -18,6 +19,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.lsp4e.LSPEclipseUtils;
 import org.eclipse.lsp4e.LanguageServiceAccessor;
 import org.eclipse.lsp4e.debug.DSPPlugin;
+import org.eclipse.lsp4e.operations.diagnostics.LSPDiagnosticsToMarkers;
 import org.eclipse.lsp4j.DocumentHighlightParams;
 import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.TextDocumentIdentifier;
@@ -89,6 +91,23 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
          final var params = new DocumentHighlightParams(identifier, caretPosition);
          info.getInitializedLanguageClient().whenComplete((client, ex) -> client.getTextDocumentService().documentHighlight(params));
       });
+   }
+
+   @Override
+   protected void performSave(final boolean overwrite, final IProgressMonitor progressMonitor) {
+
+      // TODO workaround for https://github.com/vshaxe/vshaxe/issues/507
+      final var res = getEditorInput().getAdapter(IResource.class);
+      try {
+         for (final var marker : res.findMarkers(LSPDiagnosticsToMarkers.LS_DIAGNOSTIC_MARKER_TYPE, false, IResource.DEPTH_ONE)) {
+            if ("org.haxe4e.langserv".equals(marker.getAttribute(LSPDiagnosticsToMarkers.LANGUAGE_SERVER_ID))) {
+               marker.delete();
+            }
+         }
+      } catch (final CoreException ex) {
+         LOG.error(ex);
+      }
+      super.performSave(overwrite, progressMonitor);
    }
 
    private void toggleBreakpoint() {
