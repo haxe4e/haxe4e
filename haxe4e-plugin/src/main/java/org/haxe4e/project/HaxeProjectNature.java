@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.haxe4e.Haxe4EPlugin;
+import org.haxe4e.builder.HaxeBuilder;
 import org.haxe4e.navigation.HaxeDependenciesUpdater;
 import org.haxe4e.util.LOG;
 
@@ -27,21 +28,6 @@ import net.sf.jstuff.core.validation.Args;
  * @author Sebastian Thomschke
  */
 public final class HaxeProjectNature implements IProjectNature {
-
-   /**
-    * @return null if status cannot be determine
-    */
-   public static Boolean hasNature(final IProject project) {
-      if (project == null)
-         return false;
-
-      try {
-         return project.hasNature(NATURE_ID);
-      } catch (final CoreException ex) {
-         LOG.error(ex);
-         return null; // CHECKSTYLE:IGNORE .*
-      }
-   }
 
    public static final class AddNatureHandler extends AbstractHandler {
 
@@ -99,7 +85,21 @@ public final class HaxeProjectNature implements IProjectNature {
          projectConfig.setNatureIds(ArrayUtils.add(natures, NATURE_ID));
          project.setDescription(projectConfig, null);
       }
-      HaxeDependenciesUpdater.INSTANCE.onHaxeProjectConfigChanged(project);
+   }
+
+   /**
+    * @return null if status cannot be determine
+    */
+   public static Boolean hasNature(final IProject project) {
+      if (project == null)
+         return false;
+
+      try {
+         return project.hasNature(NATURE_ID);
+      } catch (final CoreException ex) {
+         LOG.error(ex);
+         return null; // CHECKSTYLE:IGNORE .*
+      }
    }
 
    public static void removeFromProject(final IProject project) throws CoreException {
@@ -110,27 +110,51 @@ public final class HaxeProjectNature implements IProjectNature {
          projectConfig.setNatureIds(ArrayUtils.removeElement(natures, NATURE_ID));
          project.setDescription(projectConfig, null);
       }
-      final var haxeDepsFolder = project.getFolder(HaxeDependenciesUpdater.HAXE_DEPS_MAGIC_FOLDER_NAME);
-      if (haxeDepsFolder.exists() && haxeDepsFolder.isVirtual()) {
-         haxeDepsFolder.delete(false, new NullProgressMonitor());
-      }
    }
 
    private IProject project;
 
+   private void addBuilder(final String builderId) throws CoreException {
+      final var desc = project.getDescription();
+      final var commands = desc.getBuildSpec();
+
+      for (final var command : commands) {
+         if (command.getBuilderName().equals(builderId))
+            return;
+      }
+      final var command = desc.newCommand();
+      command.setBuilderName(builderId);
+      desc.setBuildSpec(ArrayUtils.add(commands, command));
+      project.setDescription(desc, null);
+   }
+
    @Override
    public void configure() throws CoreException {
-      // invoked when the nature is added
+      HaxeDependenciesUpdater.INSTANCE.onHaxeProjectConfigChanged(project);
+      addBuilder(HaxeBuilder.ID);
    }
 
    @Override
    public void deconfigure() throws CoreException {
-      // invoked when the nature is removed
+      HaxeDependenciesUpdater.INSTANCE.removeDependenciesFolder(project, new NullProgressMonitor());
+      removeBuilder(HaxeBuilder.ID);
    }
 
    @Override
    public IProject getProject() {
       return project;
+   }
+
+   private void removeBuilder(final String builderId) throws CoreException {
+      final var desc = project.getDescription();
+      final var commands = desc.getBuildSpec();
+      for (final var command : commands) {
+         if (command.getBuilderName().equals(builderId)) {
+            desc.setBuildSpec(ArrayUtils.removeElement(commands, command));
+            project.setDescription(desc, null);
+            return;
+         }
+      }
    }
 
    @Override
