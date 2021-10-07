@@ -22,6 +22,8 @@ public interface Constants {
    String LAUNCH_ATTR_HAXE_SDK = "launch.haxe.sdk";
    String LAUNCH_ATTR_HAXE_BUILD_FILE = "launch.haxe.haxe_build_file";
 
+   String HAXE_FILE_EXTENSION = "hx";
+
    String HAXE_BUILD_FILE_EXTENSION = "hxml";
    String DEFAULT_HAXE_BUILD_FILE = "build.hxml";
 
