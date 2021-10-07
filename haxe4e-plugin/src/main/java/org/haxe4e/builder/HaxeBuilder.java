@@ -94,7 +94,7 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
          return;
 
       monitor.setTaskName("Building Haxe project [" + project.getName() + "]...");
-      final var console = HaxeBuilderConsole.openConsole();
+      final var console = HaxeBuilderConsole.openConsole(project);
 
       try (var out = console.newOutputStream();
            var err = console.newOutputStream()) {

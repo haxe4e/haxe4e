@@ -264,6 +264,16 @@
          icon="src/main/resources/images/logo/haxe_icon.png"
          label="Haxe Builder" />
     </extension>
+   <extension point="org.eclipse.ui.console.consolePatternMatchListeners">
+      <consolePatternMatchListener
+         class="org.haxe4e.builder.HaxeBuilderConsoleLinkifier"
+         id="org.haxe4e.builder.HaxeBuilderConsolePatternMatchListener"
+         regex="(\w+\/)*\w+\.hx:\d+:">
+         <enablement>
+            <test property="org.eclipse.ui.console.consoleTypeTest" value="org.haxe4e.builder.HaxeBuilderConsole"/>
+         </enablement>
+      </consolePatternMatchListener>
+   </extension>
 
 
    <!-- ===================================== -->
