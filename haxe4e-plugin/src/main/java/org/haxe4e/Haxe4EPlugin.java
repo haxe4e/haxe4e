@@ -86,6 +86,7 @@ public class Haxe4EPlugin extends AbstractUIPlugin {
 
    @Override
    public void stop(final BundleContext context) throws Exception {
+      WindowListener.INSTANCE.detatch();
       ResourcesPlugin.getWorkspace().removeResourceChangeListener(HaxeDependenciesUpdater.INSTANCE);
 
       getLog().info("stopping...");
