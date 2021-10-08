@@ -14,6 +14,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.haxe4e.navigation.HaxeDependenciesUpdater;
+import org.haxe4e.navigation.WindowListener;
 import org.osgi.framework.BundleContext;
 
 import net.sf.jstuff.core.Strings;
@@ -79,6 +80,7 @@ public class Haxe4EPlugin extends AbstractUIPlugin {
       super.start(context);
       instance = this;
 
+      WindowListener.INSTANCE.attach();
       ResourcesPlugin.getWorkspace().addResourceChangeListener(HaxeDependenciesUpdater.INSTANCE, IResourceChangeEvent.POST_CHANGE);
    }
 

@@ -4,9 +4,6 @@
  */
 package org.haxe4e.widget;
 
-import java.util.ArrayList;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -26,6 +23,7 @@ import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.prefs.HaxeProjectPreference;
+import org.haxe4e.project.HaxeProject;
 import org.haxe4e.util.LOG;
 import org.haxe4e.util.ui.Buttons;
 import org.haxe4e.util.ui.GridDatas;
@@ -90,20 +88,8 @@ public class HaxeBuildFileSelectionGroup extends Composite {
       dialog.setEmptyListMessage("The project has no build files.");
 
       try {
-         final var buildFiles = new ArrayList<String>();
-         final var projectFullPath = project.getFullPath();
-         project.accept(res -> {
-            if (res.isVirtual() || res.isLinked())
-               return false;
-
-            if (res instanceof IFile //
-               && Constants.HAXE_BUILD_FILE_EXTENSION.equals(res.getFileExtension()) //
-            ) {
-               buildFiles.add(res.getFullPath().makeRelativeTo(projectFullPath).toPortableString());
-            }
-            return true;
-         });
-
+         final var haxeProject = new HaxeProject(project);
+         final var buildFiles = haxeProject.getBuildFiles();
          dialog.setElements(buildFiles.toArray(new String[buildFiles.size()]));
          dialog.setInitialSelections(preselectedBuildFile);
       } catch (final CoreException e) {
