@@ -6,7 +6,9 @@ package org.haxe4e.builder;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceDelta;
@@ -93,7 +95,7 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
       if (hxmlFile == null)
          return;
 
-      monitor.setTaskName("Building Haxe project [" + project.getName() + "]...");
+      monitor.setTaskName("Building project '" + project.getName() + "'");
       final var console = HaxeBuilderConsole.openConsole(project);
 
       try (var out = console.newOutputStream();
@@ -102,24 +104,55 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
          out.setColor(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR));
          err.setColor(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR));
 
-         out.write("Building Haxe project [" + project.getName() + "] using [" + hxmlFile.getProjectRelativePath() + "]...");
+         out.write("Building project '" + project.getName() + "': haxe " + hxmlFile.getProjectRelativePath() + "");
+         out.write(" (haxe v" + haxeSDK.getVersion() + ")");
+         out.write(Strings.NEW_LINE);
          out.write(Strings.NEW_LINE);
 
          final var sw = new StopWatch();
          sw.start();
 
+         final AtomicBoolean appendNewLine = new AtomicBoolean(false);
          final var proc = haxeSDK.getCompilerProcessBuilder(false) //
             .withArg(hxmlFile.getLocation().toOSString()) //
             .withWorkingDirectory(project.getLocation().toFile()) //
-            .withRedirectOutput(out) //
-            .withRedirectError(err) //
+            .withRedirectOutput(line -> {
+               try {
+                  out.write(line);
+                  out.write(Strings.NEW_LINE);
+               } catch (final IOException e) {
+                  e.printStackTrace();
+               }
+               appendNewLine.set(true);
+            })
+            .withRedirectError(line -> {
+               try {
+                  err.write(line);
+                  err.write(Strings.NEW_LINE);
+               } catch (final IOException e) {
+                  e.printStackTrace();
+               }
+               appendNewLine.set(true);
+            })
             .start();
          proc.waitForExit();
 
          sw.stop();
 
-         out.write("Build Time:");
-         out.write(sw.toString());
+         if (appendNewLine.get()) {
+            out.write(Strings.NEW_LINE);
+         }
+         if (proc.exitStatus() == 0) {
+            out.write("Build successful in ");
+         } else {
+            out.write("Build");
+            err.write(" failed ");
+            out.write("in ");
+         }
+         out.write(DurationFormatUtils.formatDurationWords(sw.getTime(), true, true));
+         if (proc.exitStatus() != 0) {
+            out.write(" (exit code: " + proc.exitStatus() + ")");
+         }
          out.write(Strings.NEW_LINE);
 
       } catch (final IOException ex) {
