@@ -8,12 +8,15 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleFactory;
-import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.MessageConsole;
+import org.haxe4e.util.ui.UI;
+
+import net.sf.jstuff.core.Strings;
 
 /**
  * @author Sebastian Thomschke
  */
-public final class HaxeBuilderConsole extends IOConsole {
+public final class HaxeBuilderConsole extends MessageConsole {
 
    public static class Factory implements IConsoleFactory {
       @Override
@@ -47,7 +50,17 @@ public final class HaxeBuilderConsole extends IOConsole {
    public final IProject project;
 
    private HaxeBuilderConsole(final IProject project) {
-      super("Haxe Builder", HaxeBuilderConsole.class.getName(), null);
+      super("Haxe Builder", HaxeBuilderConsole.class.getName(), null, true);
       this.project = project;
+   }
+
+   public void setTitle(final String title) {
+      UI.run(() -> {
+         if (Strings.isEmpty(title)) {
+            setName("Haxe Builder");
+         } else {
+            setName("Haxe Builder: " + title);
+         }
+      });
    }
 }
