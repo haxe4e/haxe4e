@@ -14,6 +14,8 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
+import org.haxe4e.navigation.HaxeDependenciesUpdater;
+import org.haxe4e.navigation.HaxeResourcesDecorator;
 import org.haxe4e.util.StatusUtils;
 import org.haxe4e.util.ui.Dialogs;
 
@@ -30,6 +32,8 @@ public class HaxeProjectPreference {
 
    private final IPersistentPreferenceStore prefs;
    private final IProject project;
+
+   private IFile effectiveBuildFileBeforeSave;
 
    public HaxeProjectPreference(final IProject project) {
       Args.notNull("project", project);
@@ -89,6 +93,14 @@ public class HaxeProjectPreference {
    public boolean save() {
       try {
          prefs.save();
+
+         // force refresh of the affected build file icons
+         if (effectiveBuildFileBeforeSave != null) {
+            HaxeResourcesDecorator.getInstance().refreshElements(effectiveBuildFileBeforeSave, getEffectiveHaxeBuildFile());
+            effectiveBuildFileBeforeSave = null;
+         }
+         HaxeDependenciesUpdater.INSTANCE.onHaxeProjectConfigChanged(project);
+
          return true;
       } catch (final IOException ex) {
          Dialogs.showStatus(Messages.Prefs_SavingPreferencesFailed, StatusUtils.createError(ex), true);
@@ -105,6 +117,9 @@ public class HaxeProjectPreference {
    }
 
    public void setHaxeBuildFile(final String buildFile) {
+      if (effectiveBuildFileBeforeSave == null) {
+         effectiveBuildFileBeforeSave = getEffectiveHaxeBuildFile();
+      }
       prefs.setValue(PROPERTY_HAXE_BUILD_FILE, buildFile);
    }
 

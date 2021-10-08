@@ -101,7 +101,7 @@
 
    <extension point="org.eclipse.ui.genericeditor.icons">
       <icon contentType="org.haxe4e.content.haxe" icon="src/main/resources/images/navigator/haxe_file.png" />
-      <icon contentType="org.haxe4e.content.hxml" icon="platform:/plugin/org.eclipse.ui.externaltools/icons/full/obj16/builder.png" />
+      <icon contentType="org.haxe4e.content.hxml" icon="src/main/resources/images/navigator/build_file.png" />
       <icon contentType="org.haxe4e.content.hlcode" icon="platform:/plugin/org.eclipse.ui.editors/icons/full/obj16/file_obj.png" />
    </extension>
 
@@ -356,7 +356,10 @@
          location="REPLACE"
          state="true">
          <enablement>
-            <objectClass name="org.eclipse.core.resources.IFolder" />
+            <or>
+               <objectClass name="org.eclipse.core.resources.IFile" />
+               <objectClass name="org.eclipse.core.resources.IFolder" />
+            </or>
          </enablement>
       </decorator>
    </extension>
