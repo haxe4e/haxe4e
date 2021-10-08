@@ -62,8 +62,19 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
                   }
 
                   final var resource = subDelta.getResource();
-                  if (Constants.HAXE_BUILD_FILE_EXTENSION.equals(resource.getFileExtension()) || "hx".equals(
-                     Constants.HAXE_FILE_EXTENSION)) {
+                  switch (resource.getProjectRelativePath().segment(0)) {
+                     case "bin":
+                     case "build":
+                     case "dump":
+                     case "target":
+                        return true; // ignore
+                     default:
+                        break;
+                  }
+
+                  final var resourceExt = resource.getFileExtension();
+                  if (Constants.HAXE_BUILD_FILE_EXTENSION.equals(resourceExt) //
+                     || Constants.HAXE_FILE_EXTENSION.equals(resourceExt)) {
                      hasRelevantFileChange[0] = true;
                   }
                   return true;
