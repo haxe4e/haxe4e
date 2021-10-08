@@ -316,6 +316,11 @@
                value="org.haxe4e.project.nature" />
          </adapt>
       </definition>
+      <definition id="org.haxe4e.perspective.isActive">
+         <with variable="activeWorkbenchWindow.activePerspective">
+            <equals value="org.haxe4e.perspective"/>
+         </with>
+      </definition>
    </extension>
    <extension point="org.eclipse.ui.menus">
       <menuContribution locationURI="popup:org.eclipse.ui.projectConfigure">
@@ -340,6 +345,25 @@
                </iterate>
             </visibleWhen>
          </command>
+      </menuContribution>
+      <menuContribution
+         locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar id="org.haxe4e.main.toolbar">
+            <control class="org.haxe4e.widget.HaxeBuildFileToolbarContribution">
+               <visibleWhen>
+                  <reference definitionId="org.haxe4e.perspective.isActive" />
+               </visibleWhen>
+            </control>
+            <command
+               id="org.haxe4e.commands.dummy"
+               commandId="org.haxe4e.commands.dummy"
+               icon="src/main/resources/images/px.png"
+               label="">
+               <visibleWhen>
+                  <reference definitionId="org.haxe4e.perspective.isActive" />
+               </visibleWhen>
+            </command>
+         </toolbar>
       </menuContribution>
    </extension>
 
