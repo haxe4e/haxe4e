@@ -61,23 +61,23 @@ public final class Projects {
    }
    
    public static IProject findProjectFromPartRef(final IWorkbenchPartReference partRef, final String natureId) {
-      IProject project = null;
       try {
          if (partRef instanceof EditorReference) {
             final EditorReference editorRef = (EditorReference) partRef;
             final IEditorInput editorInput = editorRef.getEditorInput();
             if (editorInput instanceof FileEditorInput) {
                final FileEditorInput fileEditorInput = (FileEditorInput) editorInput;
-               project = fileEditorInput.getFile().getProject();
+               final IProject project = fileEditorInput.getFile().getProject();
                if (natureId != null && !project.hasNature(natureId)) {
-                  project = null;
+                  return null;
                }
+               return project;
             }
          }
       } catch (final Exception ex) {
          LOG.error(ex);
       }
-      return project;
+      return null;
    }
    
    public static IProject findProjectFromWindow(final IWorkbenchWindow window) {
