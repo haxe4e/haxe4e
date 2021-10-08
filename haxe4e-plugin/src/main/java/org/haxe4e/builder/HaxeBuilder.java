@@ -146,6 +146,7 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
             out.write("Build successful in ");
          } else {
             out.write("Build");
+            out.flush();
             err.write(" failed ");
             out.write("in ");
          }
