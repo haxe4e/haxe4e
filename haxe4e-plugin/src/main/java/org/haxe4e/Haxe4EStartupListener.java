@@ -7,6 +7,7 @@ package org.haxe4e;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IStartup;
+import org.haxe4e.navigation.ActiveEditorChangeListener;
 import org.haxe4e.navigation.HaxeDependenciesUpdater;
 import org.haxe4e.project.HaxeProjectNature;
 import org.haxe4e.util.Projects;
@@ -23,5 +24,7 @@ public class Haxe4EStartupListener implements IStartup {
 
       // refresh haxelib dependencies when workbench first starts
       HaxeDependenciesUpdater.INSTANCE.onHaxeProjectsConfigChanged(Projects.getProjectsWithNature(HaxeProjectNature.NATURE_ID));
+
+      ActiveEditorChangeListener.INSTANCE.attach();
    }
 }
