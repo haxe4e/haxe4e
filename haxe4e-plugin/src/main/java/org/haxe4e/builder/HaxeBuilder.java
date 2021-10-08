@@ -112,7 +112,7 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
          final var sw = new StopWatch();
          sw.start();
 
-         final AtomicBoolean appendNewLine = new AtomicBoolean(false);
+         final AtomicBoolean hasCompilerOutput = new AtomicBoolean(false);
          final var proc = haxeSDK.getCompilerProcessBuilder(false) //
             .withArg(hxmlFile.getLocation().toOSString()) //
             .withWorkingDirectory(project.getLocation().toFile()) //
@@ -123,7 +123,7 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
                } catch (final IOException e) {
                   e.printStackTrace();
                }
-               appendNewLine.set(true);
+               hasCompilerOutput.set(true);
             })
             .withRedirectError(line -> {
                try {
@@ -132,14 +132,14 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
                } catch (final IOException e) {
                   e.printStackTrace();
                }
-               appendNewLine.set(true);
+               hasCompilerOutput.set(true);
             })
             .start();
          proc.waitForExit();
 
          sw.stop();
 
-         if (appendNewLine.get()) {
+         if (hasCompilerOutput.get()) {
             out.write(Strings.NEW_LINE);
          }
          if (proc.exitStatus() == 0) {
