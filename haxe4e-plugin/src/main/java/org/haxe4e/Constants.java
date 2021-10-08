@@ -11,8 +11,9 @@ public interface Constants {
 
    String IMAGE_ICON = "src/main/resources/images/logo/haxe_icon.png";
    String IMAGE_NAVIGATOR_HAXE_PROJECT = "src/main/resources/images/navigator/haxe_project.png";
-   String IMAGE_HAXE_BUILD_FILE = "platform:/plugin/org.eclipse.ui.externaltools/icons/full/obj16/builder.png";
-   String IMAGE_HAXE_DEPENDENCIES = "platform:/plugin/org.eclipse.ui.externaltools/icons/full/obj16/classpath.png";
+   String IMAGE_HAXE_BUILD_FILE = "src/main/resources/images/navigator/build_file.png";
+   String IMAGE_HAXE_BUILD_FILE_ACTIVE = "src/main/resources/images/navigator/build_file_active.png";
+   String IMAGE_HAXE_DEPENDENCIES = "src/main/resources/images/navigator/classpath.png";
    String IMAGE_HAXE_SOURCE_FOLDER = "src/main/resources/images/navigator/packagefolder_obj.png";
    String IMAGE_HAXE_SOURCE_PACKAGE = "src/main/resources/images/navigator/package_obj.png";
    String IMAGE_OUTLINE_SYMBOL_ENUM_MEMBER = "src/main/resources/images/outline/enum_member.png";

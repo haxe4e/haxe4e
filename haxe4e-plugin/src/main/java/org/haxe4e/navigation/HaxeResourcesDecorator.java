@@ -6,58 +6,81 @@ package org.haxe4e.navigation;
 
 import java.io.IOException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.model.HaxeBuildFile;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.project.HaxeProjectNature;
 import org.haxe4e.util.LOG;
+import org.haxe4e.util.ui.UI;
 
 /**
  * @author Sebastian Thomschke
  */
 public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelDecorator {
 
+   public static HaxeResourcesDecorator getInstance() {
+      return (HaxeResourcesDecorator) PlatformUI.getWorkbench().getDecoratorManager() //
+         .getLabelDecorator(HaxeResourcesDecorator.class.getName());
+   }
+
    @Override
    public Image decorateImage(final Image image, final Object element) {
-      final var folder = (IFolder) element;
-      final var project = folder.getProject();
+      final var res = (IResource) element;
+      final var project = res.getProject();
 
       if (HaxeProjectNature.hasNature(project) != Boolean.TRUE)
          return image;
-      if (folder.isVirtual()) {
-         if (folder.getName().equals(HaxeDependenciesUpdater.HAXE_DEPS_MAGIC_FOLDER_NAME))
+
+      if (res.isVirtual()) {
+         if (res instanceof IFolder && res.getName().equals(HaxeDependenciesUpdater.HAXE_DEPS_MAGIC_FOLDER_NAME))
             return Haxe4EPlugin.getSharedImage(Constants.IMAGE_HAXE_DEPENDENCIES);
          return image;
       }
 
-      if (folder.isLinked())
+      if (res.isLinked())
          return image;
 
-      final var prefs = new HaxeProjectPreference(project);
-      prefs.getEffectiveHaxeSDK();
-      final var haxeBuildFilePath = prefs.getEffectiveHaxeBuildFile();
-      if (haxeBuildFilePath == null)
-         return image;
-
-      final var haxeBuildFile = new HaxeBuildFile(haxeBuildFilePath.getLocation().toFile());
-      final var folderPath = folder.getLocation().toFile().toPath();
-      final var projectPath = project.getLocation().toFile().toPath();
-      try {
-         for (final var p : haxeBuildFile.getSourcePaths()) {
-            final var sourceFolder = projectPath.resolve(p);
-            if (folderPath.equals(sourceFolder))
-               return Haxe4EPlugin.getSharedImage(Constants.IMAGE_HAXE_SOURCE_FOLDER);
-            if (folderPath.startsWith(sourceFolder))
-               return Haxe4EPlugin.getSharedImage(Constants.IMAGE_HAXE_SOURCE_PACKAGE);
-
+      if (res instanceof IFile) {
+         final var file = (IFile) res;
+         if (Constants.HAXE_BUILD_FILE_EXTENSION.equals(file.getFileExtension())) {
+            final var prefs = new HaxeProjectPreference(project);
+            final var haxeBuildFilePath = prefs.getEffectiveHaxeBuildFile();
+            if (haxeBuildFilePath == null)
+               return image;
+            if (haxeBuildFilePath.equals(file))
+               return Haxe4EPlugin.getSharedImage(Constants.IMAGE_HAXE_BUILD_FILE_ACTIVE);
          }
-      } catch (final IOException ex) {
-         LOG.error(ex);
+      } else if (res instanceof IFolder) {
+         final var folder = (IFolder) res;
+         final var prefs = new HaxeProjectPreference(project);
+         final var haxeBuildFilePath = prefs.getEffectiveHaxeBuildFile();
+         if (haxeBuildFilePath == null)
+            return image;
+
+         final var haxeBuildFile = new HaxeBuildFile(haxeBuildFilePath.getLocation().toFile());
+         final var folderPath = folder.getLocation().toFile().toPath();
+         final var projectPath = project.getLocation().toFile().toPath();
+         try {
+            for (final var p : haxeBuildFile.getSourcePaths()) {
+               final var sourceFolder = projectPath.resolve(p);
+               if (folderPath.equals(sourceFolder))
+                  return Haxe4EPlugin.getSharedImage(Constants.IMAGE_HAXE_SOURCE_FOLDER);
+               if (folderPath.startsWith(sourceFolder))
+                  return Haxe4EPlugin.getSharedImage(Constants.IMAGE_HAXE_SOURCE_PACKAGE);
+
+            }
+         } catch (final IOException ex) {
+            LOG.error(ex);
+         }
       }
 
       return image;
@@ -65,15 +88,23 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
 
    @Override
    public String decorateText(final String text, final Object element) {
-      final var folder = (IFolder) element;
-      final var project = folder.getProject();
+      if (element instanceof IFolder) {
+         final var folder = (IFolder) element;
+         final var project = folder.getProject();
 
-      if (HaxeProjectNature.hasNature(project) == Boolean.TRUE //
-         && folder.isVirtual() //
-         && folder.getName().equals(HaxeDependenciesUpdater.HAXE_DEPS_MAGIC_FOLDER_NAME) //
-      )
-         return "Haxe Dependencies";
-
+         if (HaxeProjectNature.hasNature(project) == Boolean.TRUE //
+            && folder.isVirtual() //
+            && folder.getName().equals(HaxeDependenciesUpdater.HAXE_DEPS_MAGIC_FOLDER_NAME) //
+         )
+            return "Haxe Dependencies";
+      }
       return text;
+   }
+
+   public void refreshElements(final IResource... res) {
+      if (res == null || res.length == 0)
+         return;
+
+      UI.run(() -> fireLabelProviderChanged(new LabelProviderChangedEvent(this, res)));
    }
 }
