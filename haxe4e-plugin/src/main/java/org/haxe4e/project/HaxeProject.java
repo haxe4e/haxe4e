@@ -20,13 +20,17 @@ import org.haxe4e.prefs.HaxeProjectPreference;
  */
 public class HaxeProject {
    private IProject project;
-
+   private HaxeProjectPreference prefs;
+   
    public HaxeProject(final IProject project) {
       this.project = project;
    }
 
    public HaxeProjectPreference getPrefs() {
-      return new HaxeProjectPreference(project);
+      if (prefs == null) {
+         prefs = new HaxeProjectPreference(project);
+      }
+      return prefs;
    }
 
    public List<String> getBuildFiles() throws CoreException {
