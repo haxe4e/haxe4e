@@ -33,6 +33,7 @@ public class HaxePerspective implements IPerspectiveFactory {
       bottom.addView(IPageLayout.ID_PROGRESS_VIEW);
       bottom.addView("org.eclipse.team.ui.GenericHistoryView");
       bottom.addView("org.eclipse.egit.ui.StagingView");
+      bottom.addView("org.eclipse.tm.terminal.view.ui.TerminalsView");
 
       final var right = layout.createFolder("right", IPageLayout.RIGHT, (float) 0.80, editorArea);
       right.addView(IPageLayout.ID_OUTLINE);
