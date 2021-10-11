@@ -102,8 +102,8 @@ public final class HaxeWorkspacePreference {
                Dialogs.showError(Messages.Prefs_NoSDKRegistered_Title, Messages.Prefs_NoSDKRegistered_Body);
                final var dialog = PreferencesUtil.createPreferenceDialogOn( //
                   UI.getShell(), //
-                  "org.haxe4e.preferencePage", //
-                  new String[] {"org.haxe4e.preferencePage"}, //
+                  HaxeSDKPreferencePage.class.getName(), //
+                  new String[] {HaxeSDKPreferencePage.class.getName()}, //
                   null //
                );
                dialog.open();

@@ -58,8 +58,7 @@
    <!-- Preferences                           -->
    <!-- ===================================== -->
    <extension point="org.eclipse.ui.preferencePages">
-      <page
-         id="org.haxe4e.preferencePage"
+      <page id="org.haxe4e.prefs.HaxeSDKPreferencePage"
          class="org.haxe4e.prefs.HaxeSDKPreferencePage"
          name="Haxe">
          <keywordReference id="org.haxe4e.prefs.keyword.haxe" />
