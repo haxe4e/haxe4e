@@ -9,6 +9,7 @@ Automatic-Module-Name: org.haxe4e
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.haxe4e.Haxe4EPlugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-ClassPath: .
 Require-Bundle: com.fasterxml.jackson.core.jackson-annotations,
  com.fasterxml.jackson.core.jackson-core,
  com.fasterxml.jackson.core.jackson-databind,
@@ -19,6 +20,7 @@ Require-Bundle: com.fasterxml.jackson.core.jackson-annotations,
  org.eclipse.jdt.annotation;bundle-version="2.0.0";resolution:=optional,
  org.eclipse.jface.notifications,
  org.eclipse.jface.text,
+ org.eclipse.osgi,
  org.eclipse.ui,
  org.eclipse.ui.console,
  org.eclipse.ui.editors,
@@ -39,5 +41,4 @@ Require-Bundle: com.fasterxml.jackson.core.jackson-annotations,
  org.eclipse.wildwebdeveloper.embedder.node,
  org.apache.commons.commons-io,
  org.apache.commons.lang3,
- net.sf.jstuff.core;bundle-version="5.16.0"
-Bundle-ClassPath: .
+ net.sf.jstuff.core;bundle-version="5.17.0"

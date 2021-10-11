@@ -14,7 +14,7 @@
             <repository location="https://download.eclipse.org/releases/2020-12/"/>
             <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
             <unit id="org.eclipse.sdk.ide" version="0.0.0"/>
-            <unit id="org.eclipse.mylyn.wikitext_feature.feature.group" version="0.0.0"/>
+            <unit id="org.eclipse.mylyn.wikitext.editors_feature.feature.group" version="0.0.0"/>
             <unit id="org.eclipse.wildwebdeveloper.embedder.node.feature.feature.group" version="0.0.0"/>
             <unit id="org.eclipse.reddeer.go" version="0.0.0"/>
         </location>
@@ -37,27 +37,23 @@
             <!--repository location="https://download.eclipse.org/tm4e/snapshots/"/>-->
             <unit id="org.eclipse.tm4e.feature.feature.group" version="0.0.0"/>
         </location>
-
         <location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.12.5</version>
             <type>jar</type>
         </location>
-
         <location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
             <groupId>net.sf.jstuff</groupId>
             <artifactId>jstuff-core</artifactId>
             <version>5.17.0</version>
             <type>jar</type>
         </location>
-
         <location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.21.0</version>
             <type>jar</type>
         </location>
-
     </locations>
 </target>
