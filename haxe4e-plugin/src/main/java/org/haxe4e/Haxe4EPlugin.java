@@ -8,7 +8,6 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -68,8 +67,7 @@ public class Haxe4EPlugin extends AbstractUIPlugin {
          registry.put(path, AbstractUIPlugin.imageDescriptorFromPlugin(pluginId, imagePath));
          return;
       }
-      final var bundle = Platform.getBundle(PLUGIN_ID);
-      final var url = FileLocator.find(bundle, new Path(path), null);
+      final var url = FileLocator.find(getBundle(), new Path(path), null);
       final var desc = ImageDescriptor.createFromURL(url);
       registry.put(path, desc);
    }
