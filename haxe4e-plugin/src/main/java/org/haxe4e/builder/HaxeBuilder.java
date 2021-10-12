@@ -5,11 +5,11 @@
 package org.haxe4e.builder;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.eclipse.core.resources.IProject;
@@ -20,9 +20,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.ui.console.MessageConsoleStream;
 import org.haxe4e.Constants;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.util.StatusUtils;
+
+import net.sf.jstuff.core.io.Processes.ProcessWrapper;
 
 /**
  * @author Sebastian Thomschke
@@ -123,24 +126,17 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
          out.println("Building project '" + project.getName() + "' using '" + hxmlFile.getProjectRelativePath() + "'...");
          out.println();
 
-         final var hasCompilerOutput = new AtomicBoolean(false);
          final var proc = haxeSDK.getCompilerProcessBuilder(false) //
             .withArg(hxmlFile.getProjectRelativePath().toOSString()) //
             .withWorkingDirectory(project.getLocation().toFile()) //
-            .withRedirectOutput(line -> {
-               out.println(line);
-               hasCompilerOutput.set(true);
-            }).withRedirectError(line -> {
-               err.println(line);
-               hasCompilerOutput.set(true);
-            }).start();
-         proc.waitForExit();
-
+            .start();
+         
+         final var hasCompilerOutput = waitForProcess(proc, out, err);
          final var endAt = LocalTime.now();
          final var endAtStr = endAt.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_TIME);
          console.setTitle("<terminated> " + haxeSDK.getCompilerExecutable() + " (" + startAtStr + " - " + endAtStr + ")");
 
-         if (hasCompilerOutput.get()) {
+         if (hasCompilerOutput) {
             out.println();
          }
          if (proc.exitStatus() == 0) {
@@ -167,9 +163,46 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
       } catch (final InterruptedException ex) {
          Thread.currentThread().interrupt();
          throw new CoreException(StatusUtils.createError(ex, "Aborted."));
-      }
+      } 
    }
 
+   @SuppressWarnings("resource")
+   private boolean waitForProcess(final ProcessWrapper proc, final MessageConsoleStream out,
+                                  final MessageConsoleStream err) throws IOException, InterruptedException {
+      boolean hasCompilerOutput = false;
+      
+      final var procOut = proc.getStdOut();
+      final var procErr = proc.getStdErr();
+      while (proc.isAlive()) {
+         if (printAvailableBytes(procOut, out)) {
+            hasCompilerOutput = true;
+         }
+         if (printAvailableBytes(procErr, err)) {
+            hasCompilerOutput = true;
+         }
+         
+         Thread.sleep(100);
+      }
+
+      if (printAvailableBytes(procOut, out)) {
+         hasCompilerOutput = true;
+      }
+      if (printAvailableBytes(procErr, err)) {
+         hasCompilerOutput = true;
+      }
+      
+      return hasCompilerOutput;
+   }
+   
+   private boolean printAvailableBytes(final InputStream inputStream, final MessageConsoleStream consoleStream) throws IOException {
+      final var n = inputStream.available();
+      if (n > 0) {
+         consoleStream.write(inputStream.readNBytes(n));
+         return true;
+      }
+      return false;
+   }
+   
    @Override
    public ISchedulingRule getRule(final int kind, final Map<String, String> args) {
       return getProject();

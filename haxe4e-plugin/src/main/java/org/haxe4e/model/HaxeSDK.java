@@ -164,10 +164,10 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
             if (cleanEnv) {
                env.clear();
             }
-            env.merge("PATH", path.toString(), //
+            env.merge("Path", path.toString(), //
                (oldValue, haxelibPath) -> haxelibPath + File.pathSeparator + oldValue //
             );
-            env.merge("PATH", neko.getPath().toString(), //
+            env.merge("Path", neko.getPath().toString(), //
                (oldValue, nekoPath) -> nekoPath + File.pathSeparator + oldValue //
             );
 
