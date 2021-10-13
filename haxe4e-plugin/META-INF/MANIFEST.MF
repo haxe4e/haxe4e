@@ -41,4 +41,4 @@ Require-Bundle: com.fasterxml.jackson.core.jackson-annotations,
  org.eclipse.wildwebdeveloper.embedder.node,
  org.apache.commons.commons-io,
  org.apache.commons.lang3,
- net.sf.jstuff.core;bundle-version="5.17.0"
+ net.sf.jstuff.core;bundle-version="5.18.0"

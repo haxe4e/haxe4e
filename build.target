@@ -40,13 +40,13 @@
         <location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.12.5</version>
+            <version>2.13.0</version>
             <type>jar</type>
         </location>
         <location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
             <groupId>net.sf.jstuff</groupId>
             <artifactId>jstuff-core</artifactId>
-            <version>5.17.0</version>
+            <version>5.18.0</version>
             <type>jar</type>
         </location>
         <location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
