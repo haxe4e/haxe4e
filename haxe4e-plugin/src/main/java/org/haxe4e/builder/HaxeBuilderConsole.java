@@ -4,7 +4,6 @@
  */
 package org.haxe4e.builder;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleFactory;
@@ -32,7 +31,7 @@ public final class HaxeBuilderConsole extends MessageConsole {
       }
    }
 
-   public static HaxeBuilderConsole openConsole(final IProject project) {
+   public static HaxeBuilderConsole openConsole(final HaxeBuilder.Context buildContext) {
       final var consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 
       for (final IConsole console : consoleManager.getConsoles()) {
@@ -41,17 +40,17 @@ public final class HaxeBuilderConsole extends MessageConsole {
          }
       }
 
-      final var console = new HaxeBuilderConsole(project);
+      final var console = new HaxeBuilderConsole(buildContext);
       consoleManager.addConsoles(new IConsole[] {console});
       consoleManager.showConsoleView(console);
       return console;
    }
 
-   public final IProject project;
+   public final HaxeBuilder.Context buildContext;
 
-   private HaxeBuilderConsole(final IProject project) {
+   private HaxeBuilderConsole(final HaxeBuilder.Context buildContext) {
       super("Haxe Builder", HaxeBuilderConsole.class.getName(), null, true);
-      this.project = project;
+      this.buildContext = buildContext;
    }
 
    public void setTitle(final String title) {
@@ -63,4 +62,5 @@ public final class HaxeBuilderConsole extends MessageConsole {
          }
       });
    }
+
 }

@@ -18,6 +18,8 @@ public interface Constants {
    String IMAGE_HAXE_SOURCE_PACKAGE = "src/main/resources/images/navigator/package_obj.png";
    String IMAGE_OUTLINE_SYMBOL_ENUM_MEMBER = "src/main/resources/images/outline/enum_member.png";
    String IMAGE_OUTLINE_SYMBOL_TYPEDEF = "src/main/resources/images/outline/typedef.png";
+   String IMAGE_TERMINATE_BUTTON = "src/main/resources/images/console/terminate_co.png";
+   String IMAGE_TERMINATE_BUTTON_DISABLED = "src/main/resources/images/console/terminate_co_disabled.png";
 
    String LAUNCH_ATTR_PROJECT = "launch.haxe.project";
    String LAUNCH_ATTR_HAXE_SDK = "launch.haxe.sdk";

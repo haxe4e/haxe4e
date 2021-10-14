@@ -9,6 +9,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -24,11 +27,25 @@ import org.haxe4e.Constants;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.util.StatusUtils;
 
+import net.sf.jstuff.core.concurrent.Threads;
+
 /**
  * @author Sebastian Thomschke
  */
 @SuppressWarnings("restriction")
-public class HaxeBuilder extends IncrementalProjectBuilder {
+public final class HaxeBuilder extends IncrementalProjectBuilder {
+
+   public static final class Context {
+      public final IProject project;
+      public final IProgressMonitor monitor;
+      public final CompletionStage<Void> onTerminated;
+
+      public Context(final IProject project, final IProgressMonitor monitor, final CompletionStage<Void> onTerminated) {
+         this.project = project;
+         this.monitor = monitor;
+         this.onTerminated = onTerminated;
+      }
+   }
 
    public static final String ID = "org.haxe4e.builder";
 
@@ -108,7 +125,8 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
 
       monitor.setTaskName("Building project '" + project.getName() + "'");
 
-      final var console = HaxeBuilderConsole.openConsole(project);
+      final var onTerminated = new CompletableFuture<Void>();
+      final var console = HaxeBuilderConsole.openConsole(new Context(project, monitor, onTerminated));
 
       try (var out = console.newMessageStream();
            var err = console.newMessageStream()) {
@@ -134,11 +152,29 @@ public class HaxeBuilder extends IncrementalProjectBuilder {
                err.println(line);
                hasCompilerOutput.set(true);
             }).start();
-         proc.waitForExit();
+
+         while (proc.isAlive()) {
+            /*
+             * kill process if job was aborted by user
+             */
+            if (monitor.isCanceled()) {
+               proc.terminate() //
+                  .waitForExit(2, TimeUnit.SECONDS) //
+                  .kill();
+               proc.getProcess().descendants().forEach(ProcessHandle::destroy);
+               Threads.sleep(1000);
+               proc.getProcess().descendants().forEach(ProcessHandle::destroyForcibly);
+               err.println("Aborted on user request.");
+               break;
+            }
+            Threads.sleep(500);
+         }
 
          final var endAt = LocalTime.now();
          final var endAtStr = endAt.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_TIME);
          console.setTitle("<terminated> " + haxeSDK.getCompilerExecutable() + " (" + startAtStr + " - " + endAtStr + ")");
+         if (monitor.isCanceled())
+            return;
 
          if (hasCompilerOutput.get()) {
             out.println();
