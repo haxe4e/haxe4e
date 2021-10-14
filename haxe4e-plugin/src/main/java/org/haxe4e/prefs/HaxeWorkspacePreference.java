@@ -71,30 +71,36 @@ public final class HaxeWorkspacePreference {
 
    private static void ensureHaxeSDKsInitialized() {
       synchronized (haxeSDKs) {
-         if (isHaxeSDKsInitialized)
-            return;
+         if (!isHaxeSDKsInitialized) {
+            isHaxeSDKsInitialized = true;
 
-         isHaxeSDKsInitialized = true;
-
-         final var haxeSDKsSerialized = PREFS.getString(PROPERTY_HAXE_SDKS);
-         if (Strings.isNotBlank(haxeSDKsSerialized)) {
-            try {
-               haxeSDKs.addAll(JSON.readValue(haxeSDKsSerialized, new TypeReference<List<HaxeSDK>>() {}));
-            } catch (final Exception ex) {
-               LOG.error(ex);
+            final var haxeSDKsSerialized = PREFS.getString(PROPERTY_HAXE_SDKS);
+            if (Strings.isNotBlank(haxeSDKsSerialized)) {
+               try {
+                  haxeSDKs.addAll(JSON.readValue(haxeSDKsSerialized, new TypeReference<List<HaxeSDK>>() {}));
+               } catch (final Exception ex) {
+                  LOG.error(ex);
+               }
             }
-         }
 
-         if (haxeSDKs.isEmpty()) {
-            final var defaultSDK = HaxeSDK.fromPath();
-            if (defaultSDK != null) {
-               haxeSDKs.add(defaultSDK);
-               setDefaultHaxeSDK(defaultSDK.getName());
-               save();
+            if (haxeSDKs.isEmpty()) {
+               final var defaultSDK = HaxeSDK.fromPath();
+               if (defaultSDK != null) {
+                  haxeSDKs.add(defaultSDK);
+                  setDefaultHaxeSDK(defaultSDK.getName());
+                  save();
+               }
             }
          }
 
          if (haxeSDKs.isEmpty() && !PREFS.getBoolean(PROPERTY_WARNED_NO_SDK_REGISTERED)) {
+            for (final var ste : new Throwable().getStackTrace()) {
+               final var prefPage = HaxeSDKPreferencePage.class.getName();
+               // don't show warning on empty workspace if we directly go to Haxe Prefs
+               if (ste.getClassName().equals(prefPage))
+                  return;
+            }
+
             PREFS.setValue(PROPERTY_WARNED_NO_SDK_REGISTERED, true);
             save();
 
