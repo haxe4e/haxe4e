@@ -51,6 +51,10 @@ public class Haxe4EPlugin extends AbstractUIPlugin {
       return instance == null ? null : instance.getImageRegistry().get(path);
    }
 
+   public static ImageDescriptor getSharedImageDescriptor(final String path) {
+      return instance == null ? null : instance.getImageRegistry().getDescriptor(path);
+   }
+
    @Override
    protected void initializeImageRegistry(final ImageRegistry registry) {
       for (final var field : Constants.class.getFields()) {

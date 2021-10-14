@@ -17,7 +17,7 @@ import net.sf.jstuff.core.Strings;
 /**
  * @author Sebastian Thomschke
  */
-public class HaxeBuilderConsoleLinkifier implements IPatternMatchListenerDelegate {
+public final class HaxeBuilderConsoleLinkifier implements IPatternMatchListenerDelegate {
 
    private HaxeBuilderConsole console;
 
@@ -44,7 +44,7 @@ public class HaxeBuilderConsoleLinkifier implements IPatternMatchListenerDelegat
          final var doc = console.getDocument();
          final var sourceLoc = doc.get(offset, length); // e.g. src/mypackage/Game.hx:123:
          final var chunks = Strings.split(sourceLoc, ':');
-         final var file = console.project.getFile(chunks[0]);
+         final var file = console.buildContext.project.getFile(chunks[0]);
          if (file.exists()) {
             final var link = new FileLink(file, HaxeEditor.class.getName(), -1, -1, Integer.parseInt(chunks[1]));
             console.addHyperlink(link, offset, length - 1);
@@ -53,5 +53,4 @@ public class HaxeBuilderConsoleLinkifier implements IPatternMatchListenerDelegat
          LOG.debug(ex);
       }
    }
-
 }

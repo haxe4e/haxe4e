@@ -273,6 +273,15 @@
          </enablement>
       </consolePatternMatchListener>
    </extension>
+   <extension point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+         class="org.haxe4e.builder.HaxeBuilderConsoleActions"
+         id="com.plugin.console.PageParticipant">
+         <enablement>
+            <instanceof value="org.haxe4e.builder.HaxeBuilderConsole"/>
+         </enablement>
+      </consolePageParticipant>
+   </extension>
 
 
    <!-- ===================================== -->
