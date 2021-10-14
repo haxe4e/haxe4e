@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
@@ -145,13 +146,20 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
          final var proc = haxeSDK.getCompilerProcessBuilder(false) //
             .withArg(hxmlFile.getProjectRelativePath().toOSString()) //
             .withWorkingDirectory(project.getLocation().toFile()) //
+            .withEnvironment(env -> {
+               if (Platform.getBundle("net.mihai-nita.ansicon.plugin") != null) {
+                  env.put("ANSICON", "1");
+               }
+            }) //
             .withRedirectOutput(line -> {
                out.println(line);
                hasCompilerOutput.set(true);
-            }).withRedirectError(line -> {
+            }) //
+            .withRedirectError(line -> {
                err.println(line);
                hasCompilerOutput.set(true);
-            }).start();
+            }) //
+            .start();
 
          while (proc.isAlive()) {
             /*
