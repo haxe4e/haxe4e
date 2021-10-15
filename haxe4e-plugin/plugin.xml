@@ -463,7 +463,10 @@
                <with variable="selection">
                   <count value="1" />
                   <iterate>
-                     <reference definitionId="org.haxe4e.project.nature.isConfigured" />
+                     <and>
+                        <reference definitionId="org.haxe4e.project.nature.isConfigured" />
+                        <adapt type="org.eclipse.core.resources.IProject" />
+                     </and>
                   </iterate>
                </with>
             </enablement>
@@ -481,6 +484,7 @@
                   <count value="1" />
                   <iterate>
                      <and>
+                        <reference definitionId="org.haxe4e.project.nature.isConfigured" />
                         <adapt type="org.eclipse.core.resources.IFile" />
                         <test property="org.eclipse.debug.ui.matchesPattern" value="**.hxml" />
                      </and>
