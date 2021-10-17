@@ -145,6 +145,18 @@ jobs:
         git push origin updatesite --force
 
 
+    - name: Trigger Haxe Studio Build
+      if: github.ref == 'refs/heads/main'
+      run: |
+        curl --fail \
+          -H"Authorization: Bearer ${{ secrets.GHA_REPO_DISPATCH_TOKEN }}" \
+          -H "Accept: application/vnd.github.everest-preview+json" \
+          -H "Content-Type: application/json" \
+          -XPOST \
+          https://api.github.com/repos/haxe4e/haxe-studio/dispatches \
+          --data '{"event_type": "new-haxe4e-release"}'
+
+
     - name: "Delete intermediate build artifacts"
       uses: geekyeggo/delete-artifact@1-glob-support # https://github.com/GeekyEggo/delete-artifact/
       with:
