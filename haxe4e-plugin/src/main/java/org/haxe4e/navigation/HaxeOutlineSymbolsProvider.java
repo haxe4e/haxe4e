@@ -32,9 +32,9 @@ public final class HaxeOutlineSymbolsProvider extends SymbolsLabelProvider {
       if (kind != null) {
          switch (kind) {
             case EnumMember:
-               return Haxe4EPlugin.getSharedImage(Constants.IMAGE_OUTLINE_SYMBOL_ENUM_MEMBER);
+               return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_OUTLINE_SYMBOL_ENUM_MEMBER);
             case Struct:
-               return Haxe4EPlugin.getSharedImage(Constants.IMAGE_OUTLINE_SYMBOL_TYPEDEF);
+               return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_OUTLINE_SYMBOL_TYPEDEF);
             default:
          }
       }

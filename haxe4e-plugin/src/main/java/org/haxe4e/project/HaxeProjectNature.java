@@ -20,7 +20,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.builder.HaxeBuilder;
 import org.haxe4e.navigation.HaxeDependenciesUpdater;
-import org.haxe4e.util.LOG;
 
 import net.sf.jstuff.core.validation.Args;
 
@@ -97,7 +96,7 @@ public final class HaxeProjectNature implements IProjectNature {
       try {
          return project.hasNature(NATURE_ID);
       } catch (final CoreException ex) {
-         LOG.error(ex);
+         Haxe4EPlugin.log().error(ex);
          return null; // CHECKSTYLE:IGNORE .*
       }
    }

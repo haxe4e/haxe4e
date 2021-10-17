@@ -17,10 +17,10 @@ import org.eclipse.swt.widgets.Text;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.prefs.HaxeWorkspacePreference;
-import org.haxe4e.util.ui.Buttons;
-import org.haxe4e.util.ui.ComboWrapper;
 import org.haxe4e.util.ui.GridDatas;
 
+import de.sebthom.eclipse.commons.ui.Buttons;
+import de.sebthom.eclipse.commons.ui.widgets.ComboWrapper;
 import net.sf.jstuff.core.ref.ObservableRef;
 
 /**

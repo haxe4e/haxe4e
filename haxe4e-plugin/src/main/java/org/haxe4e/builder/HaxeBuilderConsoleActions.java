@@ -52,8 +52,8 @@ public final class HaxeBuilderConsoleActions implements IConsolePageParticipant 
             deactivated();
          }
       };
-      terminate.setImageDescriptor(Haxe4EPlugin.getSharedImageDescriptor(Constants.IMAGE_TERMINATE_BUTTON));
-      terminate.setDisabledImageDescriptor(Haxe4EPlugin.getSharedImageDescriptor(Constants.IMAGE_TERMINATE_BUTTON_DISABLED));
+      terminate.setImageDescriptor(Haxe4EPlugin.get().getSharedImageDescriptor(Constants.IMAGE_TERMINATE_BUTTON));
+      terminate.setDisabledImageDescriptor(Haxe4EPlugin.get().getSharedImageDescriptor(Constants.IMAGE_TERMINATE_BUTTON_DISABLED));
 
       final var bars = page.getSite().getActionBars();
       bars.getMenuManager().add(new Separator());

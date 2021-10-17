@@ -22,11 +22,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.haxe4e.Constants;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.model.HaxeBuildFile;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.project.HaxeProjectNature;
-import org.haxe4e.util.LOG;
-import org.haxe4e.util.StatusUtils;
 
 /**
  * @author Sebastian Thomschke
@@ -63,7 +62,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
                if (HaxeProjectNature.hasNature(haxeProject) == Boolean.TRUE) {
                   final var status = updateHaxeProjectDependencies(haxeProject, monitor);
                   if (status != Status.OK_STATUS) {
-                     org.haxe4e.util.LOG.error(status);
+                     Haxe4EPlugin.log().error(status);
                   }
                }
             }
@@ -115,7 +114,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
       try {
          rootDelta.accept(visitor);
       } catch (final CoreException ex) {
-         LOG.error(ex);
+         Haxe4EPlugin.log().error(ex);
       }
 
       for (final IProject p : changedProjects) {
@@ -142,7 +141,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
 
          if (haxedepsFolder.exists()) {
             if (!haxedepsFolder.isVirtual())
-               return StatusUtils.createError("Cannot update Haxe dependencies list. Physical folder with name "
+               return Haxe4EPlugin.status().createError("Cannot update Haxe dependencies list. Physical folder with name "
                   + HAXE_DEPS_MAGIC_FOLDER_NAME + " exists!");
          } else {
             haxedepsFolder.create(IResource.VIRTUAL, true, monitor);
@@ -167,7 +166,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
          }
          return Status.OK_STATUS;
       } catch (final CoreException | IOException ex) {
-         return StatusUtils.createError(ex, "Failed to Haxe dependencies list.");
+         return Haxe4EPlugin.status().createError(ex, "Failed to Haxe dependencies list.");
       }
    }
 

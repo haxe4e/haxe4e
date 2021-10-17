@@ -38,7 +38,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
-import org.haxe4e.util.LOG;
+import org.haxe4e.Haxe4EPlugin;
 
 /**
  * {@link PresentationReconciler} that performs incremental spell checking of comments
@@ -107,7 +107,7 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
                }
             }
          } catch (final BadLocationException ex) {
-            LOG.error(ex);
+            Haxe4EPlugin.log().error(ex);
          }
       }
       return regionsToSpellcheck;

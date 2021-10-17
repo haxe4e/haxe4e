@@ -23,14 +23,12 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.ide.undo.CreateProjectOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.prefs.HaxeProjectPreference;
-import org.haxe4e.util.BundleResourceUtils;
-import org.haxe4e.util.LOG;
-import org.haxe4e.util.StatusUtils;
-import org.haxe4e.util.ui.Dialogs;
-import org.haxe4e.util.ui.UI;
 
+import de.sebthom.eclipse.commons.ui.Dialogs;
+import de.sebthom.eclipse.commons.ui.UI;
 import net.sf.jstuff.core.concurrent.Threads;
 
 /**
@@ -98,22 +96,22 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
          if (exUnwrapped.getCause() instanceof CoreException) {
             final var exCore = (CoreException) exUnwrapped.getCause();
             if (exCore.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-               status = StatusUtils.createError(exCore, Messages.NewHaxeProject_CaseVariantExistsError, projHandle.getName());
+               status = Haxe4EPlugin.status().createError(exCore, Messages.NewHaxeProject_CaseVariantExistsError, projHandle.getName());
             } else {
-               status = StatusUtils.createStatus(exCore.getStatus().getSeverity(), exCore, Messages.NewHaxeProject_UnexpectedError, exCore
-                  .getMessage());
-               LOG.log(status);
+               status = Haxe4EPlugin.status().createStatus(exCore.getStatus().getSeverity(), exCore, Messages.NewHaxeProject_UnexpectedError,
+                  exCore.getMessage());
+               Haxe4EPlugin.log().log(status);
             }
          } else {
-            status = StatusUtils.createError(exUnwrapped, Messages.NewHaxeProject_UnexpectedError, exUnwrapped.getMessage());
-            LOG.log(status);
+            status = Haxe4EPlugin.status().createError(exUnwrapped, Messages.NewHaxeProject_UnexpectedError, exUnwrapped.getMessage());
+            Haxe4EPlugin.log().log(status);
          }
 
          Dialogs.showStatus(Messages.NewHaxeProject_ErrorTitle, status, false);
          return false;
       }
 
-      BasicNewResourceWizard.selectAndReveal(newProject, UI.getActiveWorkbenchWindow());
+      BasicNewResourceWizard.selectAndReveal(newProject, UI.getWorkbenchWindow());
       return true;
    }
 
@@ -128,11 +126,11 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
       createParents(f, monitor);
 
       if (isBinary) {
-         try (var is = BundleResourceUtils.getBundleResourceAsStream(from)) {
+         try (var is = Haxe4EPlugin.resources().getAsStream(from)) {
             f.create(is, true, monitor);
          }
       } else {
-         f.create(new ByteArrayInputStream(BundleResourceUtils.getBundleResourceAsString(from).getBytes()), true, monitor);
+         f.create(new ByteArrayInputStream(Haxe4EPlugin.resources().getAsString(from).getBytes()), true, monitor);
       }
    }
 

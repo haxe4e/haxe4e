@@ -8,8 +8,9 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.haxe4e.project.HaxeProjectNature;
-import org.haxe4e.util.Projects;
 import org.haxe4e.widget.HaxeBuildFileToolbarContribution;
+
+import de.sebthom.eclipse.commons.ui.Projects;
 
 /**
  * @author Ian Harrigan
@@ -20,7 +21,7 @@ public class WindowListener implements IWindowListener {
    @Override
    public void windowActivated(final IWorkbenchWindow window) {
       if (HaxeBuildFileToolbarContribution.instance != null) {
-         HaxeBuildFileToolbarContribution.instance.refresh(Projects.findProjectFromWindow(window, HaxeProjectNature.NATURE_ID));
+         HaxeBuildFileToolbarContribution.instance.refresh(Projects.getActiveProjectWithNature(window, HaxeProjectNature.NATURE_ID));
       }
    }
 

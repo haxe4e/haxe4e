@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.haxe4e.Constants;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.prefs.HaxeProjectPreference;
-import org.haxe4e.util.StatusUtils;
 
 import net.sf.jstuff.core.concurrent.Threads;
 
@@ -207,10 +207,10 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
          out.println();
 
       } catch (final IOException ex) {
-         throw new CoreException(StatusUtils.createError(ex, "Failed to run Haxe Builder."));
+         throw new CoreException(Haxe4EPlugin.status().createError(ex, "Failed to run Haxe Builder."));
       } catch (final InterruptedException ex) {
          Thread.currentThread().interrupt();
-         throw new CoreException(StatusUtils.createError(ex, "Aborted."));
+         throw new CoreException(Haxe4EPlugin.status().createError(ex, "Aborted."));
       }
    }
 

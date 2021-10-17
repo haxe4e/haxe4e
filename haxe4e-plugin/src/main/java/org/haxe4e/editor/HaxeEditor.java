@@ -27,7 +27,7 @@ import org.eclipse.swt.custom.CaretListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm4e.ui.internal.model.TMModelManager;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
-import org.haxe4e.util.LOG;
+import org.haxe4e.Haxe4EPlugin;
 
 /**
  * @author Sebastian Thomschke
@@ -45,7 +45,7 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
          // TODO https://github.com/vshaxe/vshaxe/issues/502
          // highlightMatchingOccurrences(caretPosition);
       } catch (final Exception ex) {
-         LOG.error(ex);
+         Haxe4EPlugin.log().error(ex);
       }
    };
 
@@ -105,7 +105,7 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
             }
          }
       } catch (final CoreException ex) {
-         LOG.error(ex);
+         Haxe4EPlugin.log().error(ex);
       }
       super.performSave(overwrite, progressMonitor);
    }
@@ -156,7 +156,7 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
                   breakpoint.delete();
                }
             } catch (final CoreException ex) {
-               LOG.error(ex);
+               Haxe4EPlugin.log().error(ex);
             }
          }
       }

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
-import org.haxe4e.util.LOG;
+import org.haxe4e.Haxe4EPlugin;
 
 import net.sf.jstuff.core.collection.Sets;
 
@@ -54,7 +54,7 @@ public final class HaxeProjectImportConfigurator implements ProjectConfigurator 
             }
          });
       } catch (final IOException ex) {
-         LOG.error(ex, "Cannot traverse directory tree");
+         Haxe4EPlugin.log().error(ex, "Cannot traverse directory tree");
       }
       return haxeProjects;
    }
@@ -85,7 +85,7 @@ public final class HaxeProjectImportConfigurator implements ProjectConfigurator 
       try {
          HaxeProjectNature.addToProject(project);
       } catch (final CoreException ex) {
-         LOG.error(ex);
+         Haxe4EPlugin.log().error(ex);
       }
    }
 }

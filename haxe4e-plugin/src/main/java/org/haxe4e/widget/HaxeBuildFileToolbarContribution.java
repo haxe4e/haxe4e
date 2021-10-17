@@ -16,9 +16,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.project.HaxeProject;
-import org.haxe4e.util.LOG;
-import org.haxe4e.util.ui.UI;
+
+import de.sebthom.eclipse.commons.ui.Editors;
 
 /**
  * @author Ian Harrigan
@@ -85,7 +86,7 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
          hxmlList.setItems(buildFiles.toArray(new String[0]));
          hxmlList.setText(currentBuildFile);
       } catch (final Exception ex) {
-         LOG.error(ex);
+         Haxe4EPlugin.log().error(ex);
       }
    }
 
@@ -107,7 +108,7 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
          haxeProject.setBuildFile(newHxmlFile);
 
          // dropdown steals focus, lets set it back to any active editor
-         final var editor = UI.getActiveEditor();
+         final var editor = Editors.getActiveEditor();
          if (editor != null) {
             editor.setFocus();
          }

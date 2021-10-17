@@ -16,9 +16,9 @@ import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.prefs.HaxeWorkspacePreference;
 import org.haxe4e.project.HaxeProjectNature;
-import org.haxe4e.util.Projects;
-import org.haxe4e.util.StatusUtils;
-import org.haxe4e.util.ui.Dialogs;
+
+import de.sebthom.eclipse.commons.ui.Dialogs;
+import de.sebthom.eclipse.commons.ui.Projects;
 
 /**
  * @author Sebastian Thomschke
@@ -35,7 +35,7 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
 
    @Override
    public Image getImage() {
-      return Haxe4EPlugin.getDefault().getImageRegistry().get(Constants.IMAGE_ICON);
+      return Haxe4EPlugin.get().getImageRegistry().get(Constants.IMAGE_ICON);
    }
 
    @Override
@@ -47,7 +47,7 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
    public void initializeFrom(final ILaunchConfiguration config) {
       try {
          final var projectName = config.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "");
-         form.selectedProject.set(Projects.findProject(projectName, HaxeProjectNature.NATURE_ID));
+         form.selectedProject.set(Projects.getProject(projectName, HaxeProjectNature.NATURE_ID));
          form.selectedProject.subscribe(this::updateLaunchConfigurationDialog);
 
          final var hxmlFile = config.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, "");
@@ -58,7 +58,7 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
          form.selectedAltSDK.set(altSDK);
          form.selectedAltSDK.subscribe(this::updateLaunchConfigurationDialog);
       } catch (final CoreException ex) {
-         Dialogs.showStatus(Messages.Launch_InitializingLaunchConfigTabFailed, StatusUtils.createError(ex), true);
+         Dialogs.showStatus(Messages.Launch_InitializingLaunchConfigTabFailed, Haxe4EPlugin.status().createError(ex), true);
       }
    }
 

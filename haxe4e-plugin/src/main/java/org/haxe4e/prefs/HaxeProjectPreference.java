@@ -16,9 +16,8 @@ import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.navigation.HaxeDependenciesUpdater;
 import org.haxe4e.navigation.HaxeResourcesDecorator;
-import org.haxe4e.util.StatusUtils;
-import org.haxe4e.util.ui.Dialogs;
 
+import de.sebthom.eclipse.commons.ui.Dialogs;
 import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.validation.Args;
 
@@ -103,7 +102,7 @@ public class HaxeProjectPreference {
 
          return true;
       } catch (final IOException ex) {
-         Dialogs.showStatus(Messages.Prefs_SavingPreferencesFailed, StatusUtils.createError(ex), true);
+         Dialogs.showStatus(Messages.Prefs_SavingPreferencesFailed, Haxe4EPlugin.status().createError(ex), true);
          return false;
       }
    }

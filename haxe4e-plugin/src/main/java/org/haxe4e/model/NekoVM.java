@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import org.haxe4e.util.LOG;
+import org.haxe4e.Haxe4EPlugin;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -148,7 +148,7 @@ public final class NekoVM implements Comparable<NekoVM> {
          final var version = Strings.substringBetween(reader.readLine(), "NekoVM ", " (c)");
          return Strings.isBlank(version) ? null : version;
       } catch (final IOException ex) {
-         LOG.error(ex);
+         Haxe4EPlugin.log().error(ex);
          return null;
       }
    }

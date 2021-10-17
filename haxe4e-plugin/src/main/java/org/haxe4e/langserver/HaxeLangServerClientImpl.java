@@ -21,7 +21,7 @@ import org.eclipse.lsp4j.WorkDoneProgressBegin;
 import org.eclipse.lsp4j.WorkDoneProgressCreateParams;
 import org.eclipse.lsp4j.WorkDoneProgressEnd;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
-import org.haxe4e.util.LOG;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.util.TreeBuilder;
 
 import net.sf.jstuff.core.concurrent.Threads;
@@ -38,7 +38,7 @@ public final class HaxeLangServerClientImpl extends LanguageClientImpl implement
 
    @Override
    public CompletableFuture<Void> createProgress(final WorkDoneProgressCreateParams params) {
-      LOG.debug("createProgress: {0}", params);
+      Haxe4EPlugin.log().debug("createProgress: {0}", params);
       return CompletableFuture.completedFuture(null);
    }
 
@@ -83,24 +83,24 @@ public final class HaxeLangServerClientImpl extends LanguageClientImpl implement
                }
             }
          } else {
-            LOG.debug("notifyProgress: {0}", params);
+            Haxe4EPlugin.log().debug("notifyProgress: {0}", params);
          }
       }
    }
 
    @Override
    public void onHaxeCacheBuildFailed(final Object value) {
-      LOG.warn("onHaxeCacheBuildFailed: {0}", value);
+      Haxe4EPlugin.log().warn("onHaxeCacheBuildFailed: {0}", value);
    }
 
    @Override
    public void onHaxeDidChangeRequestQueue(final Object value) {
-      LOG.debug("onHaxeDidChangeRequestQueue: {0}", value);
+      Haxe4EPlugin.log().debug("onHaxeDidChangeRequestQueue: {0}", value);
    }
 
    @Override
    public void onHaxeDidRunMethod(final Object value) {
-      LOG.debug("onHaxeDidRunMethod: {0}", value);
+      Haxe4EPlugin.log().debug("onHaxeDidRunMethod: {0}", value);
    }
 
    @Override

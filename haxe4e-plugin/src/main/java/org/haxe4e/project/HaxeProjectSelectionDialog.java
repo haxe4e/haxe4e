@@ -14,7 +14,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
-import org.haxe4e.util.Projects;
+
+import de.sebthom.eclipse.commons.ui.Projects;
 
 /**
  * @author Sebastian Thomschke
@@ -23,7 +24,7 @@ public class HaxeProjectSelectionDialog {
    private final ElementListSelectionDialog dialog;
 
    public HaxeProjectSelectionDialog(final Shell parent) {
-      final var haxeProjectIcon = Haxe4EPlugin.getSharedImage(Constants.IMAGE_NAVIGATOR_HAXE_PROJECT);
+      final var haxeProjectIcon = Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_NAVIGATOR_HAXE_PROJECT);
       dialog = new ElementListSelectionDialog(parent, new LabelProvider() {
          @Override
          public Image getImage(final Object element) {
@@ -39,7 +40,7 @@ public class HaxeProjectSelectionDialog {
       dialog.setTitle("Select a Haxe project");
       dialog.setMessage("Enter a string to filter the project list:");
       dialog.setEmptyListMessage("No Haxe projects found in workspace.");
-      setProjects(Projects.getProjectsWithNature(HaxeProjectNature.NATURE_ID));
+      setProjects(Projects.getOpenProjectsWithNature(HaxeProjectNature.NATURE_ID));
    }
 
    public IProject getSelectedProject() {

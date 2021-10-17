@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.eclipse.jdt.annotation.Nullable;
-import org.haxe4e.util.LOG;
+import org.haxe4e.Haxe4EPlugin;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -256,7 +256,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
          final var version = reader.readLine();
          return Strings.isBlank(version) ? null : version;
       } catch (final IOException ex) {
-         LOG.error(ex);
+         Haxe4EPlugin.log().error(ex);
          return null;
       }
    }

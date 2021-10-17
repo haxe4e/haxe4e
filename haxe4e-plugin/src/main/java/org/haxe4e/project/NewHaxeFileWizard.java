@@ -20,12 +20,11 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
-import org.haxe4e.util.LOG;
-import org.haxe4e.util.StatusUtils;
-import org.haxe4e.util.ui.DialogPageUtils;
-import org.haxe4e.util.ui.UI;
 
+import de.sebthom.eclipse.commons.ui.DialogPages;
+import de.sebthom.eclipse.commons.ui.UI;
 import net.sf.jstuff.core.concurrent.Threads;
 
 /**
@@ -64,7 +63,7 @@ public final class NewHaxeFileWizard extends Wizard implements INewWizard {
 
                final var folder = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(folderName));
                if (!folder.exists() || !(folder instanceof IContainer))
-                  throw new CoreException(StatusUtils.createError(Messages.NewHaxeFile_DirectoryDoesNotExist, folderName));
+                  throw new CoreException(Haxe4EPlugin.status().createError(Messages.NewHaxeFile_DirectoryDoesNotExist, folderName));
 
                final var newHaxeFile = ((IContainer) folder).getFile(new Path(fileName));
                final var newHaxeFileContent = "";
@@ -75,16 +74,16 @@ public final class NewHaxeFileWizard extends Wizard implements INewWizard {
                      newHaxeFile.create(stream, true, progress);
                   }
                } catch (final IOException ex) {
-                  LOG.error(ex, ex.getMessage());
+                  Haxe4EPlugin.log().error(ex, ex.getMessage());
                }
                progress.worked(1);
                progress.setTaskName(Messages.NewHaxeFile_OpeningInEditor);
                UI.run(() -> {
-                  final var page = UI.getActivePage();
+                  final var page = UI.getWorkbenchPage();
                   try {
                      IDE.openEditor(page, newHaxeFile, true);
                   } catch (final PartInitException ex) {
-                     LOG.error(ex, ex.getMessage());
+                     Haxe4EPlugin.log().error(ex, ex.getMessage());
                   }
                });
                progress.worked(1);
@@ -98,8 +97,8 @@ public final class NewHaxeFileWizard extends Wizard implements INewWizard {
          Threads.handleInterruptedException(ex);
          return false;
       } catch (final InvocationTargetException ex) {
-         LOG.error(ex.getTargetException(), ex.getMessage());
-         DialogPageUtils.setMessage(haxeFilePage, StatusUtils.createError(ex.getTargetException()));
+         Haxe4EPlugin.log().error(ex.getTargetException(), ex.getMessage());
+         DialogPages.setMessage(haxeFilePage, Haxe4EPlugin.status().createError(ex.getTargetException()));
          return false;
       }
       return true;

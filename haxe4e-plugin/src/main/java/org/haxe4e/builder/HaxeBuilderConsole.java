@@ -8,8 +8,8 @@ import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleFactory;
 import org.eclipse.ui.console.MessageConsole;
-import org.haxe4e.util.ui.UI;
 
+import de.sebthom.eclipse.commons.ui.UI;
 import net.sf.jstuff.core.Strings;
 
 /**

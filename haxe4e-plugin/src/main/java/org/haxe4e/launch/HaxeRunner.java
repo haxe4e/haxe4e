@@ -16,11 +16,11 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.osgi.util.NLS;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
-import org.haxe4e.util.StatusUtils;
-import org.haxe4e.util.ui.Dialogs;
 
+import de.sebthom.eclipse.commons.ui.Dialogs;
 import net.sf.jstuff.core.io.Processes.ProcessWrapper;
 
 /**
@@ -40,7 +40,7 @@ public final class HaxeRunner {
                .start();
             launch.addProcess(DebugPlugin.newProcess(launch, proc.getProcess(), Messages.Label_Haxe_Terminal));
          } catch (final IOException ex) {
-            Dialogs.showStatus(Messages.Launch_CouldNotRunHaxe, StatusUtils.createError(ex), true);
+            Dialogs.showStatus(Messages.Launch_CouldNotRunHaxe, Haxe4EPlugin.status().createError(ex), true);
          }
       });
       job.schedule();

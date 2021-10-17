@@ -15,13 +15,13 @@ import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.project.HaxeProjectNature;
 import org.haxe4e.project.HaxeProjectSelectionDialog;
-import org.haxe4e.util.Projects;
-import org.haxe4e.util.ui.Buttons;
 import org.haxe4e.util.ui.GridDatas;
-import org.haxe4e.util.ui.UI;
 import org.haxe4e.widget.HaxeBuildFileSelectionGroup;
 import org.haxe4e.widget.HaxeSDKSelectionGroup;
 
+import de.sebthom.eclipse.commons.ui.Buttons;
+import de.sebthom.eclipse.commons.ui.Projects;
+import de.sebthom.eclipse.commons.ui.Texts;
 import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.ref.ObservableRef;
 
@@ -46,10 +46,10 @@ public class LaunchConfigForm extends Composite {
       final var txtSelectedProject = new Text(grpProject, SWT.BORDER);
       txtSelectedProject.setEditable(false);
       txtSelectedProject.setLayoutData(GridDatas.fillHorizontalExcessive());
-      UI.bind(txtSelectedProject, selectedProject, //
+      Texts.bind(txtSelectedProject, selectedProject, //
          projectName -> Strings.isEmpty(projectName) //
             ? null //
-            : Projects.findProject(projectName, HaxeProjectNature.NATURE_ID), //
+            : Projects.getProject(projectName, HaxeProjectNature.NATURE_ID), //
          project -> project == null ? "" : project.getName() //
       );
 

@@ -26,11 +26,11 @@ import org.eclipse.swt.widgets.Text;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.model.NekoVM;
-import org.haxe4e.util.ui.Buttons;
-import org.haxe4e.util.ui.Dialogs;
 import org.haxe4e.util.ui.GridDatas;
-import org.haxe4e.util.ui.UI;
 
+import de.sebthom.eclipse.commons.ui.Buttons;
+import de.sebthom.eclipse.commons.ui.Dialogs;
+import de.sebthom.eclipse.commons.ui.Texts;
 import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.ref.ObservableRef;
 
@@ -111,8 +111,8 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       lblName.setText(Messages.Label_Name + ":");
       txtName = new Text(container, SWT.BORDER);
       txtName.setLayoutData(GridDatas.fillHorizontalExcessive(2));
-      UI.bind(txtName, haxeSDKName);
-      UI.onModified(txtName, () -> setErrorMessage(null));
+      Texts.bind(txtName, haxeSDKName);
+      Texts.onModified(txtName, () -> setErrorMessage(null));
 
       /*
        * Haxe Path
@@ -123,8 +123,8 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       txtHaxePath = new Text(container, SWT.BORDER);
       txtHaxePath.setEditable(false);
       txtHaxePath.setLayoutData(GridDatas.fillHorizontalExcessive());
-      UI.bind(txtHaxePath, haxeSDKPath, Paths::get, Path::toString);
-      UI.onModified(txtHaxePath, () -> setErrorMessage(null));
+      Texts.bind(txtHaxePath, haxeSDKPath, Paths::get, Path::toString);
+      Texts.onModified(txtHaxePath, () -> setErrorMessage(null));
 
       final var btnBrowse = new Button(container, SWT.NONE);
       btnBrowse.setText(Messages.Label_Browse);
@@ -139,8 +139,8 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       txtNekoPath = new Text(container, SWT.BORDER);
       txtNekoPath.setEditable(false);
       txtNekoPath.setLayoutData(GridDatas.fillHorizontalExcessive());
-      UI.bind(txtNekoPath, nekoVMPath, Paths::get, Path::toString);
-      UI.onModified(txtNekoPath, () -> setErrorMessage(null));
+      Texts.bind(txtNekoPath, nekoVMPath, Paths::get, Path::toString);
+      Texts.onModified(txtNekoPath, () -> setErrorMessage(null));
 
       final var btnNekoBrowse = new Button(container, SWT.NONE);
       btnNekoBrowse.setText(Messages.Label_Browse);

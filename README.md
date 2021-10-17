@@ -8,15 +8,14 @@
 **Feedback and high-quality pull requests are  highly welcome!**
 
 1. [About](#about)
-1. [What is it?](#what-is-it)
 1. [Installation](#installation)
 1. [Usage](#usage)
 1. [Building from Sources](#building)
 1. [Acknowledgement](#acknowledgement)
-1. [Version History](#version-history)
+1. [License](#license)
 
 
-## <a name="what-is-it"></a>What is it?
+## <a name="about"></a>About
 
 Haxe4E is an extension for the [Eclipse IDE](https://eclipse.org) to support development using the [Haxe](https://haxe.org) general purpose
 programming language.

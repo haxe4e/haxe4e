@@ -31,12 +31,12 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.model.NekoVM;
-import org.haxe4e.util.ui.Buttons;
 import org.haxe4e.util.ui.GridDatas;
 import org.haxe4e.util.ui.StyledLabelProviderAdapter;
-import org.haxe4e.util.ui.Tables;
-import org.haxe4e.util.ui.UI;
 
+import de.sebthom.eclipse.commons.ui.Buttons;
+import de.sebthom.eclipse.commons.ui.Fonts;
+import de.sebthom.eclipse.commons.ui.Tables;
 import net.sf.jstuff.core.collection.ObservableSet;
 import net.sf.jstuff.core.ref.ObservableRef;
 
@@ -108,7 +108,7 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
          @Override
          public StyledString getStyledText(final Object element) {
             return isDefaultHaxeSDK((HaxeSDK) element) //
-               ? new StyledString(((HaxeSDK) element).getName(), UI.DEFAULT_FONT_BOLD_STYLER)
+               ? new StyledString(((HaxeSDK) element).getName(), Fonts.DEFAULT_FONT_BOLD_STYLER)
                : new StyledString(((HaxeSDK) element).getName());
          }
       });

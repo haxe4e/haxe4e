@@ -20,10 +20,6 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
-import org.haxe4e.util.LOG;
-import org.haxe4e.util.StatusUtils;
-import org.haxe4e.util.ui.Dialogs;
-import org.haxe4e.util.ui.UI;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -33,6 +29,8 @@ import com.fasterxml.jackson.databind.deser.std.FromStringDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import de.sebthom.eclipse.commons.ui.Dialogs;
+import de.sebthom.eclipse.commons.ui.UI;
 import net.sf.jstuff.core.Strings;
 
 /**
@@ -79,7 +77,7 @@ public final class HaxeWorkspacePreference {
                try {
                   haxeSDKs.addAll(JSON.readValue(haxeSDKsSerialized, new TypeReference<List<HaxeSDK>>() {}));
                } catch (final Exception ex) {
-                  LOG.error(ex);
+                  Haxe4EPlugin.log().error(ex);
                }
             }
 
@@ -177,7 +175,7 @@ public final class HaxeWorkspacePreference {
          PREFS.save();
          return true;
       } catch (final IOException ex) {
-         Dialogs.showStatus(Messages.Prefs_SavingPreferencesFailed, StatusUtils.createError(ex), true);
+         Dialogs.showStatus(Messages.Prefs_SavingPreferencesFailed, Haxe4EPlugin.status().createError(ex), true);
          return false;
       }
    }

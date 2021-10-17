@@ -9,8 +9,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.console.IPatternMatchListenerDelegate;
 import org.eclipse.ui.console.PatternMatchEvent;
 import org.eclipse.ui.console.TextConsole;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.editor.HaxeEditor;
-import org.haxe4e.util.LOG;
 
 import net.sf.jstuff.core.Strings;
 
@@ -50,7 +50,7 @@ public final class HaxeBuilderConsoleLinkifier implements IPatternMatchListenerD
             console.addHyperlink(link, offset, length - 1);
          }
       } catch (final BadLocationException ex) {
-         LOG.debug(ex);
+         Haxe4EPlugin.log().debug(ex);
       }
    }
 }

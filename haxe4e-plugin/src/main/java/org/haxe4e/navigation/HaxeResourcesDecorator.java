@@ -19,8 +19,8 @@ import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.model.HaxeBuildFile;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.project.HaxeProjectNature;
-import org.haxe4e.util.LOG;
-import org.haxe4e.util.ui.UI;
+
+import de.sebthom.eclipse.commons.ui.UI;
 
 /**
  * @author Sebastian Thomschke
@@ -42,7 +42,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
 
       if (res.isVirtual()) {
          if (res instanceof IFolder && res.getName().equals(HaxeDependenciesUpdater.HAXE_DEPS_MAGIC_FOLDER_NAME))
-            return Haxe4EPlugin.getSharedImage(Constants.IMAGE_HAXE_DEPENDENCIES);
+            return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_DEPENDENCIES);
          return image;
       }
 
@@ -57,7 +57,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
             if (haxeBuildFilePath == null)
                return image;
             if (haxeBuildFilePath.equals(file))
-               return Haxe4EPlugin.getSharedImage(Constants.IMAGE_HAXE_BUILD_FILE_ACTIVE);
+               return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_BUILD_FILE_ACTIVE);
          }
       } else if (res instanceof IFolder) {
          final var folder = (IFolder) res;
@@ -73,13 +73,13 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
             for (final var p : haxeBuildFile.getSourcePaths()) {
                final var sourceFolder = projectPath.resolve(p);
                if (folderPath.equals(sourceFolder))
-                  return Haxe4EPlugin.getSharedImage(Constants.IMAGE_HAXE_SOURCE_FOLDER);
+                  return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_SOURCE_FOLDER);
                if (folderPath.startsWith(sourceFolder))
-                  return Haxe4EPlugin.getSharedImage(Constants.IMAGE_HAXE_SOURCE_PACKAGE);
+                  return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_SOURCE_PACKAGE);
 
             }
          } catch (final IOException ex) {
-            LOG.error(ex);
+            Haxe4EPlugin.log().error(ex);
          }
       }
 

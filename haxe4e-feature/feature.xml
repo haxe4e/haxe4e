@@ -41,7 +41,6 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.externaltools"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.genericeditor"/>
       <import plugin="org.eclipse.ui.navigator"/>
@@ -56,7 +55,12 @@
       <import plugin="org.eclipse.tm4e.languageconfiguration"/>
       <import plugin="org.eclipse.tm4e.registry"/>
       <import plugin="org.eclipse.wildwebdeveloper.embedder.node"/>
-      <import plugin="net.sf.jstuff.core" version="5.16.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.commons-io" version="2.11.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.lang3" version="3.12.0" match="greaterOrEqual"/>
+      <import plugin="net.sf.jstuff.core" version="5.18.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.filebuffers"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="de.sebthom.eclipse.commons"/>
    </requires>
 
    <plugin
@@ -67,7 +71,28 @@
          unpack="false"/>
 
    <plugin
+         id="de.sebthom.eclipse.commons"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.jstuff.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.apache.commons.lang3"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.commons-io"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -89,20 +114,6 @@
 
    <plugin
          id="com.fasterxml.jackson.core.jackson-databind"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="net.sf.jstuff.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.apache.commons.commons-io"
          download-size="0"
          install-size="0"
          version="0.0.0"

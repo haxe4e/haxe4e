@@ -21,11 +21,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.prefs.HaxeWorkspacePreference;
-import org.haxe4e.util.BundleResourceUtils;
-import org.haxe4e.util.LOG;
 import org.haxe4e.util.TreeBuilder;
 import org.haxe4e.util.io.LinePrefixingTeeInputStream;
 import org.haxe4e.util.io.LinePrefixingTeeOutputStream;
@@ -48,7 +47,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    private static final boolean TRACE_METHOD_RESULTS = Platform.getDebugBoolean("org.haxe4e/trace/langserv/method_results");
 
    public HaxeLangServerLauncher() throws IOException {
-      final var languageServerJS = BundleResourceUtils.extractBundleResource("langsrv/haxe-language-server.min.js");
+      final var languageServerJS = Haxe4EPlugin.resources().extract("langsrv/haxe-language-server.min.js");
       setWorkingDirectory(SystemUtils.getUserDir().getAbsolutePath());
       setCommands(Arrays.asList( //
          NodeJSManager.getNodeJsLocation().getAbsolutePath(), //
@@ -122,7 +121,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
          .getMap();
 
       if (TRACE_INIT_OPTIONS) {
-         LOG.info(opts);
+         Haxe4EPlugin.log().info(opts);
       }
       return opts;
    }

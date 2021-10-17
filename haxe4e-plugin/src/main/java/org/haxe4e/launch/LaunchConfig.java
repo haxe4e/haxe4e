@@ -25,14 +25,13 @@ import org.eclipse.lsp4e.debug.launcher.DSPLaunchDelegate;
 import org.eclipse.lsp4e.debug.launcher.DSPLaunchDelegate.DSPLaunchDelegateLaunchBuilder;
 import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
 import org.haxe4e.Constants;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.prefs.HaxeProjectPreference;
-import org.haxe4e.util.BundleResourceUtils;
-import org.haxe4e.util.StatusUtils;
 import org.haxe4e.util.TreeBuilder;
-import org.haxe4e.util.ui.Dialogs;
-import org.haxe4e.util.ui.UI;
 
+import de.sebthom.eclipse.commons.ui.Dialogs;
+import de.sebthom.eclipse.commons.ui.UI;
 import net.sf.jstuff.core.Strings;
 
 /**
@@ -85,7 +84,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                .getMap();
 
             try {
-               final var evalDebuggerJS = BundleResourceUtils.extractBundleResource("langsrv/haxe-eval-debugger.min.js");
+               final var evalDebuggerJS = Haxe4EPlugin.resources().extract("langsrv/haxe-eval-debugger.min.js");
                final List<String> debugCmdArgs = Collections.singletonList(evalDebuggerJS.getAbsolutePath());
 
                final var builder = new DSPLaunchDelegateLaunchBuilder(config, ILaunchManager.DEBUG_MODE, launch, monitor);
@@ -94,7 +93,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                builder.setDspParameters(initOptions);
                new DSPLaunchDelegate() {}.launch(builder);
             } catch (final IOException ex) {
-               Dialogs.showStatus("Failed to start debug session", StatusUtils.createError(ex), true);
+               Dialogs.showStatus("Failed to start debug session", Haxe4EPlugin.status().createError(ex), true);
             }
             return;
          case ILaunchManager.RUN_MODE:
@@ -109,7 +108,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                   try {
                      project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
                   } catch (final CoreException e) {
-                     org.haxe4e.util.LOG.error(e);
+                     Haxe4EPlugin.log().error(e);
                   }
                });
             return;

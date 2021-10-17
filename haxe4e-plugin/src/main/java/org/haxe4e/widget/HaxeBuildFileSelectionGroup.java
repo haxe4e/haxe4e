@@ -24,11 +24,10 @@ import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.project.HaxeProject;
-import org.haxe4e.util.LOG;
-import org.haxe4e.util.ui.Buttons;
 import org.haxe4e.util.ui.GridDatas;
-import org.haxe4e.util.ui.UI;
 
+import de.sebthom.eclipse.commons.ui.Buttons;
+import de.sebthom.eclipse.commons.ui.Texts;
 import net.sf.jstuff.core.ref.ObservableRef;
 
 /**
@@ -57,7 +56,7 @@ public class HaxeBuildFileSelectionGroup extends Composite {
       final var txtSelectedBuildFile = new Text(grpBuildFile, SWT.BORDER);
       txtSelectedBuildFile.setEditable(false);
       txtSelectedBuildFile.setLayoutData(GridDatas.fillHorizontalExcessive());
-      UI.bind(txtSelectedBuildFile, buildFile);
+      Texts.bind(txtSelectedBuildFile, buildFile);
 
       final var btnBrowseBuildFile = new Button(grpBuildFile, SWT.NONE);
       btnBrowseBuildFile.setText(Messages.Label_Browse);
@@ -67,7 +66,7 @@ public class HaxeBuildFileSelectionGroup extends Composite {
       project.subscribe(p -> {
          btnBrowseBuildFile.setEnabled(p != null);
          if (p != null) {
-            final HaxeProjectPreference prefs = new HaxeProjectPreference(p);
+            final var prefs = new HaxeProjectPreference(p);
             buildFile.set(prefs.getHaxeBuildFile());
          }
       });
@@ -79,7 +78,7 @@ public class HaxeBuildFileSelectionGroup extends Composite {
       final var dialog = new ElementListSelectionDialog(shell, new LabelProvider() {
          @Override
          public Image getImage(final Object element) {
-            return Haxe4EPlugin.getSharedImage(Constants.IMAGE_HAXE_BUILD_FILE);
+            return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_BUILD_FILE);
          }
       });
 
@@ -93,7 +92,7 @@ public class HaxeBuildFileSelectionGroup extends Composite {
          dialog.setElements(buildFiles.toArray(new String[buildFiles.size()]));
          dialog.setInitialSelections(preselectedBuildFile);
       } catch (final CoreException e) {
-         LOG.error(e);
+         Haxe4EPlugin.log().error(e);
       }
 
       return dialog;

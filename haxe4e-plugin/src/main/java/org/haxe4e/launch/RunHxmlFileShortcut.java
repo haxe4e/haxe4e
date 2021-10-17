@@ -16,12 +16,12 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.haxe4e.Constants;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.prefs.HaxeProjectPreference;
-import org.haxe4e.util.StatusUtils;
-import org.haxe4e.util.ui.Dialogs;
-import org.haxe4e.util.ui.UI;
 
+import de.sebthom.eclipse.commons.ui.Dialogs;
+import de.sebthom.eclipse.commons.ui.UI;
 import net.sf.jstuff.core.validation.Args;
 
 /**
@@ -83,7 +83,7 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
             newLaunchConfig.doSave();
          }
       } catch (final CoreException ex) {
-         Dialogs.showStatus(Messages.Launch_CreatingLaunchConfigFailed, StatusUtils.createError(ex), true);
+         Dialogs.showStatus(Messages.Launch_CreatingLaunchConfigFailed, Haxe4EPlugin.status().createError(ex), true);
       }
    }
 }

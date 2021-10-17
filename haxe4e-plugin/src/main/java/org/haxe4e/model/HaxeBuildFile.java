@@ -15,10 +15,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.haxe4e.util.LOG;
-import org.haxe4e.util.ui.NotificationPopup;
-import org.haxe4e.util.ui.UI;
+import org.haxe4e.Haxe4EPlugin;
 
+import de.sebthom.eclipse.commons.ui.UI;
+import de.sebthom.eclipse.commons.ui.widgets.NotificationPopup;
 import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.ref.MutableRef;
 import net.sf.jstuff.core.validation.Args;
@@ -121,7 +121,7 @@ public class HaxeBuildFile {
             try {
                deps.add(Haxelib.from(haxeSDK, libName, libVer, monitor));
             } catch (final IOException ex) {
-               LOG.error(ex);
+               Haxe4EPlugin.log().error(ex);
                UI.run(() -> new NotificationPopup(ex.getMessage()).open());
             }
             nextArgIsLibrary = false;
