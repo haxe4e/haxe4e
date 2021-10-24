@@ -31,6 +31,7 @@ public class HaxePerspective implements IPerspectiveFactory {
       bottom.addView(IPageLayout.ID_TASK_LIST);
       bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
       bottom.addView(IPageLayout.ID_PROGRESS_VIEW);
+      bottom.addView("de.sebthom.eclipse.findview.ui.FindView");
       bottom.addView("org.eclipse.team.ui.GenericHistoryView");
       bottom.addView("org.eclipse.egit.ui.StagingView");
       bottom.addView("org.eclipse.tm.terminal.view.ui.TerminalsView");
