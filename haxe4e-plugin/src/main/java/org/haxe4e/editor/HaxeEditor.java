@@ -26,6 +26,7 @@ import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.eclipse.swt.custom.CaretListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm4e.ui.internal.model.TMModelManager;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
@@ -72,11 +73,24 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
       // double clicking a variable also selects the type since ":" is seen as part of the word
       textWidget.addMouseListener(new MouseAdapter() {
          @Override
-         public void mouseDoubleClick(final MouseEvent e) {
-            final var colPos = textWidget.getSelectionText().indexOf(':');
-            if (colPos > -1) {
-               final var selPos = textWidget.getSelection();
-               textWidget.setSelection(selPos.x, selPos.x + colPos);
+         public void mouseDoubleClick(final MouseEvent ev) {
+            final var selText = textWidget.getSelectionText();
+
+            // if the current selection includes a colon we manually adjust the selection
+            if (selText.indexOf(':') > -1) {
+               final var selOffset = textWidget.getSelection().x;
+
+               final var mouseOffset = textWidget.getOffsetAtPoint(new Point(ev.x, ev.y));
+               // index of the char of the current selection where the mouse pointer clicked
+               final var mouseSelectedChar = mouseOffset - selOffset;
+
+               final var colonBeforeMouseCursor = selText.lastIndexOf(':', mouseSelectedChar);
+               final var colonAfterMouseCursor = selText.indexOf(':', mouseSelectedChar);
+
+               textWidget.setSelection( //
+                  selOffset + colonBeforeMouseCursor + 1, //
+                  selOffset + (colonAfterMouseCursor < 0 ? selText.length() : colonAfterMouseCursor) //
+               );
             }
          }
       });
