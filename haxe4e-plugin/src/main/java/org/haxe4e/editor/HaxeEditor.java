@@ -24,6 +24,8 @@ import org.eclipse.lsp4j.DocumentHighlightParams;
 import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.eclipse.swt.custom.CaretListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm4e.ui.internal.model.TMModelManager;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
@@ -62,7 +64,22 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
    @Override
    public void createPartControl(final Composite parent) {
       super.createPartControl(parent);
-      getSourceViewer().getTextWidget().addCaretListener(caretListener);
+
+      final var textWidget = getSourceViewer().getTextWidget();
+      textWidget.addCaretListener(caretListener);
+
+      // workaround for https://github.com/haxe4e/haxe4e/issues/40
+      // double clicking a variable also selects the type since ":" is seen as part of the word
+      textWidget.addMouseListener(new MouseAdapter() {
+         @Override
+         public void mouseDoubleClick(final MouseEvent e) {
+            final var colPos = textWidget.getSelectionText().indexOf(':');
+            if (colPos > -1) {
+               final var selPos = textWidget.getSelection();
+               textWidget.setSelection(selPos.x, selPos.x + colPos);
+            }
+         }
+      });
    }
 
    @Override
