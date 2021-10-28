@@ -405,8 +405,13 @@
          class="org.haxe4e.project.HaxeProjectPropertyPage"
          id="org.haxe4e.project.settings"
          name="Haxe">
-         <filter name="nature" value="org.haxe4e.project.nature" />
          <filter name="open" value="true" />
+         <enabledWhen>
+            <and>
+               <reference definitionId="org.haxe4e.project.nature.isConfigured" />
+               <adapt type="org.eclipse.core.resources.IProject" />
+            </and>
+         </enabledWhen>
          <keywordReference id="org.haxe4e.prefs.keyword.haxe" />
       </page>
    </extension>
