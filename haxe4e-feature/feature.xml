@@ -58,20 +58,11 @@
       <import plugin="org.apache.commons.commons-io" version="2.11.0" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.lang3" version="3.12.0" match="greaterOrEqual"/>
       <import plugin="net.sf.jstuff.core" version="5.18.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.filebuffers"/>
-      <import plugin="org.eclipse.jface"/>
       <import plugin="de.sebthom.eclipse.commons"/>
    </requires>
 
    <plugin
          id="org.haxe4e"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.sebthom.eclipse.commons"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -40,7 +40,7 @@
 
         <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
             <repository location="https://raw.githubusercontent.com/sebthom/eclipse-commons/updatesite/"/>
-            <unit id="de.sebthom.eclipse.commons" version="0.0.0"/>
+            <unit id="de.sebthom.eclipse.commons.feature.feature.group" version="0.0.0"/>
         </location>
 
         <location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
