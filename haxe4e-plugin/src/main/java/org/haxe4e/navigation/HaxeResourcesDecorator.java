@@ -46,8 +46,11 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
          return image;
       }
 
-      if (res.isLinked())
+      if (res.isLinked()) {
+         if (res instanceof IFolder && res.getName().equals(HaxeDependenciesUpdater.HAXE_STDLIB_MAGIC_FOLDER_NAME))
+            return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_DEPENDENCIES);
          return image;
+      }
 
       if (res instanceof IFile) {
          final var file = (IFile) res;
@@ -92,11 +95,20 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
          final var folder = (IFolder) element;
          final var project = folder.getProject();
 
-         if (HaxeProjectNature.hasNature(project) == Boolean.TRUE //
-            && folder.isVirtual() //
-            && folder.getName().equals(HaxeDependenciesUpdater.HAXE_DEPS_MAGIC_FOLDER_NAME) //
-         )
-            return "Haxe Dependencies";
+         if (HaxeProjectNature.hasNature(project) == Boolean.TRUE) {
+            if (folder.isLinked() //
+               && folder.getName().equals(HaxeDependenciesUpdater.HAXE_STDLIB_MAGIC_FOLDER_NAME) //
+            ) {
+               final var prefs = new HaxeProjectPreference(project);
+               final var haxeSDK = prefs.getEffectiveHaxeSDK();
+               return "Haxe Standard Library" + (haxeSDK == null ? "" : " [" + haxeSDK.getName() + "]");
+            }
+
+            if (folder.isVirtual() //
+               && folder.getName().equals(HaxeDependenciesUpdater.HAXE_DEPS_MAGIC_FOLDER_NAME) //
+            )
+               return "Haxe Dependencies";
+         }
       }
       return text;
    }

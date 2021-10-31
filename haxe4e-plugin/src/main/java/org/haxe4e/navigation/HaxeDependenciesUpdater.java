@@ -32,6 +32,7 @@ import org.haxe4e.project.HaxeProjectNature;
  */
 public final class HaxeDependenciesUpdater implements IResourceChangeListener {
 
+   public static final String HAXE_STDLIB_MAGIC_FOLDER_NAME = "!!!haxestdlib";
    public static final String HAXE_DEPS_MAGIC_FOLDER_NAME = "!!haxedeps";
 
    public static final HaxeDependenciesUpdater INSTANCE = new HaxeDependenciesUpdater();
@@ -74,6 +75,11 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
    }
 
    public void removeDependenciesFolder(final IProject haxeProject, final IProgressMonitor monitor) throws CoreException {
+      final var haxeStdLibFolder = haxeProject.getFolder(HAXE_STDLIB_MAGIC_FOLDER_NAME);
+      if (haxeStdLibFolder.exists() && haxeStdLibFolder.isVirtual()) {
+         haxeStdLibFolder.delete(false, monitor);
+      }
+
       final var haxeDepsFolder = haxeProject.getFolder(HAXE_DEPS_MAGIC_FOLDER_NAME);
       if (haxeDepsFolder.exists() && haxeDepsFolder.isVirtual()) {
          haxeDepsFolder.delete(false, monitor);
@@ -124,34 +130,51 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
 
    private IStatus updateHaxeProjectDependencies(final IProject haxeProject, final IProgressMonitor monitor) {
       try {
+         final var prefs = new HaxeProjectPreference(haxeProject);
+         final var haxeSDK = prefs.getEffectiveHaxeSDK();
+
+         /*
+          * create haxe stdlib top-level virtual folder
+          */
+         final var haxeStdLibFolder = haxeProject.getFolder(HAXE_STDLIB_MAGIC_FOLDER_NAME);
+         if (haxeStdLibFolder.exists()) {
+            if (!haxeStdLibFolder.isLinked())
+               return Haxe4EPlugin.status().createError("Cannot update Haxe standard library folder. Physical folder with name "
+                  + HAXE_STDLIB_MAGIC_FOLDER_NAME + " exists!");
+         } else {
+            if (haxeSDK != null) {
+               haxeStdLibFolder.createLink(haxeSDK.getStandardLibDir().toUri(), IResource.REPLACE, monitor);
+            }
+         }
+
          /*
           * create haxe dependencies top-level virtual folder
           */
-         final var haxedepsFolder = haxeProject.getFolder(HAXE_DEPS_MAGIC_FOLDER_NAME);
+         final var haxeDepsFolder = haxeProject.getFolder(HAXE_DEPS_MAGIC_FOLDER_NAME);
 
-         final var prefs = new HaxeProjectPreference(haxeProject);
          final var buildFile = prefs.getEffectiveHaxeBuildFile();
 
+         // if no build file exists remove the dependencies folder
          if (buildFile == null) {
-            if (haxedepsFolder.exists() && haxedepsFolder.isVirtual()) {
-               haxedepsFolder.delete(true, monitor);
+            if (haxeDepsFolder.exists() && haxeDepsFolder.isVirtual()) {
+               haxeDepsFolder.delete(true, monitor);
             }
             return Status.OK_STATUS;
          }
 
-         if (haxedepsFolder.exists()) {
-            if (!haxedepsFolder.isVirtual())
+         if (haxeDepsFolder.exists()) {
+            if (!haxeDepsFolder.isVirtual())
                return Haxe4EPlugin.status().createError("Cannot update Haxe dependencies list. Physical folder with name "
                   + HAXE_DEPS_MAGIC_FOLDER_NAME + " exists!");
          } else {
-            haxedepsFolder.create(IResource.VIRTUAL, true, monitor);
+            haxeDepsFolder.create(IResource.VIRTUAL, true, monitor);
          }
 
          final var depsToCheck = new HaxeBuildFile(buildFile.getLocation().toFile()) //
-            .getDirectDependencies(prefs.getEffectiveHaxeSDK(), monitor).stream() //
+            .getDirectDependencies(haxeSDK, monitor).stream() //
             .collect(Collectors.toMap(d -> d.meta.name + " [" + (d.isDevVersion ? "dev" : d.meta.version) + "]", Function.identity()));
 
-         for (final var folder : haxedepsFolder.members()) {
+         for (final var folder : haxeDepsFolder.members()) {
             final var dep = depsToCheck.get(folder.getName());
             if (dep != null && dep.location.equals(folder.getRawLocation().toFile().toPath())) {
                depsToCheck.remove(folder.getName());
@@ -161,7 +184,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
             }
          }
          for (final var dep : depsToCheck.entrySet()) {
-            final var folder = haxedepsFolder.getFolder(dep.getKey());
+            final var folder = haxeDepsFolder.getFolder(dep.getKey());
             folder.createLink(dep.getValue().location.toUri(), IResource.BACKGROUND_REFRESH, monitor);
          }
          return Status.OK_STATUS;
