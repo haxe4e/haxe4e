@@ -9,7 +9,8 @@ Automatic-Module-Name: org.haxe4e
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.haxe4e.Haxe4EPlugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ libs/haxe-formatter-1.12.jar
 Require-Bundle: org.eclipse.platform;bundle-version="4.18.0",
  org.eclipse.core.expressions,
  org.eclipse.core.resources,

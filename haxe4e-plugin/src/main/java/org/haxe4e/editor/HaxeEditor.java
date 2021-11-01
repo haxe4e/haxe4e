@@ -125,6 +125,11 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
    }
 
    @Override
+   protected void initializeKeyBindingScopes() {
+      setKeyBindingScopes(new String[] {"org.haxe4e.editor.HaxeEditorContext"});
+   }
+
+   @Override
    protected void performSave(final boolean overwrite, final IProgressMonitor progressMonitor) {
 
       // TODO workaround for https://github.com/vshaxe/vshaxe/issues/507

@@ -98,6 +98,7 @@ Haxe4E would not have been possible without the following technologies and learn
 **Technologies/Libraries**
 - [Haxe Language Server](https://github.com/vshaxe/haxe-language-server)
 - [Haxe TextMate Grammar](https://github.com/vshaxe/haxe-TmLanguage)
+- [Haxe Formatter](https://github.com/HaxeCheckstyle/haxe-formatter/)
 - [Eclipse LSP4E](https://projects.eclipse.org/projects/technology.lsp4e) - Language Server Protocol for Eclipse
 - [Eclipse TM4E](https://projects.eclipse.org/projects/technology.tm4e) - TextMate support for Eclipse
 - [Eclipse Tycho](https://projects.eclipse.org/projects/technology.tycho) - tools to build Eclipse plug-ins with Maven

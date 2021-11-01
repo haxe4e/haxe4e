@@ -30,7 +30,7 @@ public final class HaxeRunner {
 
    public static void launchHxmlFile(final ILaunch launch, final HaxeSDK haxeSDK, final Path hxmlFile, final Path workDir,
       final Map<String, String> envVars, final boolean appendEnvVars, final Consumer<ProcessWrapper> action) {
-      final var job = Job.create(NLS.bind(Messages.Launch_RunningFile, hxmlFile), runnable -> {
+      final var job = Job.create(NLS.bind(Messages.Launch_RunningFile, hxmlFile), monitor -> {
          try {
             final var proc = haxeSDK.getCompilerProcessBuilder(!appendEnvVars) //
                .withArg(hxmlFile.toAbsolutePath()) //
