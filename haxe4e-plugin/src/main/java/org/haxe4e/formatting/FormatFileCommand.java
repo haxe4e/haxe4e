@@ -27,6 +27,7 @@ import de.sebthom.eclipse.commons.ui.widgets.NotificationPopup;
 import formatter.Formatter;
 import formatter.FormatterInput;
 import formatter.Result;
+import net.sf.jstuff.core.Strings;
 
 /**
  * @author Sebastian Thomschke
@@ -73,7 +74,15 @@ public final class FormatFileCommand extends AbstractHandler {
       monitor.setTaskName("Formatting " + file.getLocation() + "...");
       try (var in = file.getContents()) {
          final var unformatted = IOUtils.toString(in, file.getCharset());
-         final var result = Formatter.format(new FormatterInput.Code(unformatted), Format.getFormatterConfig(file), null, null, null);
+         final var formatterConfig = Format.getFormatterConfig(file);
+
+         final var result = Formatter.format( //
+            new FormatterInput.Code(unformatted), //
+            formatterConfig, //
+            Strings.getNewLineSeparator(unformatted), //
+            null, //
+            null //
+         );
          if (result instanceof Result.Success) {
             final var formatted = ((Result.Success) result).formattedCode;
             if (!unformatted.equals(formatted)) {
