@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature id="de.sebthom.eclipse.commons.feature"/>
    <feature id="org.haxe4e.feature">
       <category name="Haxe Language Support"/>
    </feature>
    <category-def name="Haxe Language Support" label="Haxe programming language support for the Eclipse IDE"/>
+   <repository-reference location="https://raw.githubusercontent.com/sebthom/eclipse-commons/updatesite" enabled="true" />
 </site>
