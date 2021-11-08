@@ -16,6 +16,7 @@ public interface Constants {
    String IMAGE_HAXE_DEPENDENCIES = "src/main/resources/images/navigator/classpath.png";
    String IMAGE_HAXE_SOURCE_FOLDER = "src/main/resources/images/navigator/packagefolder_obj.png";
    String IMAGE_HAXE_SOURCE_PACKAGE = "src/main/resources/images/navigator/package_obj.png";
+   String IMAGE_HAXE_WIZARD_BANNER = "src/main/resources/images/logo/haxe_wizard_banner.png";
    String IMAGE_OUTLINE_SYMBOL_ENUM_MEMBER = "src/main/resources/images/outline/enum_member.png";
    String IMAGE_OUTLINE_SYMBOL_TYPEDEF = "src/main/resources/images/outline/typedef.png";
    String IMAGE_TERMINATE_BUTTON = "src/main/resources/images/console/terminate_co.png";

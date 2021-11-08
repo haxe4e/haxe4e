@@ -8,6 +8,8 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.haxe4e.Constants;
+import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.prefs.HaxeWorkspacePreference;
@@ -24,6 +26,7 @@ public final class NewHaxeProjectPage extends WizardNewProjectCreationPage {
 
    public NewHaxeProjectPage(final String pageName) {
       super(pageName);
+      setImageDescriptor(Haxe4EPlugin.get().getSharedImageDescriptor(Constants.IMAGE_HAXE_WIZARD_BANNER));
    }
 
    @Override
