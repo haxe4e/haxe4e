@@ -6,6 +6,7 @@ package org.haxe4e.navigation;
 
 import org.eclipse.lsp4e.outline.SymbolsLabelProvider;
 import org.eclipse.lsp4e.outline.SymbolsModel.DocumentSymbolWithFile;
+import org.eclipse.lsp4j.DocumentSymbol;
 import org.eclipse.lsp4j.SymbolInformation;
 import org.eclipse.lsp4j.SymbolKind;
 import org.eclipse.swt.graphics.Image;
@@ -28,6 +29,8 @@ public final class HaxeOutlineSymbolsProvider extends SymbolsLabelProvider {
          kind = ((SymbolInformation) item).getKind();
       } else if (item instanceof DocumentSymbolWithFile) {
          kind = ((DocumentSymbolWithFile) item).symbol.getKind();
+      } else if (item instanceof DocumentSymbol) {
+         kind = ((DocumentSymbol) item).getKind();
       }
       if (kind != null) {
          switch (kind) {

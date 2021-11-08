@@ -8,7 +8,10 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.lsp4e.outline.SymbolsModel.DocumentSymbolWithFile;
+import org.eclipse.lsp4j.DocumentSymbol;
 import org.eclipse.lsp4j.SymbolInformation;
+
+import de.sebthom.eclipse.commons.ui.Editors;
 
 /**
  * See https://wiki.eclipse.org/Platform_Expression_Framework
@@ -48,6 +51,11 @@ public final class FileTypePropertyTester extends PropertyTester {
          file = (IFile) candidate;
       } else if (candidate instanceof DocumentSymbolWithFile) {
          file = ((DocumentSymbolWithFile) candidate).file;
+      } else if (candidate instanceof DocumentSymbol) {
+         final var editor = Editors.getActiveTextEditor();
+         if (editor == null)
+            return false;
+         file = editor.getEditorInput().getAdapter(IFile.class);
       } else
          return false;
 
