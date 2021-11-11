@@ -12,6 +12,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
@@ -31,6 +32,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm4e.ui.internal.model.TMModelManager;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.haxe4e.Haxe4EPlugin;
+
+import net.sf.jstuff.core.reflection.Fields;
 
 /**
  * @author Sebastian Thomschke
@@ -65,6 +68,13 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
    @Override
    public void createPartControl(final Composite parent) {
       super.createPartControl(parent);
+
+      final var viewer = getSourceViewer();
+
+      final var contentAssistant = (ContentAssistant) Fields.read(viewer, "fContentAssistant");
+      if (contentAssistant != null) {
+         contentAssistant.setAutoActivationDelay(500);
+      }
 
       final var textWidget = getSourceViewer().getTextWidget();
       textWidget.addCaretListener(caretListener);
