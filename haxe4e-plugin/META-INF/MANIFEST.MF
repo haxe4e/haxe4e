@@ -11,7 +11,7 @@ Bundle-Activator: org.haxe4e.Haxe4EPlugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ClassPath: .,
  libs/haxe-formatter-1.12.jar
-Require-Bundle: org.eclipse.platform;bundle-version="4.18.0",
+Require-Bundle: org.eclipse.platform;bundle-version="4.19.0",
  org.eclipse.core.expressions,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,

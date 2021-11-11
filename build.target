@@ -9,9 +9,8 @@
         </location>
 
         <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-            <!-- Eclipse 2020-12 aka 4.18 is minimum required by lsp4e -->
-            <!-- Eclipse 2020-09 aka 4.17 is the first release requiring JRE 11 https://wiki.eclipse.org/Eclipse/Installation#Eclipse_4.17_.282020-09.29 -->
-            <repository location="https://download.eclipse.org/releases/2020-12/"/>
+            <!-- Eclipse 2021-03 aka 4.19 is the required minimum of latest LSP4E release -->
+            <repository location="https://download.eclipse.org/releases/2021-03/"/>
             <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
             <unit id="org.eclipse.sdk.ide" version="0.0.0"/>
             <unit id="org.eclipse.mylyn.wikitext.editors_feature.feature.group" version="0.0.0"/>
@@ -20,7 +19,8 @@
         </location>
 
         <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-            <repository location="https://download.eclipse.org/eclipse/updates/4.18/"/>
+            <repository location="https://download.eclipse.org/eclipse/updates/4.19/"/>
+            <unit id="org.eclipse.jface.text.tests" version="0.0.0"/>
             <unit id="org.eclipse.test.feature.group" version="0.0.0"/>
         </location>
 
