@@ -4,7 +4,7 @@
     <booleanAttribute key="append.args" value="true"/>
     <booleanAttribute key="askclear" value="false"/>
     <booleanAttribute key="automaticAdd" value="false"/>
-    <booleanAttribute key="automaticValidate" value="true"/>
+    <booleanAttribute key="automaticValidate" value="false"/>
     <stringAttribute key="bootstrap" value=""/>
     <stringAttribute key="checked" value="org.eclipse.lsp4e.debug,org.haxe4e"/>
     <booleanAttribute key="clearConfig" value="true"/>
@@ -32,7 +32,7 @@
         <setEntry value="com.fasterxml.jackson.core.jackson-databind*2.13.0@default:default"/>
         <setEntry value="com.google.gson@default:default"/>
         <setEntry value="com.google.guava*21.0.0.v20170206-1425@default:default"/>
-        <setEntry value="com.google.guava*27.1.0.v20190517-1946@default:default"/>
+        <setEntry value="com.google.guava*30.1.0.v20210127-2300@default:default"/>
         <setEntry value="com.ibm.icu@default:default"/>
         <setEntry value="com.jcraft.jsch@default:default"/>
         <setEntry value="com.sun.jna.platform@default:default"/>
@@ -129,12 +129,6 @@
         <setEntry value="org.eclipse.lsp4j@default:default"/>
         <setEntry value="org.eclipse.ltk.core.refactoring@default:default"/>
         <setEntry value="org.eclipse.ltk.ui.refactoring@default:default"/>
-        <setEntry value="org.eclipse.mylyn.commons.core@default:default"/>
-        <setEntry value="org.eclipse.mylyn.commons.notifications.core@default:default"/>
-        <setEntry value="org.eclipse.mylyn.commons.notifications.ui@default:default"/>
-        <setEntry value="org.eclipse.mylyn.commons.screenshots@default:default"/>
-        <setEntry value="org.eclipse.mylyn.commons.ui@default:default"/>
-        <setEntry value="org.eclipse.mylyn.commons.workbench@default:default"/>
         <setEntry value="org.eclipse.mylyn.wikitext.markdown@default:default"/>
         <setEntry value="org.eclipse.mylyn.wikitext@default:default"/>
         <setEntry value="org.eclipse.osgi.services@default:default"/>
