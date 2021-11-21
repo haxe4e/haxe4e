@@ -91,6 +91,13 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
    }
 
    @Override
+   public void dispose() {
+      hxmlList.getCursor().dispose(); // to prevent "java.lang.Error: SWT Resource was not properly disposed"
+
+      super.dispose();
+   }
+
+   @Override
    public void widgetSelected(final SelectionEvent event) {
       handleSelectionChanged();
    }
