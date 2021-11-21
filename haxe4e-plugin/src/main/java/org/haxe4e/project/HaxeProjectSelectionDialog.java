@@ -15,7 +15,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 
-import de.sebthom.eclipse.commons.ui.Projects;
+import de.sebthom.eclipse.commons.resources.Projects;
 
 /**
  * @author Sebastian Thomschke

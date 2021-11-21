@@ -10,7 +10,7 @@ import org.eclipse.ui.PlatformUI;
 import org.haxe4e.project.HaxeProjectNature;
 import org.haxe4e.widget.HaxeBuildFileToolbarContribution;
 
-import de.sebthom.eclipse.commons.ui.Projects;
+import de.sebthom.eclipse.commons.ui.UI;
 
 /**
  * @author Ian Harrigan
@@ -21,7 +21,7 @@ public final class ActiveEditorChangeListener implements IPartListener2 {
    @Override
    public void partBroughtToTop(final IWorkbenchPartReference partRef) {
       if (HaxeBuildFileToolbarContribution.instance != null) {
-         HaxeBuildFileToolbarContribution.instance.refresh(Projects.getActiveProjectWithNature(partRef, HaxeProjectNature.NATURE_ID));
+         HaxeBuildFileToolbarContribution.instance.refresh(UI.getActiveProjectWithNature(partRef, HaxeProjectNature.NATURE_ID));
       }
    }
 

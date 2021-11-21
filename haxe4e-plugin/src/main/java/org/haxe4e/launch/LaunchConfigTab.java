@@ -17,8 +17,8 @@ import org.haxe4e.localization.Messages;
 import org.haxe4e.prefs.HaxeWorkspacePreference;
 import org.haxe4e.project.HaxeProjectNature;
 
+import de.sebthom.eclipse.commons.resources.Projects;
 import de.sebthom.eclipse.commons.ui.Dialogs;
-import de.sebthom.eclipse.commons.ui.Projects;
 
 /**
  * @author Sebastian Thomschke
@@ -47,7 +47,7 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
    public void initializeFrom(final ILaunchConfiguration config) {
       try {
          final var projectName = config.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "");
-         form.selectedProject.set(Projects.getProject(projectName, HaxeProjectNature.NATURE_ID));
+         form.selectedProject.set(Projects.getOpenProjectWithNature(projectName, HaxeProjectNature.NATURE_ID));
          form.selectedProject.subscribe(this::updateLaunchConfigurationDialog);
 
          final var hxmlFile = config.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, "");

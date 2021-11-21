@@ -11,7 +11,7 @@ import org.haxe4e.navigation.ActiveEditorChangeListener;
 import org.haxe4e.navigation.HaxeDependenciesUpdater;
 import org.haxe4e.project.HaxeProjectNature;
 
-import de.sebthom.eclipse.commons.ui.Projects;
+import de.sebthom.eclipse.commons.resources.Projects;
 
 /**
  * @author Sebastian Thomschke

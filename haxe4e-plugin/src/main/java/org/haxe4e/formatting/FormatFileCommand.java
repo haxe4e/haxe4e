@@ -36,7 +36,7 @@ public final class FormatFileCommand extends AbstractHandler {
 
    @Override
    public Object execute(final ExecutionEvent event) throws ExecutionException {
-      final var window = UI.getWorkbenchWindow();
+      final var window = UI.getActiveWorkbenchWindow();
       if (window != null) {
          final var selection = (IStructuredSelection) window.getSelectionService().getSelection();
          final var job = Job.create("Formatting Haxe source files...", monitor -> {
