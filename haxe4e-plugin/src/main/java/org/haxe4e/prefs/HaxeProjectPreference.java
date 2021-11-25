@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
@@ -82,7 +83,11 @@ public class HaxeProjectPreference {
     * @return null if none configured
     */
    public String getHaxeBuildFile() {
-      return prefs.getString(PROPERTY_HAXE_BUILD_FILE);
+      final String buildFile = prefs.getString(PROPERTY_HAXE_BUILD_FILE);
+      if (Constants.HAXE_BUILD_FILE_EXCLUSIONS.contains(buildFile)) {
+         return null;
+      }
+      return buildFile;
    }
 
    public IProject getProject() {
@@ -116,6 +121,9 @@ public class HaxeProjectPreference {
    }
 
    public void setHaxeBuildFile(final String buildFile) {
+      if (Constants.HAXE_BUILD_FILE_EXCLUSIONS.contains(buildFile)) {
+         return;
+      }
       if (effectiveBuildFileBeforeSave == null) {
          effectiveBuildFileBeforeSave = getEffectiveHaxeBuildFile();
       }

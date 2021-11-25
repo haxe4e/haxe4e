@@ -48,7 +48,9 @@ public class HaxeProject {
             && Constants.HAXE_BUILD_FILE_EXTENSION.equals(res.getFileExtension()) //
          ) {
             final var fullPath = res.getFullPath().makeRelativeTo(projectFullPath).toPortableString();
-            if (allFiles || !allFiles && !fullPath.contains("/")) {
+            if (allFiles
+               || !allFiles && !fullPath.contains("/")
+               && !Constants.HAXE_BUILD_FILE_EXCLUSIONS.contains(res.getName())) {
                buildFiles.add(fullPath);
             }
          }
