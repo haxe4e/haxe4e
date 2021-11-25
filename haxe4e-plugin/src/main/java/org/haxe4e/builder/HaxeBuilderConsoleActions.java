@@ -22,12 +22,10 @@ public final class HaxeBuilderConsoleActions implements IConsolePageParticipant 
 
    @Override
    public void activated() {
-      terminate.setEnabled(true);
    }
 
    @Override
    public void deactivated() {
-      terminate.setEnabled(false);
    }
 
    @Override
@@ -43,13 +41,13 @@ public final class HaxeBuilderConsoleActions implements IConsolePageParticipant 
    public void init(final IPageBookViewPage page, final IConsole console) {
       final var builderConsole = (HaxeBuilderConsole) console;
 
-      builderConsole.buildContext.onTerminated.thenRun(this::deactivated);
+      builderConsole.buildContext.onTerminated.thenRun(() -> terminate.setEnabled(false));
 
       terminate = new Action("Terminate") {
          @Override
          public void run() {
             builderConsole.buildContext.monitor.setCanceled(true);
-            deactivated();
+            terminate.setEnabled(false);
          }
       };
       terminate.setImageDescriptor(Haxe4EPlugin.get().getSharedImageDescriptor(Constants.IMAGE_TERMINATE_BUTTON));
@@ -64,5 +62,4 @@ public final class HaxeBuilderConsoleActions implements IConsolePageParticipant 
 
       bars.updateActionBars();
    }
-
 }
