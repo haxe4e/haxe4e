@@ -211,6 +211,8 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
       } catch (final InterruptedException ex) {
          Thread.currentThread().interrupt();
          throw new CoreException(Haxe4EPlugin.status().createError(ex, "Aborted."));
+      } finally {
+         onTerminated.complete(null);
       }
    }
 

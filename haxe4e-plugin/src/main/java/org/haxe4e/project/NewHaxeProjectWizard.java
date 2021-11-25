@@ -98,8 +98,8 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
             if (exCore.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
                status = Haxe4EPlugin.status().createError(exCore, Messages.NewHaxeProject_CaseVariantExistsError, projHandle.getName());
             } else {
-               status = Haxe4EPlugin.status().createStatus(exCore.getStatus().getSeverity(), exCore, Messages.NewHaxeProject_UnexpectedError,
-                  exCore.getMessage());
+               status = Haxe4EPlugin.status().createStatus(exCore.getStatus().getSeverity(), exCore,
+                  Messages.NewHaxeProject_UnexpectedError, exCore.getMessage());
                Haxe4EPlugin.log().log(status);
             }
          } else {
@@ -111,7 +111,7 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
          return false;
       }
 
-      BasicNewResourceWizard.selectAndReveal(newProject, UI.getWorkbenchWindow());
+      BasicNewResourceWizard.selectAndReveal(newProject, UI.getActiveWorkbenchWindow());
       return true;
    }
 

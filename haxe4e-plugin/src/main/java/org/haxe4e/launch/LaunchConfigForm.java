@@ -19,10 +19,9 @@ import org.haxe4e.util.ui.GridDatas;
 import org.haxe4e.widget.HaxeBuildFileSelectionGroup;
 import org.haxe4e.widget.HaxeSDKSelectionGroup;
 
+import de.sebthom.eclipse.commons.resources.Projects;
 import de.sebthom.eclipse.commons.ui.Buttons;
-import de.sebthom.eclipse.commons.ui.Projects;
 import de.sebthom.eclipse.commons.ui.Texts;
-import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.ref.ObservableRef;
 
 /**
@@ -47,9 +46,7 @@ public class LaunchConfigForm extends Composite {
       txtSelectedProject.setEditable(false);
       txtSelectedProject.setLayoutData(GridDatas.fillHorizontalExcessive());
       Texts.bind(txtSelectedProject, selectedProject, //
-         projectName -> Strings.isEmpty(projectName) //
-            ? null //
-            : Projects.getProject(projectName, HaxeProjectNature.NATURE_ID), //
+         projectName -> Projects.getOpenProjectWithNature(projectName, HaxeProjectNature.NATURE_ID), //
          project -> project == null ? "" : project.getName() //
       );
 

@@ -79,7 +79,7 @@ public final class NewHaxeFileWizard extends Wizard implements INewWizard {
                progress.worked(1);
                progress.setTaskName(Messages.NewHaxeFile_OpeningInEditor);
                UI.run(() -> {
-                  final var page = UI.getWorkbenchPage();
+                  final var page = UI.getActiveWorkbenchPage();
                   try {
                      IDE.openEditor(page, newHaxeFile, true);
                   } catch (final PartInitException ex) {
