@@ -14,6 +14,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceDelta;
@@ -52,31 +53,41 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
 
    @Override
    protected IProject[] build(final int kind, final Map<String, String> args, final IProgressMonitor monitor) throws CoreException {
+      final var project = getProject();
+      final var prefs = new HaxeProjectPreference(project);
+
       final boolean needsBuild;
       switch (kind) {
          case INCREMENTAL_BUILD:
          case AUTO_BUILD:
-            final var delta = getDelta(getProject());
+            if (!prefs.isAutoBuild()) {
+               needsBuild = false;
+               break;
+            }
+
+            final var delta = getDelta(project);
             if (delta == null) {
                needsBuild = true;
             } else if (delta.getAffectedChildren().length == 0) {
                needsBuild = false;
             } else {
-               final boolean[] hasRelevantFileChange = {false};
+               final var hasRelevantFileChange = new MutableBoolean(false);
                delta.accept(subDelta -> {
-                  if (hasRelevantFileChange[0])
-                     return false; // skip
+                  if (hasRelevantFileChange.isTrue())
+                     return false; // no further scanning necessary
 
                   if ((subDelta.getFlags() & IResourceDelta.CONTENT) == 0)
-                     return true; // ignore
+                     return true; // ignore no content change happened
 
                   switch (subDelta.getKind()) {
-                     case IResourceDelta.CHANGED:
                      case IResourceDelta.ADDED:
+                     case IResourceDelta.CHANGED:
+                     case IResourceDelta.MOVED_FROM:
+                     case IResourceDelta.MOVED_TO:
                      case IResourceDelta.REMOVED:
                         break;
                      default:
-                        return true; // ignore
+                        return true; // ignore other delta types
                   }
 
                   final var resource = subDelta.getResource();
@@ -84,20 +95,24 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
                      case "bin":
                      case "build":
                      case "dump":
+                     case "output":
                      case "target":
-                        return true; // ignore
+                        return true; // ignore build artifacts
                      default:
                         break;
                   }
 
                   final var resourceExt = resource.getFileExtension();
-                  if (Constants.HAXE_BUILD_FILE_EXTENSION.equals(resourceExt) //
-                     || Constants.HAXE_FILE_EXTENSION.equals(resourceExt)) {
-                     hasRelevantFileChange[0] = true;
+                  switch (resourceExt == null ? "" : resourceExt) {
+                     case Constants.HAXE_BUILD_FILE_EXTENSION:
+                     case Constants.HAXE_FILE_EXTENSION:
+                     case "json":
+                     case "xml":
+                        hasRelevantFileChange.setTrue();
                   }
                   return true;
                });
-               needsBuild = hasRelevantFileChange[0];
+               needsBuild = hasRelevantFileChange.isTrue();
             }
             break;
          case CLEAN_BUILD:
@@ -109,13 +124,13 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
       }
 
       if (needsBuild) {
-         buildProject(getProject(), monitor);
+         buildProject(project, prefs, monitor);
       }
       return null;
    }
 
-   private void buildProject(final IProject project, final IProgressMonitor monitor) throws CoreException {
-      final var prefs = new HaxeProjectPreference(project);
+   private void buildProject(final IProject project, final HaxeProjectPreference prefs, final IProgressMonitor monitor)
+      throws CoreException {
       final var haxeSDK = prefs.getEffectiveHaxeSDK();
       if (haxeSDK == null)
          return;

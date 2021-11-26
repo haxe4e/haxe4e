@@ -27,6 +27,7 @@ import net.sf.jstuff.core.validation.Args;
  */
 public class HaxeProjectPreference {
 
+   private static final String PROPERTY_ALTERNATE_AUTO_BUILD = "haxe.project.auto_build";
    private static final String PROPERTY_ALTERNATE_HAXE_SDK = "haxe.project.alternate_sdk";
    private static final String PROPERTY_HAXE_BUILD_FILE = "haxe.project.build_file";
 
@@ -40,6 +41,7 @@ public class HaxeProjectPreference {
 
       this.project = project;
       prefs = new ScopedPreferenceStore(new ProjectScope(project), Haxe4EPlugin.PLUGIN_ID);
+      prefs.setDefault(PROPERTY_ALTERNATE_AUTO_BUILD, true);
    }
 
    /**
@@ -47,16 +49,6 @@ public class HaxeProjectPreference {
     */
    public HaxeSDK getAlternateHaxeSDK() {
       return HaxeWorkspacePreference.getHaxeSDK(prefs.getString(PROPERTY_ALTERNATE_HAXE_SDK));
-   }
-
-   /**
-    * @return null if none found
-    */
-   public HaxeSDK getEffectiveHaxeSDK() {
-      final var sdk = getAlternateHaxeSDK();
-      if (sdk == null)
-         return HaxeWorkspacePreference.getDefaultHaxeSDK(false, true);
-      return sdk;
    }
 
    /**
@@ -72,6 +64,7 @@ public class HaxeProjectPreference {
       var buildFile = project.getFile("build.hxml");
       if (buildFile.exists())
          return buildFile;
+
       buildFile = project.getFile("tests.hxml");
       if (buildFile.exists())
          return buildFile;
@@ -80,18 +73,31 @@ public class HaxeProjectPreference {
    }
 
    /**
+    * @return null if none found
+    */
+   public HaxeSDK getEffectiveHaxeSDK() {
+      final var sdk = getAlternateHaxeSDK();
+      if (sdk == null)
+         return HaxeWorkspacePreference.getDefaultHaxeSDK(false, true);
+      return sdk;
+   }
+
+   /**
     * @return null if none configured
     */
    public String getHaxeBuildFile() {
-      final String buildFile = prefs.getString(PROPERTY_HAXE_BUILD_FILE);
-      if (Constants.HAXE_BUILD_FILE_EXCLUSIONS.contains(buildFile)) {
+      final var buildFile = prefs.getString(PROPERTY_HAXE_BUILD_FILE);
+      if (Constants.HAXE_BUILD_FILE_EXCLUSIONS.contains(buildFile))
          return null;
-      }
       return buildFile;
    }
 
    public IProject getProject() {
       return project;
+   }
+
+   public boolean isAutoBuild() {
+      return prefs.getBoolean(PROPERTY_ALTERNATE_AUTO_BUILD);
    }
 
    public boolean save() {
@@ -120,10 +126,13 @@ public class HaxeProjectPreference {
       }
    }
 
+   public void setAutoBuild(final boolean value) {
+      prefs.setValue(PROPERTY_ALTERNATE_AUTO_BUILD, value);
+   }
+
    public void setHaxeBuildFile(final String buildFile) {
-      if (Constants.HAXE_BUILD_FILE_EXCLUSIONS.contains(buildFile)) {
+      if (Constants.HAXE_BUILD_FILE_EXCLUSIONS.contains(buildFile))
          return;
-      }
       if (effectiveBuildFileBeforeSave == null) {
          effectiveBuildFileBeforeSave = getEffectiveHaxeBuildFile();
       }

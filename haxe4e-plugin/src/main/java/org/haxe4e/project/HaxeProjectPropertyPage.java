@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.haxe4e.model.HaxeSDK;
@@ -19,6 +20,7 @@ import org.haxe4e.util.ui.GridDatas;
 import org.haxe4e.widget.HaxeBuildFileSelectionGroup;
 import org.haxe4e.widget.HaxeSDKSelectionGroup;
 
+import de.sebthom.eclipse.commons.ui.Buttons;
 import net.sf.jstuff.core.ref.ObservableRef;
 
 /**
@@ -28,6 +30,7 @@ public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.Proper
 
    private ObservableRef<HaxeSDK> selectedAltSDK;
    private ObservableRef<String> buildFile;
+   private ObservableRef<Boolean> autoBuild;
    private HaxeProjectPreference prefs;
 
    @Override
@@ -56,6 +59,10 @@ public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.Proper
       buildFile = grpBuildFile.buildFile;
       buildFile.set(prefs.getHaxeBuildFile());
 
+      autoBuild = new ObservableRef<>(prefs.isAutoBuild());
+      final var btnAutoBuild = new Button(container, SWT.CHECK);
+      btnAutoBuild.setText("Enable auto build");
+      Buttons.bind(btnAutoBuild, autoBuild);
       return container;
    }
 
@@ -63,6 +70,7 @@ public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.Proper
    public boolean performOk() {
       prefs.setAlternateHaxeSDK(selectedAltSDK.get());
       prefs.setHaxeBuildFile(buildFile.get());
+      prefs.setAutoBuild(autoBuild.get());
       prefs.save();
       return super.performOk();
    }

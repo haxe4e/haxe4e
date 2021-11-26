@@ -152,6 +152,9 @@ public final class HaxeWorkspacePreference {
     * @return null if not found
     */
    public static HaxeSDK getHaxeSDK(final String name) {
+      if (Strings.isEmpty(name))
+         return null;
+
       ensureHaxeSDKsInitialized();
 
       synchronized (haxeSDKs) {
