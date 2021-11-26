@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Haxe4EPlugin;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -34,7 +35,7 @@ public final class NekoVM implements Comparable<NekoVM> {
    private static final String ENV_NEKO_INSTPATH = "NEKO_INSTPATH";
 
    @JsonIgnore
-   private static final Supplier<NekoVM> NEKO_FROM_PATH = Suppliers.memoize(() -> {
+   private static final Supplier<@Nullable NekoVM> NEKO_FROM_PATH = Suppliers.memoize(() -> {
       final var nekoPath = System.getenv(ENV_NEKOPATH);
       if (Strings.isNotBlank(nekoPath)) {
          final var sdk = new NekoVM(Paths.get(nekoPath));

@@ -47,7 +47,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    public static final String ENV_HAXE_STD_PATH = "HAXE_STD_PATH";
 
    @JsonIgnore
-   private static final Supplier<HaxeSDK> HAXESDK_FROM_PATH = Suppliers.memoize(() -> {
+   private static final Supplier<@Nullable HaxeSDK> HAXESDK_FROM_PATH = Suppliers.memoize(() -> {
       final var haxepath = System.getenv(ENV_HAXEPATH);
       if (Strings.isBlank(haxepath))
          return null;
