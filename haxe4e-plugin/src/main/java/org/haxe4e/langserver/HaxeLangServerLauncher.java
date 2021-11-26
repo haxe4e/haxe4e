@@ -84,7 +84,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
          displayServerArgs = Collections.emptyList();
          haxeSDK = HaxeWorkspacePreference.getDefaultHaxeSDK(true, true);
       } else {
-         final var projectPrefs = new HaxeProjectPreference(project);
+         final var projectPrefs = HaxeProjectPreference.get(project);
          haxeSDK = projectPrefs.getEffectiveHaxeSDK();
          final var buildFile = projectPrefs.getEffectiveHaxeBuildFile();
          displayServerArgs = buildFile == null ? Collections.emptyList()

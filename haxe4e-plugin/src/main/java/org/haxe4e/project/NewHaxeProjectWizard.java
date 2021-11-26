@@ -74,7 +74,7 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
 
                newProject = (IProject) create.getAffectedObjects()[0];
                HaxeProjectNature.addToProject(newProject);
-               final var prefs = new HaxeProjectPreference(newProject);
+               final var prefs = HaxeProjectPreference.get(newProject);
                prefs.setAlternateHaxeSDK(newHaxeProjectPage.selectedAltSDK.get());
                prefs.save();
 

@@ -66,7 +66,7 @@ public class HaxeBuildFileSelectionGroup extends Composite {
       project.subscribe(p -> {
          btnBrowseBuildFile.setEnabled(p != null);
          if (p != null) {
-            final var prefs = new HaxeProjectPreference(p);
+            final var prefs = HaxeProjectPreference.get(p);
             buildFile.set(prefs.getHaxeBuildFile());
          }
       });

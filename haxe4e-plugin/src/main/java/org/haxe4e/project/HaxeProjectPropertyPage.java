@@ -49,7 +49,7 @@ public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.Proper
          project = resource.getProject();
       }
 
-      prefs = new HaxeProjectPreference(project);
+      prefs = HaxeProjectPreference.get(project);
       final var grpHaxeSDKSelection = new HaxeSDKSelectionGroup(container, GridDataFactory.fillDefaults().create());
       selectedAltSDK = grpHaxeSDKSelection.selectedAltSDK;
       selectedAltSDK.set(prefs.getAlternateHaxeSDK());

@@ -20,17 +20,9 @@ import org.haxe4e.prefs.HaxeProjectPreference;
  */
 public class HaxeProject {
    private IProject project;
-   private HaxeProjectPreference prefs;
-   
+
    public HaxeProject(final IProject project) {
       this.project = project;
-   }
-
-   public HaxeProjectPreference getPrefs() {
-      if (prefs == null) {
-         prefs = new HaxeProjectPreference(project);
-      }
-      return prefs;
    }
 
    public List<String> getBuildFiles() throws CoreException {
@@ -48,9 +40,7 @@ public class HaxeProject {
             && Constants.HAXE_BUILD_FILE_EXTENSION.equals(res.getFileExtension()) //
          ) {
             final var fullPath = res.getFullPath().makeRelativeTo(projectFullPath).toPortableString();
-            if (allFiles
-               || !allFiles && !fullPath.contains("/")
-               && !Constants.HAXE_BUILD_FILE_EXCLUSIONS.contains(res.getName())) {
+            if (allFiles || !allFiles && !fullPath.contains("/") && !Constants.HAXE_BUILD_FILE_EXCLUSIONS.contains(res.getName())) {
                buildFiles.add(fullPath);
             }
          }
@@ -85,13 +75,17 @@ public class HaxeProject {
       // create a new launch config
       final var newLaunchConfig = launchConfigType.newInstance(null, launchMgr.generateLaunchConfigurationName(project.getName()));
       newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_PROJECT, project.getName());
-      final var prefs = new HaxeProjectPreference(project);
+      final var prefs = HaxeProjectPreference.get(project);
       final var altSDK = prefs.getAlternateHaxeSDK();
       if (altSDK != null) {
          newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_SDK, altSDK.getName());
       }
 
       return newLaunchConfig;
+   }
+
+   public HaxeProjectPreference getPrefs() {
+      return HaxeProjectPreference.get(project);
    }
 
    public void setBuildFile(final String buildFile) {

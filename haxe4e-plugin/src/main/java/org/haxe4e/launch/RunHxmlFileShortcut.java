@@ -73,7 +73,7 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
             + hxmlFile.getName() + ")"));
          newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_PROJECT, project.getName());
          newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, hxmlFilePath);
-         final var prefs = new HaxeProjectPreference(project);
+         final var prefs = HaxeProjectPreference.get(project);
          final var altSDK = prefs.getAlternateHaxeSDK();
          if (altSDK != null) {
             newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_SDK, altSDK.getName());

@@ -55,7 +55,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
       if (res instanceof IFile) {
          final var file = (IFile) res;
          if (Constants.HAXE_BUILD_FILE_EXTENSION.equals(file.getFileExtension())) {
-            final var prefs = new HaxeProjectPreference(project);
+            final var prefs = HaxeProjectPreference.get(project);
             final var haxeBuildFilePath = prefs.getEffectiveHaxeBuildFile();
             if (haxeBuildFilePath == null)
                return image;
@@ -64,7 +64,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
          }
       } else if (res instanceof IFolder) {
          final var folder = (IFolder) res;
-         final var prefs = new HaxeProjectPreference(project);
+         final var prefs = HaxeProjectPreference.get(project);
          final var haxeBuildFilePath = prefs.getEffectiveHaxeBuildFile();
          if (haxeBuildFilePath == null)
             return image;
@@ -98,7 +98,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
             if (folder.isLinked() //
                && folder.getName().equals(HaxeDependenciesUpdater.HAXE_STDLIB_MAGIC_FOLDER_NAME) //
             ) {
-               final var prefs = new HaxeProjectPreference(project);
+               final var prefs = HaxeProjectPreference.get(project);
                final var haxeSDK = prefs.getEffectiveHaxeSDK();
                return "Haxe Standard Library" + (haxeSDK == null ? "" : " [" + haxeSDK.getName() + "]");
             }

@@ -54,7 +54,7 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
    @Override
    protected IProject[] build(final int kind, final Map<String, String> args, final IProgressMonitor monitor) throws CoreException {
       final var project = getProject();
-      final var prefs = new HaxeProjectPreference(project);
+      final var prefs = HaxeProjectPreference.get(project);
 
       final boolean needsBuild;
       switch (kind) {

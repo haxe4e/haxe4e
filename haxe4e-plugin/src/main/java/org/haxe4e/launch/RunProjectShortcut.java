@@ -109,7 +109,7 @@ public class RunProjectShortcut implements ILaunchShortcut {
          if (buildFileToLaunch != null) {
             newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, buildFileToLaunch);
          }
-         final var prefs = new HaxeProjectPreference(project);
+         final var prefs = HaxeProjectPreference.get(project);
          final var altSDK = prefs.getAlternateHaxeSDK();
          if (altSDK != null) {
             newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_SDK, altSDK.getName());

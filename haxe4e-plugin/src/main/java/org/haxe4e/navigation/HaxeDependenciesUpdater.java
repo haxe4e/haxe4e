@@ -130,7 +130,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
 
    private IStatus updateHaxeProjectDependencies(final IProject haxeProject, final IProgressMonitor monitor) {
       try {
-         final var prefs = new HaxeProjectPreference(haxeProject);
+         final var prefs = HaxeProjectPreference.get(haxeProject);
          final var haxeSDK = prefs.getEffectiveHaxeSDK();
 
          /*

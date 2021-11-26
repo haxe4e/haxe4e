@@ -5,6 +5,7 @@
 package org.haxe4e.prefs;
 
 import java.io.IOException;
+import java.util.WeakHashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -25,7 +26,15 @@ import net.sf.jstuff.core.validation.Args;
 /**
  * @author Sebastian Thomschke
  */
-public class HaxeProjectPreference {
+public final class HaxeProjectPreference {
+
+   private static final WeakHashMap<IProject, HaxeProjectPreference> PREFS_BY_PROJECT = new WeakHashMap<>();
+
+   public static HaxeProjectPreference get(final IProject project) {
+      synchronized (PREFS_BY_PROJECT) {
+         return PREFS_BY_PROJECT.computeIfAbsent(project, HaxeProjectPreference::new);
+      }
+   }
 
    private static final String PROPERTY_ALTERNATE_AUTO_BUILD = "haxe.project.auto_build";
    private static final String PROPERTY_ALTERNATE_HAXE_SDK = "haxe.project.alternate_sdk";
@@ -36,7 +45,7 @@ public class HaxeProjectPreference {
 
    private IFile effectiveBuildFileBeforeSave;
 
-   public HaxeProjectPreference(final IProject project) {
+   private HaxeProjectPreference(final IProject project) {
       Args.notNull("project", project);
 
       this.project = project;
@@ -138,5 +147,4 @@ public class HaxeProjectPreference {
       }
       prefs.setValue(PROPERTY_HAXE_BUILD_FILE, buildFile);
    }
-
 }

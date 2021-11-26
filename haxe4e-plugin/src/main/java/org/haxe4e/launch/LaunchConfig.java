@@ -51,7 +51,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
          return;
       }
 
-      final var prefs = new HaxeProjectPreference(project);
+      final var prefs = HaxeProjectPreference.get(project);
       final var haxeSDK = prefs.getEffectiveHaxeSDK();
       if (!haxeSDK.isValid()) {
          Dialogs.showError(Messages.Prefs_NoSDKRegistered_Title, Messages.Prefs_NoSDKRegistered_Body);
