@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import de.sebthom.eclipse.commons.ui.Dialogs;
 import de.sebthom.eclipse.commons.ui.UI;
 import net.sf.jstuff.core.Strings;
+import net.sf.jstuff.core.io.RuntimeIOException;
 
 /**
  * @author Sebastian Thomschke
@@ -84,6 +85,7 @@ public final class HaxeWorkspacePreference {
             if (haxeSDKs.isEmpty()) {
                final var defaultSDK = HaxeSDK.fromPath();
                if (defaultSDK != null) {
+                  Haxe4EPlugin.log().info("Registering system {0} with {1}", defaultSDK, defaultSDK.getNekoVM());
                   haxeSDKs.add(defaultSDK);
                   setDefaultHaxeSDK(defaultSDK.getName());
                   save();
@@ -198,7 +200,7 @@ public final class HaxeWorkspacePreference {
          try {
             PREFS.setValue(PROPERTY_HAXE_SDKS, JSON.writeValueAsString(haxeSDKs));
          } catch (final JsonProcessingException ex) {
-            throw new RuntimeException(ex);
+            throw new RuntimeIOException(ex);
          }
       }
    }
