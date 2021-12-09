@@ -76,12 +76,12 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
 
    public void removeDependenciesFolder(final IProject haxeProject, final IProgressMonitor monitor) throws CoreException {
       final var haxeStdLibFolder = haxeProject.getFolder(HAXE_STDLIB_MAGIC_FOLDER_NAME);
-      if (haxeStdLibFolder.exists() && haxeStdLibFolder.isVirtual()) {
+      if (haxeStdLibFolder.exists() && (haxeStdLibFolder.isVirtual() || haxeStdLibFolder.isLinked())) {
          haxeStdLibFolder.delete(false, monitor);
       }
 
       final var haxeDepsFolder = haxeProject.getFolder(HAXE_DEPS_MAGIC_FOLDER_NAME);
-      if (haxeDepsFolder.exists() && haxeDepsFolder.isVirtual()) {
+      if (haxeDepsFolder.exists() && (haxeDepsFolder.isVirtual() || haxeDepsFolder.isLinked())) {
          haxeDepsFolder.delete(false, monitor);
       }
    }
