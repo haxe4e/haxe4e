@@ -4,10 +4,6 @@
  */
 package org.haxe4e.project;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Adapters;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,6 +16,7 @@ import org.haxe4e.util.ui.GridDatas;
 import org.haxe4e.widget.HaxeBuildFileSelectionGroup;
 import org.haxe4e.widget.HaxeSDKSelectionGroup;
 
+import de.sebthom.eclipse.commons.resources.Projects;
 import de.sebthom.eclipse.commons.ui.Buttons;
 import net.sf.jstuff.core.ref.ObservableRef;
 
@@ -42,13 +39,7 @@ public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.Proper
       container.setLayout(new GridLayout(1, true));
       container.setLayoutData(GridDatas.fillHorizontal());
 
-      var project = Adapters.adapt(getElement(), IProject.class);
-      if (project == null) {
-         final var resource = Adapters.adapt(getElement(), IResource.class);
-         Assert.isNotNull(resource, "unable to adapt element to a project");
-         project = resource.getProject();
-      }
-
+      final var project = Projects.adapt(getElement());
       prefs = HaxeProjectPreference.get(project);
       final var grpHaxeSDKSelection = new HaxeSDKSelectionGroup(container, GridDataFactory.fillDefaults().create());
       selectedAltSDK = grpHaxeSDKSelection.selectedAltSDK;

@@ -10,10 +10,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -21,6 +19,7 @@ import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.builder.HaxeBuilder;
 import org.haxe4e.navigation.HaxeDependenciesUpdater;
 
+import de.sebthom.eclipse.commons.resources.Projects;
 import net.sf.jstuff.core.validation.Args;
 
 /**
@@ -35,9 +34,8 @@ public final class HaxeProjectNature implements IProjectNature {
          final var currentSelection = HandlerUtil.getCurrentSelection(event);
          if (currentSelection instanceof IStructuredSelection) {
             final var selectedElement = ((IStructuredSelection) currentSelection).getFirstElement();
-            final var resource = Platform.getAdapterManager().getAdapter(selectedElement, IResource.class);
-            if (resource != null) {
-               final var project = resource.getProject();
+            final var project = Projects.adapt(selectedElement);
+            if (project != null) {
                try {
                   addToProject(project);
                   return Status.OK_STATUS;
@@ -46,7 +44,6 @@ public final class HaxeProjectNature implements IProjectNature {
                }
             }
          }
-
          return Status.CANCEL_STATUS;
       }
    }
@@ -58,9 +55,8 @@ public final class HaxeProjectNature implements IProjectNature {
          final var currentSelection = HandlerUtil.getCurrentSelection(event);
          if (currentSelection instanceof IStructuredSelection) {
             final var selectedElement = ((IStructuredSelection) currentSelection).getFirstElement();
-            final var resource = Platform.getAdapterManager().getAdapter(selectedElement, IResource.class);
-            if (resource != null) {
-               final var project = resource.getProject();
+            final var project = Projects.adapt(selectedElement);
+            if (project != null) {
                try {
                   removeFromProject(project);
                   return Status.OK_STATUS;
@@ -69,7 +65,6 @@ public final class HaxeProjectNature implements IProjectNature {
                }
             }
          }
-
          return Status.CANCEL_STATUS;
       }
    }
