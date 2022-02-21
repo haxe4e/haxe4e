@@ -4,6 +4,8 @@
  */
 package org.haxe4e.model;
 
+import static org.eclipse.jdt.annotation.DefaultLocation.*;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -12,6 +14,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Sebastian Thomschke
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@NonNullByDefault({PARAMETER, RETURN_TYPE, TYPE_BOUND, TYPE_ARGUMENT})
 public class HaxelibJSON {
 
    private static final ObjectMapper JSON = new ObjectMapper();

@@ -24,7 +24,6 @@ import net.sf.jstuff.core.SystemUtils;
 import net.sf.jstuff.core.functional.Suppliers;
 import net.sf.jstuff.core.io.Processes;
 import net.sf.jstuff.core.validation.Args;
-import net.sf.jstuff.core.validation.Assert;
 
 /**
  * @author Sebastian Thomschke
@@ -69,12 +68,15 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
     *
     * @return null if not found
     */
+   @Nullable
    public static HaxeSDK fromPath() {
       return HAXESDK_FROM_PATH.get();
    }
 
    private String name;
    private Path path;
+
+   @Nullable
    private NekoVM nekoVM;
 
    @JsonIgnore
@@ -96,6 +98,10 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    @SuppressWarnings("unused")
    private HaxeSDK() {
       // for Jackson
+
+      // only to satisfy annotation-based null-safety analysis:
+      name = "";
+      path = Path.of("");
    }
 
    public HaxeSDK(final Path path) {
@@ -105,12 +111,8 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
       name = "haxe-" + getVersion();
    }
 
-   public HaxeSDK(final Path path, final NekoVM nekoVM) {
-      Args.notNull("path", path);
-      Args.notNull("nekoVM", nekoVM);
-
-      this.path = path.toAbsolutePath();
-      name = "haxe-" + getVersion();
+   public HaxeSDK(final Path path, @Nullable final NekoVM nekoVM) {
+      this(path);
       this.nekoVM = nekoVM;
    }
 
@@ -122,13 +124,8 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
       this.path = path.toAbsolutePath();
    }
 
-   public HaxeSDK(final String name, final Path path, final NekoVM nekoVM) {
-      Args.notBlank("name", name);
-      Args.notNull("path", path);
-      Args.notNull("nekoVM", nekoVM);
-
-      this.name = name;
-      this.path = path.toAbsolutePath();
+   public HaxeSDK(final String name, final Path path, @Nullable final NekoVM nekoVM) {
+      this(name, path);
       this.nekoVM = nekoVM;
    }
 
@@ -138,7 +135,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    }
 
    @Override
-   public boolean equals(final Object obj) {
+   public boolean equals(@Nullable final Object obj) {
       if (this == obj)
          return true;
       if (obj == null || getClass() != obj.getClass())
@@ -157,7 +154,8 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    @JsonIgnore
    public Processes.Builder getCompilerProcessBuilder(final boolean cleanEnv) {
       final var neko = getNekoVM();
-      Assert.notNull(neko, "No Neko VM found.");
+      if (neko == null)
+         throw new IllegalStateException("No Neko VM found.");
 
       return Processes.builder(getCompilerExecutable()) //
          .withEnvironment(env -> {
@@ -188,7 +186,8 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    @JsonIgnore
    public Processes.Builder getHaxelibProcessBuilder(final Object... args) {
       final var neko = getNekoVM();
-      Assert.notNull(neko, "No Neko VM found.");
+      if (neko == null)
+         throw new IllegalStateException("No Neko VM found.");
 
       return Processes.builder(getHaxelibExecutable()) //
          .withArgs(args) //
@@ -246,6 +245,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
       return path.resolve("std");
    }
 
+   @Nullable
    @JsonIgnore
    public String getVersion() {
       if (!isValid())

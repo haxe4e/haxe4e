@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.annotation.Nullable;
 
 import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.collection.EvictingDeque;
@@ -105,7 +106,7 @@ public final class Haxelib implements Comparable<Haxelib> {
    }
 
    @Override
-   public boolean equals(final Object obj) {
+   public boolean equals(@Nullable final Object obj) {
       if (this == obj)
          return true;
       if (obj == null || getClass() != obj.getClass())

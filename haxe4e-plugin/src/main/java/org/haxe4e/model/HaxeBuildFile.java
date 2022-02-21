@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Haxe4EPlugin;
 
 import de.sebthom.eclipse.commons.ui.UI;
@@ -44,7 +45,7 @@ public class HaxeBuildFile {
 
    public List<String> parseArgs() throws IOException {
       final var args = new ArrayList<String>();
-      final var quotedWith = new MutableRef<Character>(null);
+      final var quotedWith = new MutableRef<@Nullable Character>(null);
       final var arg = new StringBuilder();
 
       try (var lines = Files.lines(location)) {

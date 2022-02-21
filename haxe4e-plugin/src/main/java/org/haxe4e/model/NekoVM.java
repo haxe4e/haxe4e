@@ -62,6 +62,7 @@ public final class NekoVM implements Comparable<NekoVM> {
    /**
     * Tries to locate the Neko VM via NEKOPATH and PATH environment variables
     */
+   @Nullable
    public static NekoVM fromPath() {
       return NEKO_FROM_PATH.get();
    }
@@ -93,6 +94,10 @@ public final class NekoVM implements Comparable<NekoVM> {
    @SuppressWarnings("unused")
    private NekoVM() {
       // for Jackson
+
+      // only to satisfy annotation-based null-safety analysis:
+      name = "";
+      path = Path.of("");
    }
 
    public NekoVM(final Path path) {
@@ -116,7 +121,7 @@ public final class NekoVM implements Comparable<NekoVM> {
    }
 
    @Override
-   public boolean equals(final Object obj) {
+   public boolean equals(@Nullable final Object obj) {
       if (this == obj)
          return true;
       if (obj == null || getClass() != obj.getClass())
@@ -139,6 +144,7 @@ public final class NekoVM implements Comparable<NekoVM> {
       return path;
    }
 
+   @Nullable
    @JsonIgnore
    public String getVersion() {
       if (!isValid())
