@@ -27,9 +27,9 @@
     <stringAttribute key="pde.version" value="3.3"/>
     <stringAttribute key="product" value="org.eclipse.sdk.ide"/>
     <setAttribute key="selected_target_bundles">
-        <setEntry value="com.fasterxml.jackson.core.jackson-annotations*2.13.0@default:default"/>
-        <setEntry value="com.fasterxml.jackson.core.jackson-core*2.13.0@default:default"/>
-        <setEntry value="com.fasterxml.jackson.core.jackson-databind*2.13.0@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-annotations@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-core@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-databind@default:default"/>
         <setEntry value="com.google.gson@default:default"/>
         <setEntry value="com.google.guava*21.0.0.v20170206-1425@default:default"/>
         <setEntry value="com.google.guava*30.1.0.v20210127-2300@default:default"/>
@@ -149,6 +149,7 @@
         <setEntry value="org.eclipse.ui.browser@default:default"/>
         <setEntry value="org.eclipse.ui.console@default:default"/>
         <setEntry value="org.eclipse.ui.editors@default:default"/>
+        <setEntry value="org.eclipse.ui.externaltools@default:default"/>
         <setEntry value="org.eclipse.ui.forms@default:default"/>
         <setEntry value="org.eclipse.ui.genericeditor@default:default"/>
         <setEntry value="org.eclipse.ui.ide.application@default:default"/>
