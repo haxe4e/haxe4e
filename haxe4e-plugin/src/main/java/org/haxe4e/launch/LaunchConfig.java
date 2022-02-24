@@ -27,6 +27,7 @@ import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
+import org.haxe4e.model.buildsystem.BuildSystem;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.util.TreeBuilder;
 
@@ -58,9 +59,9 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
          return;
       }
 
-      var hxmlFile = config.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, Constants.DEFAULT_HAXE_BUILD_FILE);
+      var hxmlFile = config.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, BuildSystem.HAXE.getDefaultBuildFileNames().first());
       if ("".equals(hxmlFile)) {
-         hxmlFile = Constants.DEFAULT_HAXE_BUILD_FILE;
+         hxmlFile = BuildSystem.HAXE.getDefaultBuildFileNames().first();
       }
       final var hxmlFilePath = Paths.get(project.getLocation().toPortableString(), hxmlFile);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by the Haxe4E authors.
+ * Copyright 2021-2022 by the Haxe4E authors.
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.haxe4e.widget;
@@ -10,7 +10,6 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
@@ -21,14 +20,14 @@ import org.haxe4e.util.ui.GridDatas;
 
 import de.sebthom.eclipse.commons.ui.Buttons;
 import de.sebthom.eclipse.commons.ui.widgets.ComboWrapper;
-import net.sf.jstuff.core.ref.ObservableRef;
+import net.sf.jstuff.core.ref.MutableObservableRef;
 
 /**
  * @author Sebastian Thomschke
  */
 public class HaxeSDKSelectionGroup extends Composite {
 
-   public final ObservableRef<HaxeSDK> selectedAltSDK = new ObservableRef<>();
+   public final MutableObservableRef<HaxeSDK> selectedAltSDK = MutableObservableRef.of(null);
    private HaxeSDK selectedAltSDK_internal;
 
    public HaxeSDKSelectionGroup(final Composite parent, final Object layoutData) {
@@ -59,9 +58,7 @@ public class HaxeSDKSelectionGroup extends Composite {
       radioAltSDK.setText(Messages.Label_Alternative);
       Buttons.onSelected(radioAltSDK, () -> selectedAltSDK.set(selectedAltSDK_internal));
 
-      final var cmbAltSDK_ = new Combo(grpHaxeSdk, SWT.READ_ONLY);
-      cmbAltSDK_.setLayoutData(GridDataFactory.fillDefaults().create());
-      final var cmbAltSDK = new ComboWrapper<HaxeSDK>(cmbAltSDK_) //
+      final var cmbAltSDK = new ComboWrapper<HaxeSDK>(grpHaxeSdk, SWT.READ_ONLY, GridDataFactory.fillDefaults().create()) //
          .setLabelProvider(HaxeSDK::toShortString) //
          .onItemsChanged((widget, oldItems, newItems) -> {
             if (newItems.isEmpty()) {

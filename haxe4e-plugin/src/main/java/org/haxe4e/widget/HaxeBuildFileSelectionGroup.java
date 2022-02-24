@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by the Haxe4E authors.
+ * Copyright 2021-2022 by the Haxe4E authors.
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.haxe4e.widget;
@@ -15,32 +15,29 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.AbstractElementListSelectionDialog;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
+import org.haxe4e.model.buildsystem.BuildFile;
 import org.haxe4e.prefs.HaxeProjectPreference;
-import org.haxe4e.project.HaxeProject;
 import org.haxe4e.util.ui.GridDatas;
 
 import de.sebthom.eclipse.commons.ui.Buttons;
 import de.sebthom.eclipse.commons.ui.Texts;
-import net.sf.jstuff.core.ref.ObservableRef;
+import net.sf.jstuff.core.Strings;
+import net.sf.jstuff.core.ref.MutableObservableRef;
 
 /**
  * @author Sebastian Thomschke
  */
 public class HaxeBuildFileSelectionGroup extends Composite {
 
-   public final ObservableRef<IProject> project = new ObservableRef<>();
-   public final ObservableRef<String> buildFile = new ObservableRef<>();
-
-   public HaxeBuildFileSelectionGroup(final Composite parent, final Object layoutData) {
-      this(parent, SWT.NONE, layoutData);
-   }
+   private HaxeProjectPreference projectPrefs;
+   private Button btnBrowseForBuildFile;
+   public final MutableObservableRef<BuildFile> selectedBuildFile = MutableObservableRef.of(null);
 
    public HaxeBuildFileSelectionGroup(final Composite parent, final int style, final Object layoutData) {
       super(parent, style);
@@ -50,63 +47,82 @@ public class HaxeBuildFileSelectionGroup extends Composite {
 
       final var grpBuildFile = new Group(this, SWT.NONE);
       grpBuildFile.setLayoutData(GridDatas.fillHorizontalExcessive());
-      grpBuildFile.setText("Build file (*.hxml)");
+      grpBuildFile.setText("Build File");
       grpBuildFile.setLayout(new GridLayout(2, false));
 
       final var txtSelectedBuildFile = new Text(grpBuildFile, SWT.BORDER);
       txtSelectedBuildFile.setEditable(false);
       txtSelectedBuildFile.setLayoutData(GridDatas.fillHorizontalExcessive());
-      Texts.bind(txtSelectedBuildFile, buildFile);
+      Texts.bind(txtSelectedBuildFile, selectedBuildFile, this::getBuildFile, bf -> bf == null ? "" : bf.getProjectRelativePath());
 
-      final var btnBrowseBuildFile = new Button(grpBuildFile, SWT.NONE);
-      btnBrowseBuildFile.setText(Messages.Label_Browse);
-      btnBrowseBuildFile.setEnabled(false);
-      Buttons.onSelected(btnBrowseBuildFile, this::onBuildFileButton);
-
-      project.subscribe(p -> {
-         btnBrowseBuildFile.setEnabled(p != null);
-         if (p != null) {
-            final var prefs = HaxeProjectPreference.get(p);
-            buildFile.set(prefs.getHaxeBuildFile());
-         }
-      });
+      btnBrowseForBuildFile = new Button(grpBuildFile, SWT.NONE);
+      btnBrowseForBuildFile.setText(Messages.Label_Browse);
+      btnBrowseForBuildFile.setEnabled(false);
+      Buttons.onSelected(btnBrowseForBuildFile, this::onBrowseForBuildFile);
    }
 
-   private AbstractElementListSelectionDialog createSelectBuildFileDialog(final Shell shell, final IProject project,
-      final String preselectedBuildFile) {
+   public HaxeBuildFileSelectionGroup(final Composite parent, final Object layoutData) {
+      this(parent, SWT.NONE, layoutData);
+   }
 
-      final var dialog = new ElementListSelectionDialog(shell, new LabelProvider() {
+   private BuildFile getBuildFile(final String path) {
+      if (projectPrefs == null || Strings.isBlank(path))
+         return null;
+      final var buildSystem = projectPrefs.getBuildSystem();
+      if (buildSystem == null)
+         return null;
+      return buildSystem.toBuildFile(projectPrefs.getProject().getFile(path));
+   }
+
+   private AbstractElementListSelectionDialog createSelectBuildFileDialog() {
+      final var dlg = new ElementListSelectionDialog(getShell(), new LabelProvider() {
          @Override
          public Image getImage(final Object element) {
             return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_BUILD_FILE);
          }
+
+         @Override
+         public String getText(final Object element) {
+            return ((BuildFile) element).getProjectRelativePath();
+         }
       });
-
-      dialog.setTitle("Select a Haxe build file");
-      dialog.setMessage("Enter a string to search for a file:");
-      dialog.setEmptyListMessage("The project has no build files.");
-
+      final var buildSystem = projectPrefs.getBuildSystem();
+      dlg.setTitle("Select a build file (*." + buildSystem.getBuildFileExtension() + ")");
+      dlg.setMessage("Enter a string to search for a file:");
+      dlg.setEmptyListMessage("The project has no build files.");
+      dlg.setEmptySelectionMessage("No matches found.");
       try {
-         final var haxeProject = new HaxeProject(project);
-         final var buildFiles = haxeProject.getBuildFiles();
-         dialog.setElements(buildFiles.toArray(new String[buildFiles.size()]));
-         dialog.setInitialSelections(preselectedBuildFile);
-      } catch (final CoreException e) {
-         Haxe4EPlugin.log().error(e);
+         final var buildFiles = buildSystem.getBuildFiles(projectPrefs.getProject(), true);
+         if (!buildFiles.isEmpty()) {
+            dlg.setElements(buildFiles.toArray(new BuildFile[buildFiles.size()]));
+            dlg.setInitialSelections(selectedBuildFile.get());
+         }
+      } catch (final CoreException ex) {
+         Haxe4EPlugin.log().error(ex);
       }
-
-      return dialog;
+      return dlg;
    }
 
-   private void onBuildFileButton() {
-      final var dialog = createSelectBuildFileDialog(getShell(), project.get(), buildFile.get());
+   private void onBrowseForBuildFile() {
+      final var dialog = createSelectBuildFileDialog();
 
       if (dialog.open() == Window.OK) {
-         final var buildFilePath = dialog.getFirstResult().toString();
+         final var buildFile = (BuildFile) dialog.getFirstResult();
 
-         if (buildFilePath != null) {
-            buildFile.set(buildFilePath);
+         if (buildFile != null) {
+            selectedBuildFile.set(buildFile);
          }
+      }
+   }
+
+   public void setProject(final IProject project) {
+      if (project == null) {
+         projectPrefs = null;
+         btnBrowseForBuildFile.setEnabled(false);
+      } else {
+         projectPrefs = HaxeProjectPreference.get(project);
+         selectedBuildFile.set(projectPrefs.getBuildFile());
+         btnBrowseForBuildFile.setEnabled(true);
       }
    }
 }

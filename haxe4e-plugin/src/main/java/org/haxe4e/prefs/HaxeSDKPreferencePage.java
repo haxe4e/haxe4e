@@ -38,7 +38,7 @@ import de.sebthom.eclipse.commons.ui.Buttons;
 import de.sebthom.eclipse.commons.ui.Fonts;
 import de.sebthom.eclipse.commons.ui.Tables;
 import net.sf.jstuff.core.collection.ObservableSet;
-import net.sf.jstuff.core.ref.ObservableRef;
+import net.sf.jstuff.core.ref.MutableObservableRef;
 
 /**
  * @author Sebastian Thomschke
@@ -47,7 +47,7 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
 
    private CheckboxTableViewer haxeSDKTable;
    private final ObservableSet<HaxeSDK> haxeSDKs = new ObservableSet<>(new HashSet<>());
-   private final ObservableRef<HaxeSDK> defaultHaxeSDK = new ObservableRef<>();
+   private final MutableObservableRef<HaxeSDK> defaultHaxeSDK = MutableObservableRef.of(null);
 
    public HaxeSDKPreferencePage() {
       setDescription(Messages.Prefs_ManageSDKsDescription);

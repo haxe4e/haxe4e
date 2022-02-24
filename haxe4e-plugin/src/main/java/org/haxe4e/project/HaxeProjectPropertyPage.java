@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by the Haxe4E authors.
+ * Copyright 2021-2022 by the Haxe4E authors.
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.haxe4e.project;
@@ -10,24 +10,20 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.util.ui.GridDatas;
 import org.haxe4e.widget.HaxeBuildFileSelectionGroup;
+import org.haxe4e.widget.HaxeBuildSystemSelectionGroup;
 import org.haxe4e.widget.HaxeSDKSelectionGroup;
 
 import de.sebthom.eclipse.commons.resources.Projects;
 import de.sebthom.eclipse.commons.ui.Buttons;
-import net.sf.jstuff.core.ref.ObservableRef;
 
 /**
  * @author Sebastian Thomschke
  */
 public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
-   private ObservableRef<HaxeSDK> selectedAltSDK;
-   private ObservableRef<String> buildFile;
-   private ObservableRef<Boolean> autoBuild;
    private HaxeProjectPreference prefs;
 
    @Override
@@ -39,31 +35,53 @@ public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.Proper
       container.setLayout(new GridLayout(1, true));
       container.setLayoutData(GridDatas.fillHorizontal());
 
+      /*
+       * alt SDK selection
+       */
       final var project = Projects.adapt(getElement());
       prefs = HaxeProjectPreference.get(project);
       final var grpHaxeSDKSelection = new HaxeSDKSelectionGroup(container, GridDataFactory.fillDefaults().create());
-      selectedAltSDK = grpHaxeSDKSelection.selectedAltSDK;
-      selectedAltSDK.set(prefs.getAlternateHaxeSDK());
+      grpHaxeSDKSelection.selectedAltSDK.subscribe(prefs::setAlternateHaxeSDK);
 
+      /*
+       * build system selection
+       */
+      final var grpBuildSystem = new HaxeBuildSystemSelectionGroup(container, GridDatas.fillHorizontalExcessive());
+      grpBuildSystem.setProject(project);
+
+      /*
+       * build file selection
+       */
       final var grpBuildFile = new HaxeBuildFileSelectionGroup(container, GridDatas.fillHorizontalExcessive());
-      grpBuildFile.project.set(prefs.getProject());
-      buildFile = grpBuildFile.buildFile;
-      buildFile.set(prefs.getHaxeBuildFile());
+      grpBuildFile.setProject(project);
+      grpBuildFile.selectedBuildFile.subscribe(buildFile -> prefs.setBuildFilePath(buildFile == null ? null
+         : buildFile.getProjectRelativePath()));
 
-      autoBuild = new ObservableRef<>(prefs.isAutoBuild());
+      grpBuildSystem.selectedBuildSystem.subscribe(selectedBuildSystem -> {
+         prefs.setBuildSystem(selectedBuildSystem);
+         // clear build file selection if build file extension is not supported by newly selected build system
+         grpBuildFile.selectedBuildFile.set(prefs.getBuildFile());
+      });
+
+      /*
+       * auto build check box
+       */
       final var btnAutoBuild = new Button(container, SWT.CHECK);
       btnAutoBuild.setText("Enable auto build");
-      Buttons.bind(btnAutoBuild, autoBuild);
+      btnAutoBuild.setSelection(prefs.isAutoBuild());
+      Buttons.onSelected(btnAutoBuild, () -> prefs.setAutoBuild(btnAutoBuild.getSelection()));
       return container;
    }
 
    @Override
    public boolean performOk() {
-      prefs.setAlternateHaxeSDK(selectedAltSDK.get());
-      prefs.setHaxeBuildFile(buildFile.get());
-      prefs.setAutoBuild(autoBuild.get());
       prefs.save();
       return super.performOk();
    }
 
+   @Override
+   public boolean performCancel() {
+      prefs.revert();
+      return true;
+   }
 }

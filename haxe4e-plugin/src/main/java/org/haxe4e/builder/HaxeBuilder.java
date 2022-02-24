@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by the Haxe4E authors.
+ * Copyright 2021-2022 by the Haxe4E authors.
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.haxe4e.builder;
@@ -104,12 +104,15 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
 
                   final var resourceExt = resource.getFileExtension();
                   switch (resourceExt == null ? "" : resourceExt) {
-                     case Constants.HAXE_BUILD_FILE_EXTENSION:
                      case Constants.HAXE_FILE_EXTENSION:
                      case "json":
                      case "xml":
                         hasRelevantFileChange.setTrue();
                   }
+                  if (prefs.getBuildSystem().getBuildFileExtension().equals(resourceExt)) {
+                     hasRelevantFileChange.setTrue();
+                  }
+
                   return true;
                });
                needsBuild = hasRelevantFileChange.isTrue();
@@ -135,8 +138,8 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
       if (haxeSDK == null)
          return;
 
-      final var hxmlFile = prefs.getEffectiveHaxeBuildFile();
-      if (hxmlFile == null)
+      final var buildFile = prefs.getBuildFile();
+      if (buildFile == null)
          return;
 
       monitor.setTaskName("Building project '" + project.getName() + "'");
@@ -154,12 +157,14 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
          final var startAtStr = startAt.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_TIME);
          console.setTitle("<running> " + haxeSDK.getCompilerExecutable() + " (" + startAtStr + ")");
 
-         out.println("Building project '" + project.getName() + "' using '" + hxmlFile.getProjectRelativePath() + "'...");
+         final var buildFileProjectRelativePath = buildFile.location.getProjectRelativePath();
+
+         out.println("Building project '" + project.getName() + "' using '" + buildFileProjectRelativePath + "'...");
          out.println();
 
          final var hasCompilerOutput = new AtomicBoolean(false);
          final var proc = haxeSDK.getCompilerProcessBuilder(false) //
-            .withArg(hxmlFile.getProjectRelativePath().toOSString()) //
+            .withArg(buildFileProjectRelativePath.toOSString()) //
             .withWorkingDirectory(project.getLocation().toFile()) //
             .withEnvironment(env -> {
                if (Platform.getBundle("net.mihai-nita.ansicon.plugin") != null) {

@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
+import org.haxe4e.model.buildsystem.BuildFile;
 import org.haxe4e.project.HaxeProjectNature;
 import org.haxe4e.project.HaxeProjectSelectionDialog;
 import org.haxe4e.util.ui.GridDatas;
@@ -22,16 +23,16 @@ import org.haxe4e.widget.HaxeSDKSelectionGroup;
 import de.sebthom.eclipse.commons.resources.Projects;
 import de.sebthom.eclipse.commons.ui.Buttons;
 import de.sebthom.eclipse.commons.ui.Texts;
-import net.sf.jstuff.core.ref.ObservableRef;
+import net.sf.jstuff.core.ref.MutableObservableRef;
 
 /**
  * @author Sebastian Thomschke
  */
 public class LaunchConfigForm extends Composite {
 
-   public final ObservableRef<IProject> selectedProject = new ObservableRef<>();
-   public final ObservableRef<String> buildFile;
-   public final ObservableRef<HaxeSDK> selectedAltSDK;
+   public final MutableObservableRef<IProject> selectedProject = MutableObservableRef.of(null);
+   public final MutableObservableRef<BuildFile> selectedBuildFile;
+   public final MutableObservableRef<HaxeSDK> selectedAltSDK;
 
    public LaunchConfigForm(final Composite parent, final int style) {
       super(parent, style);
@@ -55,9 +56,9 @@ public class LaunchConfigForm extends Composite {
       Buttons.onSelected(btnBrowseProject, this::onSelectProject);
 
       final var grpBuildFile = new HaxeBuildFileSelectionGroup(this, GridDatas.fillHorizontalExcessive());
-      buildFile = grpBuildFile.buildFile;
+      selectedBuildFile = grpBuildFile.selectedBuildFile;
 
-      selectedProject.subscribe(grpBuildFile.project::set);
+      selectedProject.subscribe(grpBuildFile::setProject);
 
       final var grpHaxeSDKSelection = new HaxeSDKSelectionGroup(this, GridDatas.fillHorizontalExcessive());
       selectedAltSDK = grpHaxeSDKSelection.selectedAltSDK;

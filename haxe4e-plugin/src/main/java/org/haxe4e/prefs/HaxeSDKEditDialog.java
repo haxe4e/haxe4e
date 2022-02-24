@@ -32,15 +32,15 @@ import de.sebthom.eclipse.commons.ui.Buttons;
 import de.sebthom.eclipse.commons.ui.Dialogs;
 import de.sebthom.eclipse.commons.ui.Texts;
 import net.sf.jstuff.core.Strings;
-import net.sf.jstuff.core.ref.ObservableRef;
+import net.sf.jstuff.core.ref.MutableObservableRef;
 
 /**
  * @author Sebastian Thomschke
  */
 public class HaxeSDKEditDialog extends TitleAreaDialog {
-   public final ObservableRef<String> haxeSDKName = new ObservableRef<>();
-   public final ObservableRef<Path> haxeSDKPath = new ObservableRef<>();
-   public final ObservableRef<Path> nekoVMPath = new ObservableRef<>();
+   public final MutableObservableRef<String> haxeSDKName = MutableObservableRef.of(null);
+   public final MutableObservableRef<Path> haxeSDKPath = MutableObservableRef.of(null);
+   public final MutableObservableRef<Path> nekoVMPath = MutableObservableRef.of(null);
 
    private boolean isEditSDK;
 

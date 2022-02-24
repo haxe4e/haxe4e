@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by the Haxe4E authors.
+ * Copyright 2021-2022 by the Haxe4E authors.
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.haxe4e.langserver;
@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +18,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
@@ -28,6 +29,8 @@ import org.haxe4e.prefs.HaxeWorkspacePreference;
 import org.haxe4e.util.TreeBuilder;
 import org.haxe4e.util.io.LinePrefixingTeeInputStream;
 import org.haxe4e.util.io.LinePrefixingTeeOutputStream;
+
+import net.sf.jstuff.core.Strings;
 
 /**
  * Runs the node.js based embedded haxe-language-server.
@@ -78,17 +81,34 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
       }
 
       final HaxeSDK haxeSDK;
-      final List<String> displayServerArgs;
+      final List<String> displayServerArgs = new ArrayList<>();
 
       if (project == null) {
-         displayServerArgs = Collections.emptyList();
          haxeSDK = HaxeWorkspacePreference.getDefaultHaxeSDK(true, true);
       } else {
          final var projectPrefs = HaxeProjectPreference.get(project);
          haxeSDK = projectPrefs.getEffectiveHaxeSDK();
-         final var buildFile = projectPrefs.getEffectiveHaxeBuildFile();
-         displayServerArgs = buildFile == null ? Collections.emptyList()
-            : Arrays.asList(buildFile.getRawLocation().makeAbsolute().toOSString());
+         final var buildFile = projectPrefs.getBuildFile();
+         if (buildFile != null) {
+            switch (projectPrefs.getBuildSystem()) {
+               case HAXE:
+                  displayServerArgs.add(buildFile.location.getLocation().toOSString());
+                  break;
+               case LIME:
+                  for (final var haxelib : buildFile.getDirectDependencies(haxeSDK, new NullProgressMonitor())) {
+                     displayServerArgs.add("-lib");
+                     if (Strings.isBlank(haxelib.meta.version)) {
+                        displayServerArgs.add(haxelib.meta.name);
+                     } else {
+                        displayServerArgs.add(haxelib.meta.name + ":" + haxelib.meta.version);
+                     }
+                  }
+                  break;
+               default:
+                  throw new UnsupportedOperationException("Unsupported build-system: " + this);
+            }
+         }
+
       }
       final var nekoVM = haxeSDK == null ? null : haxeSDK.getNekoVM();
 

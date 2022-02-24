@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+
+    <meta title="LimeTest" package="com.sample.limetest" version="1.0.0" company="Company Name" />
+
+    <app main="Main" path="Export" file="LimeTest" />
+
+    <source path="src" />
+    <source path="dir/another src" />
+    <source path='dir/yet another src' />
+    <!--
+        <source path="commented-out-src"/>
+    -->
+
+    <assets path="assets" />
+
+    <haxelib name="lib1" />
+    <haxelib name="lib2" />
+    <haxelib name="lib3" version="1.0.0" />
+    <!--
+        <haxelib name="commented-out-lib:1.0.0" />
+    -->
+
+</project>

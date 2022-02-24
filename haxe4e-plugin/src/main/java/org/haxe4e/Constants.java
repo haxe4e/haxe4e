@@ -4,9 +4,6 @@
  */
 package org.haxe4e;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Sebastian Thomschke
  */
@@ -30,10 +27,6 @@ public interface Constants {
    String LAUNCH_ATTR_HAXE_BUILD_FILE = "launch.haxe.haxe_build_file";
 
    String HAXE_FILE_EXTENSION = "hx";
-
-   String HAXE_BUILD_FILE_EXTENSION = "hxml";
-   String DEFAULT_HAXE_BUILD_FILE = "build.hxml";
-   List<String> HAXE_BUILD_FILE_EXCLUSIONS = new ArrayList<>(List.of("extraParams.hxml"));
 
    /**
     * id of <launchConfigurationType/> as specified in plugin.xml

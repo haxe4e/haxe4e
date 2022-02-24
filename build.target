@@ -50,20 +50,18 @@
                     <version>2.13.1</version>
                     <type>jar</type>
                 </dependency>
-            </dependencies>
-        </location>
-        <location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
-            <dependencies>
                 <dependency>
                     <groupId>net.sf.jstuff</groupId>
                     <artifactId>jstuff-core</artifactId>
-                    <version>5.19.0</version>
+                    <version>5.21.0</version>
                     <type>jar</type>
                 </dependency>
-            </dependencies>
-        </location>
-        <location includeDependencyScope="compile" includeSource="true" missingManifest="generate" type="Maven">
-            <dependencies>
+                <dependency>
+                    <groupId>net.sf.jstuff</groupId>
+                    <artifactId>jstuff-xml</artifactId>
+                    <version>5.21.0</version>
+                    <type>jar</type>
+                </dependency>
                 <dependency>
                     <groupId>org.assertj</groupId>
                     <artifactId>assertj-core</artifactId>

@@ -1,10 +1,9 @@
 /*
- * Copyright 2021 by the Haxe4E authors.
+ * Copyright 2021-2022 by the Haxe4E authors.
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.haxe4e.navigation;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
@@ -21,9 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
-import org.haxe4e.model.HaxeBuildFile;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.project.HaxeProjectNature;
 
@@ -111,7 +108,9 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
          if (!project.hasNature(HaxeProjectNature.NATURE_ID))
             return true; // ignore
 
-         if (Constants.HAXE_BUILD_FILE_EXTENSION.equals(resource.getFileExtension()) || "haxelib.json".equals(resource.getName())) {
+         final var prefs = HaxeProjectPreference.get(project);
+         if (prefs.getBuildSystem().getBuildFileExtension().equals(resource.getFileExtension()) //
+            || "haxelib.json".equals(resource.getName())) {
             changedProjects.add(project);
          }
          return true;
@@ -131,7 +130,10 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
    private IStatus updateHaxeProjectDependencies(final IProject haxeProject, final IProgressMonitor monitor) {
       try {
          final var prefs = HaxeProjectPreference.get(haxeProject);
+
          final var haxeSDK = prefs.getEffectiveHaxeSDK();
+         if (haxeSDK == null)
+            throw new IllegalStateException("Haxe SDK cannot be found.");
 
          /*
           * create haxe stdlib top-level virtual folder
@@ -142,9 +144,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
                return Haxe4EPlugin.status().createError("Cannot update Haxe standard library folder. Physical folder with name "
                   + HAXE_STDLIB_MAGIC_FOLDER_NAME + " exists!");
          } else {
-            if (haxeSDK != null) {
-               haxeStdLibFolder.createLink(haxeSDK.getStandardLibDir().toUri(), IResource.REPLACE, monitor);
-            }
+            haxeStdLibFolder.createLink(haxeSDK.getStandardLibDir().toUri(), IResource.REPLACE, monitor);
          }
 
          /*
@@ -152,7 +152,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
           */
          final var haxeDepsFolder = haxeProject.getFolder(HAXE_DEPS_MAGIC_FOLDER_NAME);
 
-         final var buildFile = prefs.getEffectiveHaxeBuildFile();
+         final var buildFile = prefs.getBuildFile();
 
          // if no build file exists remove the dependencies folder
          if (buildFile == null) {
@@ -170,25 +170,29 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
             haxeDepsFolder.create(IResource.VIRTUAL, true, monitor);
          }
 
-         final var depsToCheck = new HaxeBuildFile(buildFile.getLocation().toFile()) //
+         final var depsToCheck = buildFile //
             .getDirectDependencies(haxeSDK, monitor).stream() //
             .collect(Collectors.toMap(d -> d.meta.name + " [" + (d.isDevVersion ? "dev" : d.meta.version) + "]", Function.identity()));
 
          for (final var folder : haxeDepsFolder.members()) {
-            final var dep = depsToCheck.get(folder.getName());
-            if (dep != null && dep.location.equals(folder.getRawLocation().toFile().toPath())) {
-               depsToCheck.remove(folder.getName());
+            if (depsToCheck.containsKey(folder.getName())) {
+               final var dep = depsToCheck.get(folder.getName());
+               if (dep.location.equals(folder.getRawLocation().toFile().toPath())) {
+                  depsToCheck.remove(folder.getName());
+               } else {
+                  folder.delete(true, monitor); // delete broken folder link
+               }
             } else {
-               // delete obsolete or broken link
-               folder.delete(true, monitor);
+               folder.delete(true, monitor); // delete folder link to (now) unused dependency
             }
          }
+
          for (final var dep : depsToCheck.entrySet()) {
             final var folder = haxeDepsFolder.getFolder(dep.getKey());
             folder.createLink(dep.getValue().location.toUri(), IResource.BACKGROUND_REFRESH, monitor);
          }
          return Status.OK_STATUS;
-      } catch (final CoreException | IOException ex) {
+      } catch (final Exception ex) {
          return Haxe4EPlugin.status().createError(ex, "Failed to Haxe dependencies list.");
       }
    }

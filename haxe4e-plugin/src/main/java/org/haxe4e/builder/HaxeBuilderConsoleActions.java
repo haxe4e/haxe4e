@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by the Haxe4E authors.
+ * Copyright 2021-2022 by the Haxe4E authors.
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.haxe4e.builder;
@@ -33,6 +33,7 @@ public final class HaxeBuilderConsoleActions implements IConsolePageParticipant 
    }
 
    @Override
+   @SuppressWarnings("null")
    public <T> T getAdapter(final Class<T> adapter) {
       return null;
    }

@@ -4,9 +4,6 @@
  */
 package org.haxe4e.launch;
 
-import java.util.ArrayList;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -32,25 +29,6 @@ import net.sf.jstuff.core.validation.Args;
  * @author Sebastian Thomschke
  */
 public class RunProjectShortcut implements ILaunchShortcut {
-
-   private String guessBuildFileToLaunch(final IProject project) throws CoreException {
-      final var defaultBuildFile = project.getFile(Constants.DEFAULT_HAXE_BUILD_FILE);
-      if (defaultBuildFile != null)
-         return Constants.DEFAULT_HAXE_BUILD_FILE;
-
-      final var foundFiles = new ArrayList<IFile>();
-      project.accept(res -> {
-         if (res.getType() == IResource.PROJECT)
-            return true;
-         if (res.getType() == IResource.FILE //
-            && Constants.HAXE_BUILD_FILE_EXTENSION.equals(((IFile) res).getFileExtension())) {
-            foundFiles.add((IFile) res);
-         }
-         return false;
-      });
-
-      return foundFiles.isEmpty() ? null : foundFiles.get(1).getName();
-   }
 
    @Override
    public void launch(final IEditorPart editor, final String mode) {
@@ -103,13 +81,14 @@ public class RunProjectShortcut implements ILaunchShortcut {
          }
 
          // create a new launch config
+         final var prefs = HaxeProjectPreference.get(project);
          final var newLaunchConfig = launchConfigType.newInstance(null, launchMgr.generateLaunchConfigurationName(project.getName()));
          newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_PROJECT, project.getName());
-         final var buildFileToLaunch = guessBuildFileToLaunch(project);
+         final var buildFileToLaunch = prefs.getBuildFile();
          if (buildFileToLaunch != null) {
-            newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, buildFileToLaunch);
+            newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, buildFileToLaunch.getProjectRelativePath());
          }
-         final var prefs = HaxeProjectPreference.get(project);
+
          final var altSDK = prefs.getAlternateHaxeSDK();
          if (altSDK != null) {
             newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_SDK, altSDK.getName());

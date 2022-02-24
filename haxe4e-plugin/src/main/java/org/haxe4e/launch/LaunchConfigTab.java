@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
+import org.haxe4e.model.buildsystem.BuildSystem;
 import org.haxe4e.prefs.HaxeWorkspacePreference;
 import org.haxe4e.project.HaxeProjectNature;
 
@@ -47,12 +48,15 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
    public void initializeFrom(final ILaunchConfiguration config) {
       try {
          final var projectName = config.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "");
-         form.selectedProject.set(Projects.getOpenProjectWithNature(projectName, HaxeProjectNature.NATURE_ID));
+         final var project = Projects.getOpenProjectWithNature(projectName, HaxeProjectNature.NATURE_ID);
+         form.selectedProject.set(project);
          form.selectedProject.subscribe(this::updateLaunchConfigurationDialog);
 
-         final var hxmlFile = config.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, "");
-         form.buildFile.set(hxmlFile);
-         form.buildFile.subscribe(this::updateLaunchConfigurationDialog);
+         if (project != null) {
+            final var buildFile = config.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, "");
+            form.selectedBuildFile.set(BuildSystem.HAXE.toBuildFile(project.getFile(buildFile)));
+         }
+         form.selectedBuildFile.subscribe(this::updateLaunchConfigurationDialog);
 
          final var altSDK = HaxeWorkspacePreference.getHaxeSDK(config.getAttribute(Constants.LAUNCH_ATTR_HAXE_SDK, ""));
          form.selectedAltSDK.set(altSDK);
@@ -73,7 +77,8 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
    @Override
    public void performApply(final ILaunchConfigurationWorkingCopy config) {
       config.setAttribute(Constants.LAUNCH_ATTR_PROJECT, form.selectedProject.get() == null ? null : form.selectedProject.get().getName());
-      config.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, form.buildFile.get());
+      config.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, form.selectedBuildFile.get() == null ? null
+         : form.selectedBuildFile.get().getProjectRelativePath());
       final var altSDK = form.selectedAltSDK.get();
       config.setAttribute(Constants.LAUNCH_ATTR_HAXE_SDK, altSDK == null ? "" : altSDK.getName());
    }

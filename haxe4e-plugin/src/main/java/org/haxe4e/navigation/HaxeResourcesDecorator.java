@@ -1,10 +1,8 @@
 /*
- * Copyright 2021 by the Haxe4E authors.
+ * Copyright 2021-2022 by the Haxe4E authors.
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.haxe4e.navigation;
-
-import java.io.IOException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -16,7 +14,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
-import org.haxe4e.model.HaxeBuildFile;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.project.HaxeProjectNature;
 
@@ -54,22 +51,21 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
 
       if (res instanceof IFile) {
          final var file = (IFile) res;
-         if (Constants.HAXE_BUILD_FILE_EXTENSION.equals(file.getFileExtension())) {
-            final var prefs = HaxeProjectPreference.get(project);
-            final var haxeBuildFilePath = prefs.getEffectiveHaxeBuildFile();
-            if (haxeBuildFilePath == null)
+         final var prefs = HaxeProjectPreference.get(project);
+         if (prefs.getBuildSystem().getBuildFileExtension().equals(file.getFileExtension())) {
+            final var haxeBuildFile = prefs.getBuildFile();
+            if (haxeBuildFile == null)
                return image;
-            if (haxeBuildFilePath.equals(file))
+            if (haxeBuildFile.location.equals(file))
                return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_BUILD_FILE_ACTIVE);
          }
       } else if (res instanceof IFolder) {
          final var folder = (IFolder) res;
          final var prefs = HaxeProjectPreference.get(project);
-         final var haxeBuildFilePath = prefs.getEffectiveHaxeBuildFile();
-         if (haxeBuildFilePath == null)
+         final var haxeBuildFile = prefs.getBuildFile();
+         if (haxeBuildFile == null)
             return image;
 
-         final var haxeBuildFile = new HaxeBuildFile(haxeBuildFilePath.getLocation().toFile());
          final var folderPath = folder.getLocation().toFile().toPath();
          final var projectPath = project.getLocation().toFile().toPath();
          try {
@@ -80,7 +76,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
                if (folderPath.startsWith(sourceFolder))
                   return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_SOURCE_PACKAGE);
             }
-         } catch (final IOException ex) {
+         } catch (final Exception ex) {
             Haxe4EPlugin.log().error(ex);
          }
       }
