@@ -15,8 +15,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.ISourceViewerExtension4;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.lsp4e.LSPEclipseUtils;
 import org.eclipse.lsp4e.LanguageServiceAccessor;
 import org.eclipse.lsp4e.debug.DSPPlugin;
@@ -69,9 +71,7 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
    public void createPartControl(final Composite parent) {
       super.createPartControl(parent);
 
-      final var viewer = getSourceViewer();
-
-      final var contentAssistant = (ContentAssistant) Fields.read(viewer, "fContentAssistant");
+      final var contentAssistant = getContentAssistant();
       if (contentAssistant != null) {
          contentAssistant.setAutoActivationDelay(500);
       }
@@ -114,6 +114,27 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
          // ignore
       }
       super.dispose();
+   }
+
+   private ContentAssistant getContentAssistant() {
+      final var viewer = getSourceViewer();
+
+      if (viewer instanceof ISourceViewerExtension4) {
+         final var contentAssistantFacade = ((ISourceViewerExtension4) viewer).getContentAssistantFacade();
+         if (contentAssistantFacade != null) {
+            final var contentAssistant = Fields.read(contentAssistantFacade, "fContentAssistant");
+            if (contentAssistant instanceof ContentAssistant)
+               return (ContentAssistant) contentAssistant;
+         }
+      }
+
+      if (viewer instanceof SourceViewer) {
+         final var contentAssistant = Fields.read(viewer, "fContentAssistant");
+         if (contentAssistant instanceof ContentAssistant)
+            return (ContentAssistant) contentAssistant;
+      }
+
+      return null;
    }
 
    private IDocument getDocument() {
