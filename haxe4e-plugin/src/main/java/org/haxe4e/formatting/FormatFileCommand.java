@@ -24,6 +24,7 @@ import org.haxe4e.Haxe4EPlugin;
 
 import de.sebthom.eclipse.commons.ui.UI;
 import de.sebthom.eclipse.commons.ui.widgets.NotificationPopup;
+import formatter.CodeOrigin;
 import formatter.Formatter;
 import formatter.FormatterInput;
 import formatter.Result;
@@ -77,7 +78,7 @@ public final class FormatFileCommand extends AbstractHandler {
          final var formatterConfig = Format.getFormatterConfig(file);
 
          final var result = Formatter.format( //
-            new FormatterInput.Code(unformatted), //
+            new FormatterInput.Code(unformatted, CodeOrigin.SourceFile(file.getFullPath().toOSString())), //
             formatterConfig, //
             Strings.getNewLineSeparator(unformatted), //
             null, //

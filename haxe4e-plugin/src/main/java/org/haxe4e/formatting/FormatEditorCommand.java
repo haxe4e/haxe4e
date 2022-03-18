@@ -15,6 +15,7 @@ import org.haxe4e.Haxe4EPlugin;
 
 import de.sebthom.eclipse.commons.ui.Editors;
 import de.sebthom.eclipse.commons.ui.widgets.NotificationPopup;
+import formatter.CodeOrigin;
 import formatter.Formatter;
 import formatter.FormatterInput;
 import formatter.Result;
@@ -55,7 +56,7 @@ public final class FormatEditorCommand extends AbstractHandler {
             );
 
             final var result = Formatter.format( //
-               new FormatterInput.Code(sourceCode), //
+               new FormatterInput.Code(sourceCode, CodeOrigin.Snippet), //
                formatterConfig, //
                Strings.getNewLineSeparator(sourceCode), //
                null, //
@@ -79,7 +80,7 @@ public final class FormatEditorCommand extends AbstractHandler {
              * format all
              */
             final var result = Formatter.format( //
-               new FormatterInput.Code(sourceCode), //
+               new FormatterInput.Code(sourceCode, CodeOrigin.Snippet), //
                formatterConfig, //
                Strings.getNewLineSeparator(sourceCode), //
                null, //
