@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -71,6 +73,18 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
 
       switch (mode) {
          case ILaunchManager.DEBUG_MODE:
+            final var debuggerEnvVars = new HashMap<String, Object>();
+            debuggerEnvVars.put("PATH", System.getenv("PATH"));
+            debuggerEnvVars.putAll(envVars);
+            haxeSDK.configureEnvVars(debuggerEnvVars);
+
+            // to prevent stackoverflow in lsp4j
+            debuggerEnvVars.replaceAll((k, v) -> v = Objects.toString(v));
+
+            // workaround for nodejs issue: https://github.com/nodejs/node/issues/20605 in conjunction with
+            // https://github.com/vshaxe/eval-debugger/blob/fd1c7844e9b13fce6f2f85c7b19d8948cd230cce/src/Main.hx#L110-L114
+            // resulting in "Error: 'haxelib' is not recognized as an internal or external command"
+            debuggerEnvVars.put("Path", debuggerEnvVars.get("PATH"));
 
             // LaunchRequestArguments https://github.com/vshaxe/vscode-debugadapter-extern/blob/master/src/vscode/debugProtocol/DebugProtocol.hx#L764
             // EvalLaunchRequestArguments https://github.com/vshaxe/eval-debugger/blob/master/src/Main.hx#L14
@@ -79,7 +93,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                .put("args", Arrays.asList(hxmlFilePath.toString())) //
                .put("haxeExecutable", new TreeBuilder<String>() //
                   .put("executable", haxeSDK.getCompilerExecutable().toString()) //
-                  .put("env", envVars) //
+                  .put("env", debuggerEnvVars) //
                ) //
                .put("stopOnEntry", false) //
                .getMap();
@@ -87,7 +101,6 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
             try {
                final var evalDebuggerJS = Haxe4EPlugin.resources().extract("langsrv/haxe-eval-debugger.min.js");
                final List<String> debugCmdArgs = Collections.singletonList(evalDebuggerJS.getAbsolutePath());
-
                final var builder = new DSPLaunchDelegateLaunchBuilder(config, ILaunchManager.DEBUG_MODE, launch, monitor);
                builder.setLaunchDebugAdapter(NodeJSManager.getNodeJsLocation().getAbsolutePath(), debugCmdArgs);
                builder.setMonitorDebugAdapter(config.getAttribute(DSPPlugin.ATTR_DSP_MONITOR_DEBUG_ADAPTER, true));
@@ -97,6 +110,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                Dialogs.showStatus("Failed to start debug session", Haxe4EPlugin.status().createError(ex), true);
             }
             return;
+
          case ILaunchManager.RUN_MODE:
             HaxeRunner.launchHxmlFile( //
                launch, //
@@ -113,6 +127,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                   }
                });
             return;
+
          default:
             UI.run(() -> MessageDialog.openError(null, "Unsupported launch mode", "Launch mode [" + mode + "] is not supported."));
       }
