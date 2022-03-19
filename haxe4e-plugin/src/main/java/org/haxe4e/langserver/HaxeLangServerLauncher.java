@@ -95,8 +95,12 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
                   displayServerArgs.add(buildFile.location.getLocation().toOSString());
                   break;
                case LIME:
+                  for (final var source : buildFile.getSourcePaths()) {
+                     displayServerArgs.add("--class-path");
+                     displayServerArgs.add(source.toString());
+                  }
                   for (final var haxelib : buildFile.getDirectDependencies(haxeSDK, new NullProgressMonitor())) {
-                     displayServerArgs.add("-lib");
+                     displayServerArgs.add("--library");
                      if (Strings.isBlank(haxelib.meta.version)) {
                         displayServerArgs.add(haxelib.meta.name);
                      } else {
@@ -108,7 +112,6 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
                   throw new UnsupportedOperationException("Unsupported build-system: " + this);
             }
          }
-
       }
       final var nekoVM = haxeSDK == null ? null : haxeSDK.getNekoVM();
 
