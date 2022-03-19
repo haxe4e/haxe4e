@@ -66,7 +66,7 @@ public final class Haxelib implements Comparable<Haxelib> {
       monitor.setTaskName("Installing haxelib " + name + ":" + version);
       final var out = new EvictingDeque<String>(4);
       final var haxelibProcessBuilder = sdk.getHaxelibProcessBuilder("install", name, version) //
-         .withWorkingDirectory(sdk.getPath()) //
+         .withWorkingDirectory(sdk.getInstallRoot()) //
          .withRedirectErrorToOutput() //
          .withRedirectOutput(line -> {
             out.add(line);

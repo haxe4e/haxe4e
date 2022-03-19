@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -74,7 +75,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    }
 
    private String name;
-   private Path path;
+   private Path installRoot;
 
    @Nullable
    private NekoVM nekoVM;
@@ -101,37 +102,57 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
 
       // only to satisfy annotation-based null-safety analysis:
       name = "";
-      path = Path.of("");
+      installRoot = Path.of("");
    }
 
-   public HaxeSDK(final Path path) {
-      Args.notNull("path", path);
+   public HaxeSDK(final Path installRoot) {
+      Args.notNull("installRoot", installRoot);
 
-      this.path = path.toAbsolutePath();
+      this.installRoot = installRoot.toAbsolutePath();
       name = "haxe-" + getVersion();
    }
 
-   public HaxeSDK(final Path path, @Nullable final NekoVM nekoVM) {
-      this(path);
+   public HaxeSDK(final Path installRoot, @Nullable final NekoVM nekoVM) {
+      this(installRoot);
       this.nekoVM = nekoVM;
    }
 
-   public HaxeSDK(final String name, final Path path) {
+   public HaxeSDK(final String name, final Path installRoot) {
       Args.notBlank("name", name);
-      Args.notNull("path", path);
+      Args.notNull("installRoot", installRoot);
 
       this.name = name;
-      this.path = path.toAbsolutePath();
+      this.installRoot = installRoot.toAbsolutePath();
    }
 
-   public HaxeSDK(final String name, final Path path, @Nullable final NekoVM nekoVM) {
-      this(name, path);
+   public HaxeSDK(final String name, final Path installRoot, @Nullable final NekoVM nekoVM) {
+      this(name, installRoot);
       this.nekoVM = nekoVM;
    }
 
    @Override
    public int compareTo(final HaxeSDK o) {
       return Strings.compare(name, o.name);
+   }
+
+   public void configureEnvVars(final Map<String, Object> env) {
+      final var neko = getNekoVM();
+      if (neko == null)
+         throw new IllegalStateException("No Neko VM found.");
+
+      env.merge("PATH", installRoot, //
+         (oldValue, haxePath) -> haxePath + File.pathSeparator + oldValue //
+      );
+      env.merge("PATH", neko.getInstallRoot(), //
+         (oldValue, nekoPath) -> nekoPath + File.pathSeparator + oldValue //
+      );
+
+      env.put(ENV_HAXEPATH, installRoot);
+      env.put(ENV_HAXE_STD_PATH, getStandardLibDir());
+
+      // if specified haxelib will install libs to <haxepath>/lib/...
+      // if not specified haxelib will install libs to <user_home>/haxelib/...
+      env.put(ENV_HAXELIB_PATH, getHaxelibsDir());
    }
 
    @Override
@@ -142,67 +163,36 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
          return false;
       final var other = (HaxeSDK) obj;
       return Objects.equals(name, other.name) //
-         && Objects.equals(path, other.path) //
+         && Objects.equals(installRoot, other.installRoot) //
          && Objects.equals(nekoVM, other.nekoVM);
    }
 
    @JsonIgnore
    public Path getCompilerExecutable() {
-      return path.resolve(SystemUtils.IS_OS_WINDOWS ? "haxe.exe" : "haxe");
+      return installRoot.resolve(SystemUtils.IS_OS_WINDOWS ? "haxe.exe" : "haxe");
    }
 
    @JsonIgnore
    public Processes.Builder getCompilerProcessBuilder(final boolean cleanEnv) {
-      final var neko = getNekoVM();
-      if (neko == null)
-         throw new IllegalStateException("No Neko VM found.");
-
       return Processes.builder(getCompilerExecutable()) //
          .withEnvironment(env -> {
             if (cleanEnv) {
                env.clear();
             }
-            env.merge("PATH", path.toString(), //
-               (oldValue, haxelibPath) -> haxelibPath + File.pathSeparator + oldValue //
-            );
-            env.merge("PATH", neko.getPath().toString(), //
-               (oldValue, nekoPath) -> nekoPath + File.pathSeparator + oldValue //
-            );
-
-            env.put(ENV_HAXEPATH, path);
-            env.put(ENV_HAXE_STD_PATH, getStandardLibDir());
-
-            // if specified haxelib will install libs to <haxepath>/lib/...
-            // if not specified haxelib will install libs to <user_home>/haxelib/...
-            env.put(ENV_HAXELIB_PATH, getHaxelibsDir());
+            configureEnvVars(env);
          });
    }
 
    @JsonIgnore
    public Path getHaxelibExecutable() {
-      return path.resolve(SystemUtils.IS_OS_WINDOWS ? "haxelib.exe" : "haxelib");
+      return installRoot.resolve(SystemUtils.IS_OS_WINDOWS ? "haxelib.exe" : "haxelib");
    }
 
    @JsonIgnore
    public Processes.Builder getHaxelibProcessBuilder(final Object... args) {
-      final var neko = getNekoVM();
-      if (neko == null)
-         throw new IllegalStateException("No Neko VM found.");
-
       return Processes.builder(getHaxelibExecutable()) //
          .withArgs(args) //
-         .withEnvironment(env -> {
-            env.merge("PATH", neko.getPath().toString(), //
-               (oldValue, nekoPath) -> nekoPath + File.pathSeparator + oldValue //
-            );
-
-            env.put(ENV_HAXEPATH, path);
-            env.put(ENV_HAXE_STD_PATH, getStandardLibDir());
-
-            // if specified haxelib will install libs to <haxepath>/lib/...
-            // if not specified haxelib will install libs to <user_home>/haxelib/...
-            env.put(ENV_HAXELIB_PATH, getHaxelibsDir());
-         });
+         .withEnvironment(this::configureEnvVars);
    }
 
    @JsonIgnore
@@ -213,7 +203,11 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
          if (Files.exists(p))
             return p;
       }
-      return path.resolve("lib");
+      return installRoot.resolve("lib");
+   }
+
+   public Path getInstallRoot() {
+      return installRoot;
    }
 
    public String getName() {
@@ -230,10 +224,6 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
       return nekoVM == null ? NekoVM.fromPath() : nekoVM;
    }
 
-   public Path getPath() {
-      return path;
-   }
-
    @JsonIgnore
    public Path getStandardLibDir() {
       final var pathFromEnv = System.getenv(ENV_HAXE_STD_PATH);
@@ -242,7 +232,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
          if (Files.exists(p))
             return p;
       }
-      return path.resolve("std");
+      return installRoot.resolve("std");
    }
 
    @Nullable
@@ -263,11 +253,11 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
 
    @Override
    public int hashCode() {
-      return Objects.hash(name, path, nekoVM);
+      return Objects.hash(name, installRoot, nekoVM);
    }
 
    /**
-    * If <code>path</code> actually points to a valid location containing the Haxe compiler
+    * If <code>installRoot</code> actually points to a valid location containing the Haxe compiler
     */
    @JsonIgnore
    public boolean isValid() {
@@ -275,11 +265,11 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    }
 
    public String toShortString() {
-      return name + " (" + path + ")";
+      return name + " (" + installRoot + ")";
    }
 
    @Override
    public String toString() {
-      return "HaxeSDK [name=" + name + ", path=" + path + "]";
+      return "HaxeSDK [name=" + name + ", installRoot=" + installRoot + "]";
    }
 }

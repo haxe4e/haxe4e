@@ -120,7 +120,7 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       colPath.setLabelProvider(new ColumnLabelProvider() {
          @Override
          public String getText(final Object element) {
-            return ((HaxeSDK) element).getPath().toString();
+            return ((HaxeSDK) element).getInstallRoot().toString();
          }
       });
       final var tblclmnPath = colPath.getColumn();

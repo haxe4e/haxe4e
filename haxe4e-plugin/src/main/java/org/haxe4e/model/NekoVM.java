@@ -68,7 +68,7 @@ public final class NekoVM implements Comparable<NekoVM> {
    }
 
    private String name;
-   private Path path;
+   private Path installRoot;
 
    @JsonIgnore
    private final Supplier<Boolean> isValidCached = Suppliers.memoize(() -> {
@@ -97,22 +97,22 @@ public final class NekoVM implements Comparable<NekoVM> {
 
       // only to satisfy annotation-based null-safety analysis:
       name = "";
-      path = Path.of("");
+      installRoot = Path.of("");
    }
 
-   public NekoVM(final Path path) {
-      Args.notNull("path", path);
+   public NekoVM(final Path installRoot) {
+      Args.notNull("installRoot", installRoot);
 
-      this.path = path.toAbsolutePath();
+      this.installRoot = installRoot.toAbsolutePath();
       name = "neko-" + getVersion();
    }
 
-   public NekoVM(final String name, final Path path) {
+   public NekoVM(final String name, final Path installRoot) {
       Args.notBlank("name", name);
-      Args.notNull("path", path);
+      Args.notNull("installRoot", installRoot);
 
       this.name = name;
-      this.path = path.toAbsolutePath();
+      this.installRoot = installRoot.toAbsolutePath();
    }
 
    @Override
@@ -128,20 +128,20 @@ public final class NekoVM implements Comparable<NekoVM> {
          return false;
       final var other = (NekoVM) obj;
       return Objects.equals(name, other.name) //
-         && Objects.equals(path, other.path);
+         && Objects.equals(installRoot, other.installRoot);
    }
 
    @JsonIgnore
    public Path getExecutable() {
-      return path.resolve(SystemUtils.IS_OS_WINDOWS ? "neko.exe" : "neko");
+      return installRoot.resolve(SystemUtils.IS_OS_WINDOWS ? "neko.exe" : "neko");
+   }
+
+   public Path getInstallRoot() {
+      return installRoot;
    }
 
    public String getName() {
       return name;
-   }
-
-   public Path getPath() {
-      return path;
    }
 
    @Nullable
@@ -162,24 +162,23 @@ public final class NekoVM implements Comparable<NekoVM> {
 
    @Override
    public int hashCode() {
-      return Objects.hash(name, path);
+      return Objects.hash(name, installRoot);
    }
 
    /**
-    * If <code>path</code> actually points to a valid location containing the Haxe compiler
+    * If <code>installRoot</code> actually points to a valid location containing the NekoVM executable
     */
    @JsonIgnore
    public boolean isValid() {
-      final var valid = isValidCached.get();
-      return valid;
+      return isValidCached.get();
    }
 
    public String toShortString() {
-      return name + " (" + path + ")";
+      return name + " (" + installRoot + ")";
    }
 
    @Override
    public String toString() {
-      return "NekoVM [name=" + name + ", path=" + path + "]";
+      return "NekoVM [name=" + name + ", installRoot=" + installRoot + "]";
    }
 }

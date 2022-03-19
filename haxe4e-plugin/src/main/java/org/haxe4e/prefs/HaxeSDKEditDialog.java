@@ -60,10 +60,10 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       super(parentShell);
       isEditSDK = true;
       haxeSDKName.set(sdk.getName());
-      haxeSDKPath.set(sdk.getPath());
+      haxeSDKPath.set(sdk.getInstallRoot());
       final var nekoVM = sdk.getNekoVM();
       if (nekoVM != null) {
-         nekoVMPath.set(nekoVM.getPath());
+         nekoVMPath.set(nekoVM.getInstallRoot());
       }
    }
 
@@ -193,7 +193,7 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       if (Strings.isBlank(dir)) {
          final var p = HaxeSDK.fromPath();
          if (p != null) {
-            dir = p.getPath().toString();
+            dir = p.getInstallRoot().toString();
          }
       }
       while (true) {
@@ -224,7 +224,7 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       if (Strings.isBlank(dir)) {
          final var p = NekoVM.fromPath();
          if (p != null) {
-            dir = p.getPath().toString();
+            dir = p.getInstallRoot().toString();
          }
       }
       while (true) {

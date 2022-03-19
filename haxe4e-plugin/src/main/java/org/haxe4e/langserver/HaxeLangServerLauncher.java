@@ -124,7 +124,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
                leaf.put("PATH", //
                   haxeSDK.getHaxelibExecutable().getParent() // add haxelib to path which is executed by Haxe Display Server
                      + File.pathSeparator //
-                     + (nekoVM == null ? null : nekoVM.getPath()) // add neko to path which is required by haxelib
+                     + (nekoVM == null ? null : nekoVM.getInstallRoot()) // add neko to path which is required by haxelib
                );
 
                // required for haxelib process spawned Haxe Display Server to analyze dependencies
