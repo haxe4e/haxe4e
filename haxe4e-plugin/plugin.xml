@@ -187,6 +187,9 @@
       <themeAssociation scopeName="source.hx" themeId="org.eclipse.tm4e.ui.themes.EclipseLight" />
       <themeAssociation scopeName="source.hxml" themeId="org.eclipse.tm4e.ui.themes.EclipseLight" />
    </extension>
+   <extension point="org.eclipse.tm4e.ui.snippets">
+      <snippet name="Haxe Example" path="src/main/resources/langcfg/haxe.sample.hx" scopeName="source.hx" />
+   </extension>
 
 
    <!-- ===================================== -->
