@@ -100,7 +100,7 @@ public final class FormatFileCommand extends AbstractHandler {
 
    private List<IFile> getSelectedHaxeFiles(final IStructuredSelection selection) throws CoreException {
       final var haxeFiles = new ArrayList<IFile>();
-      for (final Object item : selection) {
+      for (final var item : selection) {
          if (item instanceof IFile) {
             haxeFiles.add((IFile) item);
          } else if (item instanceof IFolder) {

@@ -83,7 +83,7 @@ public final class HaxeProjectPreference {
       }
 
       // fallback to default build files
-      for (final String buildFileName : buildSystem.getDefaultBuildFileNames()) {
+      for (final var buildFileName : buildSystem.getDefaultBuildFileNames()) {
          final var buildFile = project.getFile(buildFileName);
          if (buildFile.exists())
             return buildSystem.toBuildFile(buildFile);

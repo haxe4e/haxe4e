@@ -22,7 +22,7 @@ public final class HaxeBuilderConsole extends MessageConsole {
       public void openConsole() {
          final var consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 
-         for (final IConsole console : consoleManager.getConsoles()) {
+         for (final var console : consoleManager.getConsoles()) {
             if (HaxeBuilderConsole.class.getName().equals(console.getType())) {
                consoleManager.showConsoleView(console);
                return;
@@ -34,7 +34,7 @@ public final class HaxeBuilderConsole extends MessageConsole {
    public static HaxeBuilderConsole openConsole(final HaxeBuilder.Context buildContext) {
       final var consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 
-      for (final IConsole console : consoleManager.getConsoles()) {
+      for (final var console : consoleManager.getConsoles()) {
          if (Factory.class.getName().equals(console.getType())) {
             consoleManager.removeConsoles(new IConsole[] {console});
          }

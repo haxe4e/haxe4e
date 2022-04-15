@@ -42,14 +42,15 @@ public enum BuildSystem {
    @Nullable
    public static BuildSystem guessBuildSystemOfBuildFile(final Path location) {
       final var path = location.toAbsolutePath().toString();
-      for (final BuildSystem bs : BuildSystem.values()) {
-         for (final String defaultBuildFileName : bs.getDefaultBuildFileNames()) {
+
+      for (final var buildSystem : BuildSystem.values()) {
+         for (final var defaultBuildFileName : buildSystem.getDefaultBuildFileNames()) {
             if (path.endsWith(defaultBuildFileName))
-               return bs;
+               return buildSystem;
          }
       }
 
-      for (final BuildSystem buildSystem : BuildSystem.values()) {
+      for (final var buildSystem : BuildSystem.values()) {
          if (path.endsWith("." + buildSystem.getBuildFileExtension()))
             return buildSystem;
       }

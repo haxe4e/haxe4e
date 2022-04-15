@@ -34,7 +34,7 @@ public final class HaxeProjectImportConfigurator implements ProjectConfigurator 
 
    @Override
    public Set<File> findConfigurableLocations(final File root, final IProgressMonitor monitor) {
-      final Set<File> haxeProjects = new HashSet<>();
+      final var haxeProjects = new HashSet<File>();
 
       try {
          Files.walkFileTree(root.toPath(), EnumSet.noneOf(FileVisitOption.class), 2, new SimpleFileVisitor<Path>() {
@@ -44,16 +44,15 @@ public final class HaxeProjectImportConfigurator implements ProjectConfigurator 
                final var parts = dir.iterator();
                while (parts.hasNext()) {
                   final var part = parts.next();
-                  if (part.toString().startsWith(".")) {
+                  if (part.toString().startsWith("."))
                      return FileVisitResult.SKIP_SUBTREE;
-                  }
                }
                return FileVisitResult.CONTINUE;
             }
 
             @Override
             public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-               final String fileName = file.getFileName().toString();
+               final var fileName = file.getFileName().toString();
                if (fileName.endsWith(".hxml") || "haxelib.json".equals(fileName)) {
                   haxeProjects.add(file.getParent().toFile());
                }

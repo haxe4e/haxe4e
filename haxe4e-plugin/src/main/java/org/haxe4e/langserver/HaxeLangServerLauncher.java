@@ -11,11 +11,9 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -70,10 +68,10 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    }
 
    @Override
-   public Object getInitializationOptions(final URI projectRootUri) {
+   public Map<String, Object> getInitializationOptions(final URI projectRootUri) {
 
       IProject project = null;
-      for (final IContainer container : ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(projectRootUri)) {
+      for (final var container : ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(projectRootUri)) {
          if (container instanceof IProject) {
             project = (IProject) container;
             break;
@@ -81,7 +79,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
       }
 
       final HaxeSDK haxeSDK;
-      final List<String> displayServerArgs = new ArrayList<>();
+      final var displayServerArgs = new ArrayList<String>();
 
       if (project == null) {
          haxeSDK = HaxeWorkspacePreference.getDefaultHaxeSDK(true, true);
@@ -116,7 +114,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
       final var nekoVM = haxeSDK == null ? null : haxeSDK.getNekoVM();
 
       // InitOptions https://github.com/vshaxe/haxe-language-server/blob/master/src/haxeLanguageServer/Configuration.hx#L87
-      final Map<String, ?> opts = new TreeBuilder<String>() //
+      final var opts = new TreeBuilder<String>() //
          // https://github.com/vshaxe/haxe-language-server/blob/master/shared/haxeLanguageServer/DisplayServerConfig.hx
          .put("displayServerConfig", new TreeBuilder<String>() //
             .put("path", haxeSDK == null ? null : haxeSDK.getCompilerExecutable().toString()) //

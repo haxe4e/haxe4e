@@ -7,7 +7,6 @@ package org.haxe4e.launch;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.viewers.ISelection;
@@ -59,7 +58,7 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
       final var hxmlFilePath = hxmlFile.getFullPath().makeRelativeTo(project.getFullPath()).toPortableString();
       try {
          // use an existing launch config if available
-         for (final ILaunchConfiguration cfg : launchMgr.getLaunchConfigurations(launchConfigType)) {
+         for (final var cfg : launchMgr.getLaunchConfigurations(launchConfigType)) {
             if (cfg.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "").equalsIgnoreCase(project.getName()) //
                && cfg.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, "").equalsIgnoreCase(hxmlFilePath) //
             ) {

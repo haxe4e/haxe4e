@@ -135,9 +135,9 @@ public final class HaxeWorkspacePreference {
       synchronized (haxeSDKs) {
          if (!haxeSDKs.isEmpty()) {
             if (verify) {
-               for (final var h : haxeSDKs) {
-                  if (h.isValid())
-                     return h;
+               for (final var sdk : haxeSDKs) {
+                  if (sdk.isValid())
+                     return sdk;
                }
             } else
                return haxeSDKs.first();
