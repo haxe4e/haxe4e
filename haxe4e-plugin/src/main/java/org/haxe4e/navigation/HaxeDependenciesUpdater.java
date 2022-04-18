@@ -177,7 +177,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
          for (final var folder : haxeDepsFolder.members()) {
             if (depsToCheck.containsKey(folder.getName())) {
                final var dep = depsToCheck.get(folder.getName());
-               if (dep.location.equals(folder.getRawLocation().toFile().toPath())) {
+               if (folder.getRawLocation() != null && dep.location.equals(folder.getRawLocation().toFile().toPath())) {
                   depsToCheck.remove(folder.getName());
                } else {
                   folder.delete(true, monitor); // delete broken folder link
