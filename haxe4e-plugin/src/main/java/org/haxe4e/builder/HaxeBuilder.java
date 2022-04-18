@@ -29,6 +29,7 @@ import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.prefs.HaxeProjectPreference;
 
+import de.sebthom.eclipse.commons.ui.UI;
 import net.sf.jstuff.core.concurrent.Threads;
 
 /**
@@ -150,8 +151,10 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
       try (var out = console.newMessageStream();
            var err = console.newMessageStream()) {
 
-         out.setColor(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR));
-         err.setColor(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR));
+         UI.run(() -> {
+            out.setColor(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR));
+            err.setColor(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR));
+         });
 
          final var startAt = LocalTime.now();
          final var startAtStr = startAt.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_TIME);
