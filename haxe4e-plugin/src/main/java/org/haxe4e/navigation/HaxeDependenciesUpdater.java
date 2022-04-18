@@ -60,7 +60,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
                if (HaxeProjectNature.hasNature(haxeProject) == Boolean.TRUE) {
                   final var status = updateHaxeProjectDependencies(haxeProject, monitor);
                   if (status != Status.OK_STATUS) {
-                     Haxe4EPlugin.log().error(status);
+                     Haxe4EPlugin.log().log(status);
                   }
                }
             }
