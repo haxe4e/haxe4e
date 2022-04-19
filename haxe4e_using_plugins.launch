@@ -55,6 +55,8 @@
         <setEntry value="org.apache.commons.logging@default:default"/>
         <setEntry value="org.apache.felix.scr@1:true"/>
         <setEntry value="org.apache.xmlgraphics@default:default"/>
+        <setEntry value="org.bouncycastle.bcpg@default:default"/>
+        <setEntry value="org.bouncycastle.bcprov@default:default"/>
         <setEntry value="org.eclipse.compare.core@default:default"/>
         <setEntry value="org.eclipse.compare@default:default"/>
         <setEntry value="org.eclipse.core.commands@default:default"/>
@@ -108,8 +110,10 @@
         <setEntry value="org.eclipse.equinox.bidi@default:default"/>
         <setEntry value="org.eclipse.equinox.common@2:true"/>
         <setEntry value="org.eclipse.equinox.event@default:default"/>
+        <setEntry value="org.eclipse.equinox.p2.artifact.repository@default:default"/>
         <setEntry value="org.eclipse.equinox.p2.core@default:default"/>
         <setEntry value="org.eclipse.equinox.p2.engine@default:default"/>
+        <setEntry value="org.eclipse.equinox.p2.jarprocessor@default:default"/>
         <setEntry value="org.eclipse.equinox.p2.metadata.repository@default:default"/>
         <setEntry value="org.eclipse.equinox.p2.metadata@default:default"/>
         <setEntry value="org.eclipse.equinox.p2.repository@default:default"/>
@@ -355,16 +359,6 @@
         <mapEntry key="org.eclipse.jdt.core/debug/dom/rewrite" value="false"/>
         <mapEntry key="org.eclipse.jdt.core/debug/formatter" value="false"/>
         <mapEntry key="org.eclipse.jdt.core/debug/hierarchy" value="false"/>
-        <mapEntry key="org.eclipse.jdt.core/debug/index/freespacetest" value="false"/>
-        <mapEntry key="org.eclipse.jdt.core/debug/index/indexer" value="false"/>
-        <mapEntry key="org.eclipse.jdt.core/debug/index/insertions" value="false"/>
-        <mapEntry key="org.eclipse.jdt.core/debug/index/locks" value="false"/>
-        <mapEntry key="org.eclipse.jdt.core/debug/index/logsizemegs" value="0"/>
-        <mapEntry key="org.eclipse.jdt.core/debug/index/pagecache" value="false"/>
-        <mapEntry key="org.eclipse.jdt.core/debug/index/scheduling" value="false"/>
-        <mapEntry key="org.eclipse.jdt.core/debug/index/selftest" value="false"/>
-        <mapEntry key="org.eclipse.jdt.core/debug/index/space" value="false"/>
-        <mapEntry key="org.eclipse.jdt.core/debug/index/timing" value="false"/>
         <mapEntry key="org.eclipse.jdt.core/debug/indexmanager" value="false"/>
         <mapEntry key="org.eclipse.jdt.core/debug/indexmanager/advanced" value="false"/>
         <mapEntry key="org.eclipse.jdt.core/debug/javadelta" value="false"/>

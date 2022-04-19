@@ -38,7 +38,7 @@
       <import plugin="org.eclipse.jface.notifications"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.platform" version="4.19.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.platform" version="4.22.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.ui.editors"/>
