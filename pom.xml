@@ -75,6 +75,12 @@
             </plugin>
 
             <plugin>
+               <groupId>org.eclipse.tycho</groupId>
+               <artifactId>tycho-ds-plugin</artifactId>
+               <version>${tycho.version}</version>
+            </plugin>
+
+            <plugin>
                <!-- https://www.eclipse.org/tycho/sitedocs/tycho-compiler-plugin/plugin-info.html -->
                <groupId>org.eclipse.tycho</groupId>
                <artifactId>tycho-compiler-plugin</artifactId>
