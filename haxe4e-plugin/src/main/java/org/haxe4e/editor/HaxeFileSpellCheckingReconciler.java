@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextInputListener;
@@ -67,8 +68,11 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
          try {
             var blockCommentStart = -1;
             for (var lineIndex = range.fromLineNumber - 1; lineIndex < range.toLineNumber; lineIndex++) {
-               for (final var token : docModel.getLineTokens(lineIndex)) {
-
+               final var lineTokens = docModel.getLineTokens(lineIndex);
+               if (lineTokens == null) {
+                  continue;
+               }
+               for (final var token : lineTokens) {
                   if (TRACE_SPELLCHECK_REGIONS) {
                      System.out.println(lineIndex + ":" + doc.getLineOffset(lineIndex) + " " + token.startIndex + " " + token.type);
                   }
@@ -131,10 +135,12 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
    }
 
    @Override
-   public void install(final ITextViewer viewer) {
+   public void install(@Nullable final ITextViewer viewer) {
       super.install(viewer);
       this.viewer = viewer;
-      viewer.addTextInputListener(this);
+      if (viewer != null) {
+         viewer.addTextInputListener(this);
+      }
    }
 
    @Override

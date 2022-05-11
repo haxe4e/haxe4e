@@ -184,7 +184,7 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
       final var lineNumber = rulerInfo.getLineOfLastMouseButtonActivity();
 
       final var tokens = parsedDoc.getLineTokens(lineNumber);
-      if (tokens.isEmpty())
+      if (tokens == null || tokens.isEmpty())
          return;
 
       // check if the current line is eligible for having a breakpoint
