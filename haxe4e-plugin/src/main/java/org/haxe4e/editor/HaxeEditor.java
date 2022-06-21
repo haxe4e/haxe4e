@@ -31,7 +31,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.tm4e.ui.internal.model.TMModelManager;
+import org.eclipse.tm4e.ui.TMUIPlugin;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.haxe4e.Haxe4EPlugin;
 
@@ -179,7 +179,7 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
 
    private void toggleBreakpoint() {
       final var doc = getDocument();
-      final var parsedDoc = TMModelManager.getInstance().connect(doc);
+      final var parsedDoc = TMUIPlugin.getTMModelManager().connect(doc);
       final var rulerInfo = getAdapter(IVerticalRulerInfo.class);
       final var lineNumber = rulerInfo.getLineOfLastMouseButtonActivity();
 
