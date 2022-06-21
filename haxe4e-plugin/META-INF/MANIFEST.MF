@@ -8,7 +8,7 @@ Bundle-Localization: src/main/java/org/haxe4e/localization/messages
 Automatic-Module-Name: org.haxe4e
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.haxe4e.Haxe4EPlugin
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ClassPath: .,
  libs/haxe-formatter-1.13.1.jar
 Require-Bundle: org.eclipse.platform;bundle-version="4.22.0",

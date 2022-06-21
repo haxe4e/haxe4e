@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Vegard IT GmbH
 Fragment-Host: org.haxe4e
 Automatic-Module-Name: org.haxe4e.tests
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.junit,
  org.eclipse.jdt.ui,
  org.eclipse.reddeer.go,
