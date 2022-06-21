@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.core.resources.IResource;
@@ -23,7 +22,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.lsp4e.debug.DSPPlugin;
-import org.eclipse.lsp4e.debug.launcher.DSPLaunchDelegate;
 import org.eclipse.lsp4e.debug.launcher.DSPLaunchDelegate.DSPLaunchDelegateLaunchBuilder;
 import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
 import org.haxe4e.Constants;
@@ -62,16 +60,17 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
       }
 
       var hxmlFile = config.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, BuildSystem.HAXE.getDefaultBuildFileNames().first());
-      if ("".equals(hxmlFile)) {
+      if (Strings.isBlank(hxmlFile)) {
          hxmlFile = BuildSystem.HAXE.getDefaultBuildFileNames().first();
       }
       final var hxmlFilePath = Paths.get(project.getLocation().toPortableString(), hxmlFile);
 
-      final var cwd = Paths.get(config.getAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, project.getLocation().toOSString()));
+      final var workdir = Paths.get(config.getAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, project.getLocation().toOSString()));
       final var envVars = config.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, Collections.emptyMap());
       final var appendEnvVars = config.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 
       switch (mode) {
+
          case ILaunchManager.DEBUG_MODE:
             final var debuggerEnvVars = new HashMap<String, Object>();
             debuggerEnvVars.put("PATH", System.getenv("PATH"));
@@ -88,8 +87,8 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
 
             // LaunchRequestArguments https://github.com/vshaxe/vscode-debugadapter-extern/blob/master/src/vscode/debugProtocol/DebugProtocol.hx#L764
             // EvalLaunchRequestArguments https://github.com/vshaxe/eval-debugger/blob/master/src/Main.hx#L14
-            final var initOptions = new TreeBuilder<String>() //
-               .put("cwd", cwd.toString()) //
+            final var evalDebuggerOpts = new TreeBuilder<String>() //
+               .put("cwd", workdir.toString()) //
                .put("args", Arrays.asList(hxmlFilePath.toString())) //
                .put("haxeExecutable", new TreeBuilder<String>() //
                   .put("executable", haxeSDK.getCompilerExecutable().toString()) //
@@ -100,12 +99,12 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
 
             try {
                final var evalDebuggerJS = Haxe4EPlugin.resources().extract("langsrv/haxe-eval-debugger.min.js");
-               final List<String> debugCmdArgs = Collections.singletonList(evalDebuggerJS.getAbsolutePath());
+               final var debugCmdArgs = Collections.singletonList(evalDebuggerJS.getAbsolutePath());
                final var builder = new DSPLaunchDelegateLaunchBuilder(config, ILaunchManager.DEBUG_MODE, launch, monitor);
                builder.setLaunchDebugAdapter(NodeJSManager.getNodeJsLocation().getAbsolutePath(), debugCmdArgs);
                builder.setMonitorDebugAdapter(config.getAttribute(DSPPlugin.ATTR_DSP_MONITOR_DEBUG_ADAPTER, true));
-               builder.setDspParameters(initOptions);
-               new DSPLaunchDelegate() {}.launch(builder);
+               builder.setDspParameters(evalDebuggerOpts);
+               new LaunchDebugConfig().launch(builder);
             } catch (final IOException ex) {
                Dialogs.showStatus("Failed to start debug session", Haxe4EPlugin.status().createError(ex), true);
             }
@@ -116,7 +115,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                launch, //
                haxeSDK, //
                hxmlFilePath, //
-               cwd, //
+               workdir, //
                envVars, //
                appendEnvVars, //
                action -> { //
