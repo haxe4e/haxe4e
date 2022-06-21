@@ -9,7 +9,7 @@
     <source path="dir/another src" />
     <source path='dir/yet another src' />
     <!--
-        <source path="commented-out-src"/>
+        <source path="commented-out-src" />
     -->
 
     <assets path="assets" />

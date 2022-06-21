@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.pde.ui.RuntimeWorkbench">
-    <setAttribute key="additional_plugins"/>
-    <booleanAttribute key="append.args" value="true"/>
-    <booleanAttribute key="askclear" value="false"/>
-    <booleanAttribute key="automaticAdd" value="false"/>
-    <booleanAttribute key="automaticValidate" value="false"/>
-    <stringAttribute key="bootstrap" value=""/>
-    <stringAttribute key="checked" value="org.eclipse.lsp4e.debug,org.haxe4e"/>
-    <booleanAttribute key="clearConfig" value="true"/>
-    <booleanAttribute key="clearws" value="true"/>
-    <booleanAttribute key="clearwslog" value="true"/>
-    <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/haxe4e_using_features"/>
-    <booleanAttribute key="default" value="false"/>
-    <setAttribute key="deselected_workspace_bundles"/>
-    <stringAttribute key="featureDefaultLocation" value="workspace"/>
-    <stringAttribute key="featurePluginResolution" value="workspace"/>
-    <booleanAttribute key="includeOptional" value="false"/>
-    <stringAttribute key="location" value="${workspace_loc}/../runtime-haxe4e"/>
-    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false"/>
-    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
-    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
-    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17"/>
-    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"/>
-    <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true"/>
-    <stringAttribute key="pde.version" value="3.3"/>
-    <stringAttribute key="product" value="org.eclipse.sdk.ide"/>
+    <setAttribute key="additional_plugins" />
+    <booleanAttribute key="append.args" value="true" />
+    <booleanAttribute key="askclear" value="false" />
+    <booleanAttribute key="automaticAdd" value="false" />
+    <booleanAttribute key="automaticValidate" value="false" />
+    <stringAttribute key="bootstrap" value="" />
+    <stringAttribute key="checked" value="org.eclipse.lsp4e.debug,org.haxe4e" />
+    <booleanAttribute key="clearConfig" value="true" />
+    <booleanAttribute key="clearws" value="true" />
+    <booleanAttribute key="clearwslog" value="true" />
+    <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/haxe4e_using_features" />
+    <booleanAttribute key="default" value="false" />
+    <setAttribute key="deselected_workspace_bundles" />
+    <stringAttribute key="featureDefaultLocation" value="workspace" />
+    <stringAttribute key="featurePluginResolution" value="workspace" />
+    <booleanAttribute key="includeOptional" value="false" />
+    <stringAttribute key="location" value="${workspace_loc}/../runtime-haxe4e" />
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false" />
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true" />
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true" />
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17" />
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog" />
+    <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider" />
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true" />
+    <stringAttribute key="pde.version" value="3.3" />
+    <stringAttribute key="product" value="org.eclipse.sdk.ide" />
     <setAttribute key="selected_features">
-        <setEntry value="org.eclipse.e4.rcp:default"/>
-        <setEntry value="org.eclipse.platform:default"/>
-        <setEntry value="org.haxe4e.feature:default"/>
+        <setEntry value="org.eclipse.e4.rcp:default" />
+        <setEntry value="org.eclipse.platform:default" />
+        <setEntry value="org.haxe4e.feature:default" />
     </setAttribute>
-    <setAttribute key="selected_target_bundles"/>
-    <setAttribute key="selected_workspace_bundles"/>
-    <booleanAttribute key="show_selected_only" value="false"/>
-    <stringAttribute key="templateConfig" value="${target_home}\configuration\config.ini"/>
-    <booleanAttribute key="tracing" value="true"/>
+    <setAttribute key="selected_target_bundles" />
+    <setAttribute key="selected_workspace_bundles" />
+    <booleanAttribute key="show_selected_only" value="false" />
+    <stringAttribute key="templateConfig" value="${target_home}\configuration\config.ini" />
+    <booleanAttribute key="tracing" value="true" />
     <mapAttribute key="tracingOptions">
-        <mapEntry key="org.haxe4e/trace/langserv/init_options" value="true"/>
-        <mapEntry key="org.haxe4e/trace/langserv/io" value="false"/>
-        <mapEntry key="org.haxe4e/trace/langserv/method_results" value="false"/>
-        <mapEntry key="org.haxe4e/trace/spellcheck/regions" value="false"/>
+        <mapEntry key="org.haxe4e/trace/langserv/init_options" value="true" />
+        <mapEntry key="org.haxe4e/trace/langserv/io" value="false" />
+        <mapEntry key="org.haxe4e/trace/langserv/method_results" value="false" />
+        <mapEntry key="org.haxe4e/trace/spellcheck/regions" value="false" />
     </mapAttribute>
-    <booleanAttribute key="useCustomFeatures" value="true"/>
-    <booleanAttribute key="useDefaultConfig" value="true"/>
-    <booleanAttribute key="useDefaultConfigArea" value="true"/>
-    <booleanAttribute key="useProduct" value="false"/>
+    <booleanAttribute key="useCustomFeatures" value="true" />
+    <booleanAttribute key="useDefaultConfig" value="true" />
+    <booleanAttribute key="useDefaultConfigArea" value="true" />
+    <booleanAttribute key="useProduct" value="false" />
 </launchConfiguration>

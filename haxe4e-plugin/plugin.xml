@@ -214,7 +214,7 @@
          commandId="org.haxe4e.command.FormatEditor"
          contextId="org.haxe4e.editor.HaxeEditorContext"
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-         sequence="M1+M2+F"/>
+         sequence="M1+M2+F" />
    </extension>
    <extension point="org.eclipse.ui.menus">
       <menuContribution locationURI="menu:org.eclipse.ui.main.menu?after=edit">
@@ -257,8 +257,7 @@
          id="org.haxe4e.util.FileTypePropertyTester"
          namespace="org.haxe4e.fileinfo"
          properties="contentTypeId,fileExtension"
-         type="java.lang.Object">
-      </propertyTester>
+         type="java.lang.Object" />
    </extension>
 
 
@@ -335,7 +334,7 @@
          id="org.haxe4e.builder.HaxeBuilderConsolePatternMatchListener"
          regex="(\w+\/)*\w+\.hx:\d+:">
          <enablement>
-            <test property="org.eclipse.ui.console.consoleTypeTest" value="org.haxe4e.builder.HaxeBuilderConsole"/>
+            <test property="org.eclipse.ui.console.consoleTypeTest" value="org.haxe4e.builder.HaxeBuilderConsole" />
          </enablement>
       </consolePatternMatchListener>
    </extension>
@@ -344,7 +343,7 @@
          class="org.haxe4e.builder.HaxeBuilderConsoleActions"
          id="com.plugin.console.PageParticipant">
          <enablement>
-            <instanceof value="org.haxe4e.builder.HaxeBuilderConsole"/>
+            <instanceof value="org.haxe4e.builder.HaxeBuilderConsole" />
          </enablement>
       </consolePageParticipant>
    </extension>
@@ -392,12 +391,12 @@
       </definition>
       <definition id="org.haxe4e.perspective.isActive">
          <with variable="activeWorkbenchWindow.activePerspective">
-            <equals value="org.haxe4e.perspective"/>
+            <equals value="org.haxe4e.perspective" />
          </with>
       </definition>
       <definition id="org.haxe4e.resource.isHaxeFile">
          <adapt type="org.eclipse.core.resources.IFile">
-            <test args="kindOf" property="org.eclipse.core.resources.contentTypeId" value="org.haxe4e.content.haxe"/>
+            <test args="kindOf" property="org.eclipse.core.resources.contentTypeId" value="org.haxe4e.content.haxe" />
          </adapt>
       </definition>
    </extension>
