@@ -106,6 +106,17 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
                      }
                   }
                   break;
+               case LIX:
+                  for (final var source : buildFile.getSourcePaths()) {
+                     displayServerArgs.add("--class-path");
+                     displayServerArgs.add(source.toString());
+                  }
+                  for (final var haxelib : buildFile.getDirectDependencies(haxeSDK, new NullProgressMonitor())) {
+                     displayServerArgs.add("--class-path");
+                     displayServerArgs.add(haxelib.location.resolve(haxelib.meta.classPath == null ? "." : haxelib.meta.classPath)
+                        .toString());
+                  }
+                  break;
                default:
                   throw new UnsupportedOperationException("Unsupported build-system: " + this);
             }

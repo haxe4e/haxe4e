@@ -32,7 +32,12 @@ public enum BuildSystem {
    /**
     * https://github.com/haxelime/lime
     */
-   LIME("xml", Arrays.asList("project.xml", "include.xml"), emptyList());
+   LIME("xml", Arrays.asList("project.xml", "include.xml"), emptyList()),
+
+   /**
+    * https://github.com/haxelime/lime
+    */
+   LIX("hxml", Arrays.asList("build.hxml", "tests.hxml"), Arrays.asList("extraParams.hxml"));
 
    @Nullable
    public static BuildSystem guessBuildSystemOfBuildFile(final File location) {
@@ -98,6 +103,8 @@ public enum BuildSystem {
             return new HaxeBuildFile(buildFilePath);
          case LIME:
             return new LimeBuildFile(buildFilePath);
+         case LIX:
+            return new LixBuildFile(buildFilePath);
          default:
             throw new UnsupportedOperationException("Unsupported build-system: " + this);
       }

@@ -20,6 +20,7 @@ import org.haxe4e.localization.Messages;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.model.buildsystem.BuildFile;
 import org.haxe4e.model.buildsystem.BuildSystem;
+import org.haxe4e.model.buildsystem.LixVirtualBuildFile;
 import org.haxe4e.navigation.HaxeDependenciesUpdater;
 import org.haxe4e.navigation.HaxeResourcesDecorator;
 
@@ -88,6 +89,9 @@ public final class HaxeProjectPreference {
          if (buildFile.exists())
             return buildSystem.toBuildFile(buildFile);
       }
+
+      if (buildSystem == BuildSystem.LIX)
+         return new LixVirtualBuildFile(project);
 
       return null;
    }

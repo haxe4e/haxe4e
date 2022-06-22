@@ -92,11 +92,11 @@ public final class Haxelib implements Comparable<Haxelib> {
    public final Path location;
    public final HaxelibJSON meta;
 
-   private Haxelib(final Path location, final boolean isDevVersion) throws IOException {
-      Args.notNull("location", location);
+   public Haxelib(final Path directory, final boolean isDevVersion) throws IOException {
+      Args.notNull("directory", directory);
 
       this.isDevVersion = isDevVersion;
-      this.location = location;
+      location = directory;
       meta = HaxelibJSON.from(location.resolve("haxelib.json"));
    }
 

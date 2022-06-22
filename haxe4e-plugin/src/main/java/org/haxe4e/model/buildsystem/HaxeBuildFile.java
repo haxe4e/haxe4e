@@ -9,9 +9,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,69 +36,14 @@ import net.sf.jstuff.core.validation.Args;
  */
 public class HaxeBuildFile extends BuildFile {
 
-   public HaxeBuildFile(final IFile location) {
-      super(BuildSystem.HAXE, location);
+   public static List<String> parseArgs(final IFile buildFile) throws RuntimeIOException {
+      return parseArgs(buildFile.getLocation().toFile().toPath());
    }
 
-   @Override
-   public Set<Haxelib> getDirectDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) throws RuntimeIOException {
-      Args.notNull("haxeSDK", haxeSDK);
-      Args.notNull("monitor", monitor);
+   public static List<String> parseArgs(final Path buildFile) throws RuntimeIOException {
+      if (!Files.exists(buildFile))
+         return Collections.emptyList();
 
-      final var deps = new LinkedHashSet<Haxelib>();
-      final var args = parseArgs();
-      var nextArgIsLibrary = false;
-      for (final var arg : args) {
-         if (nextArgIsLibrary) {
-            final var libName = Strings.substringBefore(arg, ":");
-            final var libVer = Strings.substringAfter(arg, ":");
-            try {
-               deps.add(Haxelib.from(haxeSDK, libName, libVer, monitor));
-            } catch (final IOException ex) {
-               Haxe4EPlugin.log().error(ex);
-               UI.run(() -> new NotificationPopup(ex.getMessage()).open());
-            }
-            nextArgIsLibrary = false;
-         } else {
-            switch (arg) {
-               case "-L":
-               case "-lib":
-               case "--library":
-                  nextArgIsLibrary = true;
-                  break;
-            }
-         }
-      }
-      return deps;
-   }
-
-   @Override
-   public Set<Path> getSourcePaths() throws RuntimeIOException {
-      final var paths = new LinkedHashSet<Path>();
-      final var args = parseArgs();
-      var nextArgIsSourcePath = false;
-      for (final var arg : args) {
-         if (nextArgIsSourcePath) {
-            paths.add(Paths.get(arg));
-            nextArgIsSourcePath = false;
-         } else {
-            switch (arg) {
-               case "-p":
-               case "-cp":
-               case "--class-path":
-                  nextArgIsSourcePath = true;
-                  break;
-            }
-         }
-      }
-      return paths;
-   }
-
-   public List<String> parseArgs() throws RuntimeIOException {
-      return parseArgs(location.getLocation().toFile().toPath());
-   }
-
-   protected List<String> parseArgs(final Path buildFile) throws RuntimeIOException {
       final var args = new ArrayList<String>();
       final MutableRef<@Nullable Character> quotedWith = MutableRef.of(null);
       final var arg = new StringBuilder();
@@ -160,5 +108,64 @@ public class HaxeBuildFile extends BuildFile {
          throw Exceptions.wrapAsRuntimeException(ex);
       }
       return args;
+   }
+
+   HaxeBuildFile(final BuildSystem bs, final IFile location) {
+      super(bs, location);
+   }
+
+   public HaxeBuildFile(final IFile location) {
+      super(BuildSystem.HAXE, location);
+   }
+
+   @Override
+   public Set<Haxelib> getDirectDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) throws RuntimeIOException {
+      Args.notNull("haxeSDK", haxeSDK);
+      Args.notNull("monitor", monitor);
+
+      final var deps = new LinkedHashSet<Haxelib>();
+      final var args = parseArgs();
+      final var libs = getOptionValues(args, arg -> switch (arg) {
+         case "-L", "-lib", "--library" -> true;
+         default -> false;
+      });
+      for (final var lib : libs) {
+         final var libName = Strings.substringBefore(lib, ":");
+         final var libVer = Strings.substringAfter(lib, ":");
+         try {
+            deps.add(Haxelib.from(haxeSDK, libName, libVer, monitor));
+         } catch (final IOException ex) {
+            Haxe4EPlugin.log().error(ex);
+            UI.run(() -> new NotificationPopup(ex.getMessage()).open());
+         }
+      }
+      return deps;
+   }
+
+   protected List<String> getOptionValues(final List<String> args, final Predicate<String> optionNameTester) {
+      final var values = new ArrayList<String>(Math.min(args.size() / 2, 8));
+      var nextArgIsCollectable = false;
+      for (final var arg : args) {
+         if (nextArgIsCollectable) {
+            values.add(arg);
+            nextArgIsCollectable = false;
+         } else if (optionNameTester.test(arg)) {
+            nextArgIsCollectable = true;
+         }
+      }
+      return values;
+   }
+
+   @Override
+   public Set<Path> getSourcePaths() throws RuntimeIOException {
+      final var args = parseArgs();
+      return getOptionValues(args, arg -> switch (arg) {
+         case "-p", "-cp", "--class-path" -> true;
+         default -> false;
+      }).stream().map(Paths::get).collect(Collectors.toCollection(LinkedHashSet::new));
+   }
+
+   public List<String> parseArgs() throws RuntimeIOException {
+      return parseArgs(location);
    }
 }
