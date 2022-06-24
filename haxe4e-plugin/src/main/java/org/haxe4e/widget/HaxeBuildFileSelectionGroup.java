@@ -4,6 +4,7 @@
  */
 package org.haxe4e.widget;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -83,7 +84,7 @@ public class HaxeBuildFileSelectionGroup extends Composite {
 
          @Override
          public String getText(final Object element) {
-            return ((BuildFile) element).getProjectRelativePath();
+            return ((IFile) element).getProjectRelativePath().toPortableString();
          }
       });
       final var buildSystem = projectPrefs.getBuildSystem();
@@ -92,9 +93,9 @@ public class HaxeBuildFileSelectionGroup extends Composite {
       dlg.setEmptyListMessage("The project has no build files.");
       dlg.setEmptySelectionMessage("No matches found.");
       try {
-         final var buildFiles = buildSystem.getBuildFiles(projectPrefs.getProject(), true);
+         final var buildFiles = buildSystem.findFilesWithBuildFileExtension(projectPrefs.getProject(), true);
          if (!buildFiles.isEmpty()) {
-            dlg.setElements(buildFiles.toArray(new BuildFile[buildFiles.size()]));
+            dlg.setElements(buildFiles.toArray(IFile[]::new));
             dlg.setInitialSelections(selectedBuildFile.get());
          }
       } catch (final CoreException ex) {
@@ -107,10 +108,11 @@ public class HaxeBuildFileSelectionGroup extends Composite {
       final var dialog = createSelectBuildFileDialog();
 
       if (dialog.open() == Window.OK) {
-         final var buildFile = (BuildFile) dialog.getFirstResult();
+         final var buildFile = (IFile) dialog.getFirstResult();
 
          if (buildFile != null) {
-            selectedBuildFile.set(buildFile);
+            final var buildSystem = projectPrefs.getBuildSystem();
+            selectedBuildFile.set(buildSystem.toBuildFile(buildFile));
          }
       }
    }

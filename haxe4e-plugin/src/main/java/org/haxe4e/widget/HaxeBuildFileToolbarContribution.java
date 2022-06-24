@@ -4,6 +4,7 @@
  */
 package org.haxe4e.widget;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -17,7 +18,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.haxe4e.Haxe4EPlugin;
-import org.haxe4e.model.buildsystem.BuildFile;
 import org.haxe4e.prefs.HaxeProjectPreference;
 
 import de.sebthom.eclipse.commons.ui.Editors;
@@ -65,20 +65,15 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
    }
 
    public void refresh(final IProject project) {
-      if (project == null)
-         return;
-
-      if (project == currentProject)
-         return;
-
-      if (buildFileDropDown.getListVisible())
+      if (project == null || project == currentProject || buildFileDropDown.getListVisible())
          return;
 
       try {
          currentProject = project;
 
          final var prefs = HaxeProjectPreference.get(project);
-         final var buildFiles = prefs.getBuildSystem().getBuildFiles(project, true);
+         final var buildSystem = prefs.getBuildSystem();
+         final var buildFiles = buildSystem.findFilesWithBuildFileExtension(project, true);
 
          buildFileDropDown.removeAll();
 
@@ -86,11 +81,11 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
             var currentBuildFile = prefs.getBuildFile();
 
             if (currentBuildFile == null) {
-               currentBuildFile = buildFiles.get(0);
+               currentBuildFile = buildSystem.toBuildFile(buildFiles.get(0));
                prefs.setBuildFilePath(currentBuildFile.getProjectRelativePath());
                prefs.save();
             }
-            buildFileDropDown.setItems(buildFiles.stream().map(BuildFile::getProjectRelativePath).toArray(String[]::new));
+            buildFileDropDown.setItems(buildFiles.stream().map(IFile::getProjectRelativePath).toArray(String[]::new));
             buildFileDropDown.setText(currentBuildFile.getProjectRelativePath());
          }
 

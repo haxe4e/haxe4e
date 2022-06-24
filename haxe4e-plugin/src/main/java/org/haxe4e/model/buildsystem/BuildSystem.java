@@ -6,7 +6,6 @@ package org.haxe4e.model.buildsystem;
 
 import static java.util.Collections.*;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,18 +34,18 @@ public enum BuildSystem {
    LIME("xml", Arrays.asList("project.xml", "include.xml"), emptyList()),
 
    /**
-    * https://github.com/haxelime/lime
+    * https://github.com/lix-pm/lix.client
     */
    LIX("hxml", Arrays.asList("build.hxml", "tests.hxml"), Arrays.asList("extraParams.hxml"));
 
    @Nullable
-   public static BuildSystem guessBuildSystemOfBuildFile(final File location) {
-      return guessBuildSystemOfBuildFile(location.toPath());
+   public static BuildSystem guessBuildSystemOfBuildFile(final IFile buildFile) {
+      return guessBuildSystemOfBuildFile(buildFile.getFullPath().toFile().toPath());
    }
 
    @Nullable
-   public static BuildSystem guessBuildSystemOfBuildFile(final Path location) {
-      final var path = location.toAbsolutePath().toString();
+   public static BuildSystem guessBuildSystemOfBuildFile(final Path buildFile) {
+      final var path = buildFile.toAbsolutePath().toString();
 
       for (final var buildSystem : BuildSystem.values()) {
          for (final var defaultBuildFileName : buildSystem.getDefaultBuildFileNames()) {
@@ -60,6 +59,21 @@ public enum BuildSystem {
             return buildSystem;
       }
       return null;
+   }
+
+   public static BuildSystem guessBuildSystemOfProject(final IProject project) {
+      for (final var buildSystem : BuildSystem.values()) {
+         for (final var buildFileName : buildSystem.getDefaultBuildFileNames()) {
+            final var buildFile = project.getFile(buildFileName);
+            if (buildFile.exists()) {
+               if (buildSystem == HAXE && project.getFolder("haxe_libraries").exists())
+                  return LIX;
+               return buildSystem;
+            }
+         }
+      }
+
+      return project.getFolder("haxe_libraries").exists() ? LIX : HAXE;
    }
 
    private final String buildFileExtension;
@@ -76,25 +90,26 @@ public enum BuildSystem {
       return buildFileExtension;
    }
 
-   public List<BuildFile> getBuildFiles(final IProject project, final boolean excludeIgnorableBuildFiles) throws CoreException {
-      final var buildFiles = new ArrayList<BuildFile>();
+   public SortedSet<String> getDefaultBuildFileNames() {
+      return defaultBuildFileNames;
+   }
+
+   public List<IFile> findFilesWithBuildFileExtension(final IProject project, final boolean excludeIgnorableBuildFiles)
+      throws CoreException {
+      final var buildFiles = new ArrayList<IFile>();
       project.accept(res -> {
          if (res.isVirtual() || res.isLinked())
             return false;
 
-         if (res instanceof IFile && buildFileExtension.equals(res.getFileExtension())) {
-            if (!excludeIgnorableBuildFiles || !ignorableBuildFileNames.contains(res.getName())) {
-               buildFiles.add(toBuildFile((IFile) res));
+         if (res instanceof final IFile file && buildFileExtension.equals(file.getFileExtension())) {
+            if (!excludeIgnorableBuildFiles || !ignorableBuildFileNames.contains(file.getName())) {
+               buildFiles.add(file);
             }
          }
          return true;
       });
 
       return buildFiles;
-   }
-
-   public SortedSet<String> getDefaultBuildFileNames() {
-      return defaultBuildFileNames;
    }
 
    public BuildFile toBuildFile(final IFile buildFilePath) {

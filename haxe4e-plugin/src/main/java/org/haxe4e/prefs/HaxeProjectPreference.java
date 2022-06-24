@@ -105,7 +105,8 @@ public final class HaxeProjectPreference {
             Haxe4EPlugin.log().error(ex);
          }
       }
-      return BuildSystem.HAXE;
+
+      return BuildSystem.guessBuildSystemOfProject(project);
    }
 
    /**
