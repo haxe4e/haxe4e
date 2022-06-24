@@ -9,6 +9,7 @@ import org.eclipse.lsp4e.outline.SymbolsModel.DocumentSymbolWithFile;
 import org.eclipse.lsp4j.DocumentSymbol;
 import org.eclipse.lsp4j.SymbolInformation;
 import org.eclipse.lsp4j.SymbolKind;
+import org.eclipse.lsp4j.WorkspaceSymbol;
 import org.eclipse.swt.graphics.Image;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
@@ -25,12 +26,14 @@ public final class HaxeOutlineSymbolsProvider extends SymbolsLabelProvider {
    @Override
    public Image getImage(final Object item) {
       SymbolKind kind = null;
-      if (item instanceof SymbolInformation) {
-         kind = ((SymbolInformation) item).getKind();
-      } else if (item instanceof DocumentSymbolWithFile) {
-         kind = ((DocumentSymbolWithFile) item).symbol.getKind();
-      } else if (item instanceof DocumentSymbol) {
-         kind = ((DocumentSymbol) item).getKind();
+      if (item instanceof final SymbolInformation symbolInfo) {
+         kind = symbolInfo.getKind();
+      } else if (item instanceof final DocumentSymbol docSymbol) {
+         kind = docSymbol.getKind();
+      } else if (item instanceof final DocumentSymbolWithFile docSymbol) {
+         kind = docSymbol.symbol.getKind();
+      } else if (item instanceof final WorkspaceSymbol symbol) {
+         kind = symbol.getKind();
       }
       if (kind != null) {
          switch (kind) {
