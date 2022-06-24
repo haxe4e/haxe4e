@@ -41,7 +41,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
       if (HaxeProjectNature.hasNature(haxeProject) != Boolean.TRUE)
          return; // ignore
 
-      final var job = new Job("Updating 'Haxe Dependencies' list...") {
+      final var job = new Job("Updating 'Haxe Dependencies' list of project '" + haxeProject.getName() + "'...") {
          @Override
          protected IStatus run(final IProgressMonitor monitor) {
             return updateHaxeProjectDependencies(haxeProject, monitor);
@@ -53,22 +53,9 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
    }
 
    public void onHaxeProjectsConfigChanged(final List<IProject> haxeProjects) {
-      final var job = new Job("Updating Haxe dependency tree...") {
-         @Override
-         protected IStatus run(final IProgressMonitor monitor) {
-            for (final var haxeProject : haxeProjects) {
-               if (HaxeProjectNature.hasNature(haxeProject) == Boolean.TRUE) {
-                  final var status = updateHaxeProjectDependencies(haxeProject, monitor);
-                  if (status != Status.OK_STATUS) {
-                     Haxe4EPlugin.log().log(status);
-                  }
-               }
-            }
-            return Status.OK_STATUS;
-         }
-      };
-      job.setPriority(Job.BUILD);
-      job.schedule();
+      for (final var haxeProject : haxeProjects) {
+         onHaxeProjectConfigChanged(haxeProject);
+      }
    }
 
    public void removeDependenciesFolder(final IProject haxeProject, final IProgressMonitor monitor) throws CoreException {
@@ -95,9 +82,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
             return true; // ignore
 
          switch (delta.getKind()) {
-            case IResourceDelta.CHANGED:
-            case IResourceDelta.ADDED:
-            case IResourceDelta.REMOVED:
+            case IResourceDelta.ADDED, IResourceDelta.CHANGED, IResourceDelta.REMOVED:
                break;
             default:
                return true; // ignore
@@ -133,22 +118,24 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
 
          final var haxeSDK = prefs.getEffectiveHaxeSDK();
          if (haxeSDK == null)
-            throw new IllegalStateException("Haxe SDK cannot be found.");
+            return Haxe4EPlugin.status().createError("Cannot update 'Haxe Dependencies' list. Haxe SDK cannot be found!");
 
          /*
-          * create haxe stdlib top-level virtual folder
+          * create/update haxe stdlib top-level virtual folder
           */
          final var haxeStdLibFolder = haxeProject.getFolder(HAXE_STDLIB_MAGIC_FOLDER_NAME);
          if (haxeStdLibFolder.exists()) {
             if (!haxeStdLibFolder.isLinked())
-               return Haxe4EPlugin.status().createError("Cannot update Haxe standard library folder. Physical folder with name "
-                  + HAXE_STDLIB_MAGIC_FOLDER_NAME + " exists!");
+               return Haxe4EPlugin.status().createError("Cannot update Haxe standard library folder. Physical folder with name '"
+                  + HAXE_STDLIB_MAGIC_FOLDER_NAME + "' exists!");
+            if (!haxeStdLibFolder.getLocation().toFile().toPath().equals(haxeSDK.getStandardLibDir())) {
+               haxeStdLibFolder.createLink(haxeSDK.getStandardLibDir().toUri(), IResource.REPLACE, monitor);
+            }
          } else {
             haxeStdLibFolder.createLink(haxeSDK.getStandardLibDir().toUri(), IResource.REPLACE, monitor);
          }
-
          /*
-          * create haxe dependencies top-level virtual folder
+          * create/update haxe dependencies top-level virtual folder
           */
          final var haxeDepsFolder = haxeProject.getFolder(HAXE_DEPS_MAGIC_FOLDER_NAME);
 
@@ -164,8 +151,8 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
 
          if (haxeDepsFolder.exists()) {
             if (!haxeDepsFolder.isVirtual())
-               return Haxe4EPlugin.status().createError("Cannot update Haxe dependencies list. Physical folder with name "
-                  + HAXE_DEPS_MAGIC_FOLDER_NAME + " exists!");
+               return Haxe4EPlugin.status().createError("Cannot update 'Haxe Dependencies' list. Physical folder with name '"
+                  + HAXE_DEPS_MAGIC_FOLDER_NAME + "' exists!");
          } else {
             haxeDepsFolder.create(IResource.VIRTUAL, true, monitor);
          }
@@ -193,7 +180,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
          }
          return Status.OK_STATUS;
       } catch (final Exception ex) {
-         return Haxe4EPlugin.status().createError(ex, "Failed to Haxe dependencies list.");
+         return Haxe4EPlugin.status().createError(ex, "Failed to update 'Haxe Dependencies' list.");
       }
    }
 
