@@ -30,7 +30,7 @@
          base-type="org.haxe4e.content.base"
          file-extensions="hxml"
          name="%Label_Haxe_Build_File"
-         priority="high" />ba
+         priority="high" />
       <file-association
          content-type="org.haxe4e.content.hxml"
          file-extensions="hxml" />
@@ -424,9 +424,8 @@
             </visibleWhen>
          </command>
       </menuContribution>
-      <menuContribution
-         locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
-         <toolbar id="org.haxe4e.main.toolbar">
+      <menuContribution locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar id="org.haxe4e.main.toolbar" label="Haxe">
             <control class="org.haxe4e.widget.HaxeBuildFileToolbarContribution">
                <visibleWhen>
                   <reference definitionId="org.haxe4e.perspective.isActive" />
