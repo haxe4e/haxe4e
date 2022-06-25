@@ -5,6 +5,7 @@
 package org.haxe4e.launch;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
+import org.haxe4e.model.buildsystem.BuildFile;
 import org.haxe4e.model.buildsystem.BuildSystem;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.util.TreeBuilder;
@@ -59,11 +61,29 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
          return;
       }
 
-      var hxmlFile = config.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, BuildSystem.HAXE.getDefaultBuildFileNames().first());
-      if (Strings.isBlank(hxmlFile)) {
-         hxmlFile = BuildSystem.HAXE.getDefaultBuildFileNames().first();
+      final var buildSystem = prefs.getBuildSystem();
+      if (buildSystem != BuildSystem.HAXE && buildSystem != BuildSystem.LIX) {
+         Dialogs.showError("Unsupported Build System", "Running code via " + buildSystem + " is not yet supported.");
+         return;
       }
-      final var hxmlFilePath = Paths.get(project.getLocation().toPortableString(), hxmlFile);
+
+      final var hxmlFileRelativePath = config.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, "");
+      final BuildFile hxmlFile;
+      if (Strings.isBlank(hxmlFileRelativePath)) {
+         hxmlFile = BuildSystem.HAXE.findDefaultBuildFile(project);
+         if (hxmlFile == null) {
+            Dialogs.showError("Default build file not found.", "Default build file " + buildSystem.getDefaultBuildFileNames().first()
+               + " not found.");
+            return;
+         }
+      } else {
+         final var hxmlFilePath = Paths.get(project.getLocation().toPortableString(), hxmlFileRelativePath);
+         if (!Files.exists(hxmlFilePath)) {
+            Dialogs.showError("Build file does not exist", "The configured build file '" + hxmlFileRelativePath + "' does not exist.");
+            return;
+         }
+         hxmlFile = buildSystem.toBuildFile(project.getFile(hxmlFileRelativePath));
+      }
 
       final var workdir = Paths.get(config.getAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, project.getLocation().toOSString()));
       final var envVars = config.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, Collections.emptyMap());
@@ -89,7 +109,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
             // EvalLaunchRequestArguments https://github.com/vshaxe/eval-debugger/blob/master/src/Main.hx#L14
             final var evalDebuggerOpts = new TreeBuilder<String>() //
                .put("cwd", workdir.toString()) //
-               .put("args", Arrays.asList(hxmlFilePath.toString())) //
+               .put("args", Arrays.asList(hxmlFile.location.getLocation().toOSString())) //
                .put("haxeExecutable", new TreeBuilder<String>() //
                   .put("executable", haxeSDK.getCompilerExecutable().toString()) //
                   .put("env", debuggerEnvVars) //
@@ -114,7 +134,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
             HaxeRunner.launchHxmlFile( //
                launch, //
                haxeSDK, //
-               hxmlFilePath, //
+               hxmlFile.location.getLocation().toFile().toPath(), //
                workdir, //
                envVars, //
                appendEnvVars, //

@@ -94,6 +94,16 @@ public enum BuildSystem {
       return defaultBuildFileNames;
    }
 
+   @Nullable
+   public BuildFile findDefaultBuildFile(final IProject project) {
+      for (final var buildFileName : defaultBuildFileNames) {
+         final var buildFile = project.getFile(buildFileName);
+         if (buildFile.exists())
+            return toBuildFile(buildFile);
+      }
+      return null;
+   }
+
    public List<IFile> findFilesWithBuildFileExtension(final IProject project, final boolean excludeIgnorableBuildFiles)
       throws CoreException {
       final var buildFiles = new ArrayList<IFile>();
