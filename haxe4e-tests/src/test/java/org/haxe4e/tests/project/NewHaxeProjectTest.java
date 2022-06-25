@@ -6,6 +6,8 @@ package org.haxe4e.tests.project;
 
 import static org.assertj.core.api.Assertions.*;
 
+import org.eclipse.reddeer.common.exception.WaitTimeoutExpiredException;
+import org.eclipse.reddeer.common.wait.TimePeriod;
 import org.eclipse.reddeer.common.wait.WaitUntil;
 import org.eclipse.reddeer.direct.project.Project;
 import org.eclipse.reddeer.eclipse.condition.ProjectExists;
@@ -56,12 +58,20 @@ public class NewHaxeProjectTest {
       new ShellMenu().getItem("File", "New", Messages.Label_Haxe_Project).select();
 
       // dismiss Haxe not found error dialog
-      new WaitUntil(new ShellIsActive(Messages.Prefs_NoSDKRegistered_Title));
-      new OkButton().click();
+      try { // CHECKSTYLE:IGNORE RequireFailForTryCatchInJunitCheck
+         new WaitUntil(new ShellIsActive(Messages.Prefs_NoSDKRegistered_Title), TimePeriod.MEDIUM);
+         new OkButton().click();
+      } catch (final WaitTimeoutExpiredException ex) {
+         // ignore
+      }
 
       // dismiss preference dialog
-      new WaitUntil(new ShellIsActive("Preferences (Filtered)"));
-      new CancelButton().click();
+      try { // CHECKSTYLE:IGNORE RequireFailForTryCatchInJunitCheck
+         new WaitUntil(new ShellIsActive("Preferences (Filtered)"), TimePeriod.MEDIUM);
+         new CancelButton().click();
+      } catch (final WaitTimeoutExpiredException ex) {
+         // ignore
+      }
 
       // fill out the wizard
       new DefaultShell(Messages.NewHaxeProject);
