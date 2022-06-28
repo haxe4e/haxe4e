@@ -23,8 +23,8 @@ public class Haxe4EStartupListener implements IStartup {
       // workaround for "IResourceChangeListener adding at IDE startup" https://www.eclipse.org/forums/index.php/t/87906/
       ResourcesPlugin.getWorkspace().addResourceChangeListener(HaxeDependenciesUpdater.INSTANCE, IResourceChangeEvent.POST_CHANGE);
 
-      // refresh haxelib dependencies when workbench first starts
-      HaxeDependenciesUpdater.INSTANCE.onHaxeProjectsConfigChanged(Projects.getOpenProjectsWithNature(HaxeProjectNature.NATURE_ID));
+      // refresh dependencies when workbench first starts
+      HaxeDependenciesUpdater.INSTANCE.onProjectsConfigChanged(Projects.getOpenProjectsWithNature(HaxeProjectNature.NATURE_ID));
 
       ActiveEditorChangeListener.INSTANCE.attach();
    }

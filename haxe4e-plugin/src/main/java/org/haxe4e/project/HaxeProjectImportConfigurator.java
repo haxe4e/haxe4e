@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -72,17 +73,31 @@ public final class HaxeProjectImportConfigurator implements ProjectConfigurator 
 
    @Override
    public Set<IFolder> getFoldersToIgnore(final IProject project, final IProgressMonitor monitor) {
-      return Sets.newHashSet( //
-         project.getFolder(".git"), //
+      final var result = Sets.newHashSet( //
          project.getFolder("bin"), //
          project.getFolder("dump"), //
          project.getFolder("target") //
       );
+
+      try {
+         project.accept(res -> {
+            if (res.isVirtual() || res.isLinked() || res.isHidden() || res.getType() != IResource.FOLDER)
+               return false;
+
+            // ignore all hidden folders
+            if (res.getName().startsWith(".")) {
+               result.add((IFolder) res);
+            }
+            return true;
+         });
+      } catch (final CoreException ex) {
+         Haxe4EPlugin.log().error(ex);
+      }
+      return result;
    }
 
    @Override
    public boolean canConfigure(final IProject project, final Set<IPath> ignoredPaths, final IProgressMonitor monitor) {
-      // Do nothing, as everything is handled in ListenerService
       return false;
    }
 

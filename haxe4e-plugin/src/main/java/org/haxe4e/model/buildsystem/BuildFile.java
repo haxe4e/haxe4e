@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.model.Haxelib;
@@ -32,6 +33,10 @@ public abstract class BuildFile {
    }
 
    public abstract Set<Haxelib> getDirectDependencies(HaxeSDK haxeSDK, IProgressMonitor monitor);
+
+   public IProject getProject() {
+      return location.getProject();
+   }
 
    public String getProjectRelativePath() {
       return location.getProjectRelativePath().toPortableString();

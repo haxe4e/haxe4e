@@ -38,13 +38,13 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
          return image;
 
       if (res.isVirtual()) {
-         if (res instanceof IFolder && res.getName().equals(HaxeDependenciesUpdater.HAXE_DEPS_MAGIC_FOLDER_NAME))
+         if (res instanceof IFolder && res.getName().equals(HaxeDependenciesUpdater.DEPS_MAGIC_FOLDER_NAME))
             return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_DEPENDENCIES);
          return image;
       }
 
       if (res.isLinked()) {
-         if (res instanceof IFolder && res.getName().equals(HaxeDependenciesUpdater.HAXE_STDLIB_MAGIC_FOLDER_NAME))
+         if (res instanceof IFolder && res.getName().equals(HaxeDependenciesUpdater.STDLIB_MAGIC_FOLDER_NAME))
             return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_DEPENDENCIES);
          return image;
       }
@@ -53,23 +53,23 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
          final var file = (IFile) res;
          final var prefs = HaxeProjectPreference.get(project);
          if (prefs.getBuildSystem().getBuildFileExtension().equals(file.getFileExtension())) {
-            final var haxeBuildFile = prefs.getBuildFile();
-            if (haxeBuildFile == null)
+            final var buildFile = prefs.getBuildFile();
+            if (buildFile == null)
                return image;
-            if (haxeBuildFile.location.equals(file))
+            if (buildFile.location.equals(file))
                return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_BUILD_FILE_ACTIVE);
          }
       } else if (res instanceof IFolder) {
          final var folder = (IFolder) res;
          final var prefs = HaxeProjectPreference.get(project);
-         final var haxeBuildFile = prefs.getBuildFile();
-         if (haxeBuildFile == null)
+         final var buildFile = prefs.getBuildFile();
+         if (buildFile == null)
             return image;
 
          final var folderPath = folder.getLocation().toFile().toPath();
          final var projectPath = project.getLocation().toFile().toPath();
          try {
-            for (final var p : haxeBuildFile.getSourcePaths()) {
+            for (final var p : buildFile.getSourcePaths()) {
                final var sourceFolder = projectPath.resolve(p).normalize();
                if (folderPath.equals(sourceFolder))
                   return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_SOURCE_FOLDER);
@@ -92,15 +92,15 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
 
          if (HaxeProjectNature.hasNature(project) == Boolean.TRUE) {
             if (folder.isLinked() //
-               && folder.getName().equals(HaxeDependenciesUpdater.HAXE_STDLIB_MAGIC_FOLDER_NAME) //
+               && folder.getName().equals(HaxeDependenciesUpdater.STDLIB_MAGIC_FOLDER_NAME) //
             ) {
                final var prefs = HaxeProjectPreference.get(project);
                final var haxeSDK = prefs.getEffectiveHaxeSDK();
-               return "Haxe Standard Library" + (haxeSDK == null ? "" : " [" + haxeSDK.getName() + "]");
+               return "Haxe Standard Library" + (haxeSDK == null ? "" : " [" + haxeSDK.getVersion() + "]");
             }
 
             if (folder.isVirtual() //
-               && folder.getName().equals(HaxeDependenciesUpdater.HAXE_DEPS_MAGIC_FOLDER_NAME) //
+               && folder.getName().equals(HaxeDependenciesUpdater.DEPS_MAGIC_FOLDER_NAME) //
             )
                return "Haxe Dependencies";
          }

@@ -132,6 +132,8 @@ public final class HaxeWorkspacePreference {
             return defaultSDK;
       }
 
+      ensureHaxeSDKsInitialized();
+
       synchronized (haxeSDKs) {
          if (!haxeSDKs.isEmpty()) {
             if (verify) {

@@ -33,7 +33,7 @@ public final class HaxeRunner {
       final var job = Job.create(NLS.bind(Messages.Launch_RunningFile, hxmlFile), monitor -> {
          try {
             final var proc = haxeSDK.getCompilerProcessBuilder(!appendEnvVars) //
-               .withArg(hxmlFile.toAbsolutePath()) //
+               .withArg(hxmlFile.normalize().toAbsolutePath()) //
                .withEnvironment(env -> env.putAll(envVars)) //
                .withWorkingDirectory(workDir) //
                .onExit(action) //

@@ -29,7 +29,7 @@ public class HaxelibJSON {
    private static final ObjectMapper JSON = new ObjectMapper();
 
    public static HaxelibJSON from(final Path path) throws IOException {
-      return JSON.readValue(path.toAbsolutePath().toFile(), HaxelibJSON.class);
+      return JSON.readValue(path.normalize().toAbsolutePath().toFile(), HaxelibJSON.class);
    }
 
    public String name;

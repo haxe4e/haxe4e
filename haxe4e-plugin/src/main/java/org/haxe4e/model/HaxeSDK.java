@@ -108,7 +108,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    public HaxeSDK(final Path installRoot) {
       Args.notNull("installRoot", installRoot);
 
-      this.installRoot = installRoot.toAbsolutePath();
+      this.installRoot = installRoot.normalize().toAbsolutePath();
       name = "haxe-" + getVersion();
    }
 
@@ -122,7 +122,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
       Args.notNull("installRoot", installRoot);
 
       this.name = name;
-      this.installRoot = installRoot.toAbsolutePath();
+      this.installRoot = installRoot.normalize().toAbsolutePath();
    }
 
    public HaxeSDK(final String name, final Path installRoot, @Nullable final NekoVM nekoVM) {
@@ -201,9 +201,9 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
       if (pathFromEnv != null) {
          final var p = Paths.get(pathFromEnv);
          if (Files.exists(p))
-            return p;
+            return p.normalize().toAbsolutePath();
       }
-      return installRoot.resolve("lib");
+      return installRoot.resolve("lib").normalize().toAbsolutePath();
    }
 
    public Path getInstallRoot() {
@@ -230,17 +230,14 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
       if (pathFromEnv != null) {
          final var p = Paths.get(pathFromEnv);
          if (Files.exists(p))
-            return p;
+            return p.normalize().toAbsolutePath();
       }
-      return installRoot.resolve("std");
+      return installRoot.resolve("std").normalize().toAbsolutePath();
    }
 
    @Nullable
    @JsonIgnore
    public String getVersion() {
-      if (!isValid())
-         return null;
-
       final var processBuilder = Processes.builder(getCompilerExecutable()).withArg("--version");
       try (var reader = new BufferedReader(new InputStreamReader(processBuilder.start().getStdOut()))) {
          final var version = reader.readLine();

@@ -20,7 +20,7 @@ import org.haxe4e.Haxe4EPlugin;
  *
  * @author Sebastian Thomschke
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings({"restriction", "deprecation"})
 public final class HaxeOutlineSymbolsProvider extends SymbolsLabelProvider {
 
    @Override

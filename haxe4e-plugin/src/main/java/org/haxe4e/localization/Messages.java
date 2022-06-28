@@ -27,6 +27,7 @@ public final class Messages extends NLS {
    public static String Label_Haxe_Terminal = "Haxe Terminal";
    public static String Label_Haxe_Build_File;
    public static String Label_Name = "Name";
+   public static String Label_Version = "Version";
    public static String Label_Path = "Path";
    public static String Label_Project = "Project";
    public static String Label_Add = "Add";
@@ -39,9 +40,9 @@ public final class Messages extends NLS {
    public static String Error_ValueMustBeSpecified = "{0} must be specified.";
 
    public static String SDKPathInvalid = "Haxe SDK Path invalid.";
-   public static String SDKPathInvalid_Descr = "'{0}' does not point to a valid Haxe SDK";
+   public static String SDKPathInvalid_Descr = "\"{0}\" does not point to a valid Haxe SDK";
    public static String NekoPathInvalid = "Neko VM Path invalid";
-   public static String NekoPathInvalid_Descr = "'{0}' does not point to a valid Neko VM";
+   public static String NekoPathInvalid_Descr = "\"{0}\" does not point to a valid Neko VM";
 
    public static String Prefs_ManageSDKsDescription = "Manage installed Haxe SDKs. By default the checked SDK will be used for newly created Haxe projects.";
    public static String Prefs_NoSDKRegistered_Title = "Haxe SDK missing";
@@ -52,16 +53,16 @@ public final class Messages extends NLS {
 
    public static String NewHaxeFile = "New Haxe File";
    public static String NewHaxeFile_Descr;
-   public static String NewHaxeFile_Creating = "Creating Haxe file '{0}'...";
+   public static String NewHaxeFile_Creating = "Creating Haxe file \"{0}\"...";
    public static String NewHaxeFile_OpeningInEditor = "Opening Haxe file in editor...";
-   public static String NewHaxeFile_DirectoryDoesNotExist = "Directory '{0}' does not exist.";
+   public static String NewHaxeFile_DirectoryDoesNotExist = "Directory \"{0}\" does not exist.";
 
    public static String NewHaxeProject = "New Haxe Project";
    public static String NewHaxeProject_Descr;
    public static String NewHaxeProject_SDKNotFound_Message = "No valid Haxe SDK found! Please specify a valid SDK on the Haxe preference page.";
    public static String NewHaxeProject_ErrorTitle = "Project Creation Problem";
    public static String NewHaxeProject_UnexpectedError = "Unexpected error: {0}";
-   public static String NewHaxeProject_CaseVariantExistsError = "The file system is not case sensitive. An existing file or directory conflicts with '{0}'.";
+   public static String NewHaxeProject_CaseVariantExistsError = "The file system is not case sensitive. An existing file or directory conflicts with \"{0}\".";
 
    public static String Launch_NoProjectSelected = "No project selected";
    public static String Launch_NoProjectSelected_Descr = "Please select a project to launch";

@@ -45,7 +45,7 @@ public enum BuildSystem {
 
    @Nullable
    public static BuildSystem guessBuildSystemOfBuildFile(final Path buildFile) {
-      final var path = buildFile.toAbsolutePath().toString();
+      final var path = buildFile.normalize().toAbsolutePath().toString();
 
       for (final var buildSystem : BuildSystem.values()) {
          for (final var defaultBuildFileName : buildSystem.getDefaultBuildFileNames()) {

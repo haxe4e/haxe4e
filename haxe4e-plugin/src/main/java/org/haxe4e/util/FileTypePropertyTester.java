@@ -9,7 +9,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.lsp4e.outline.SymbolsModel.DocumentSymbolWithFile;
 import org.eclipse.lsp4j.DocumentSymbol;
+import org.eclipse.lsp4j.Location;
 import org.eclipse.lsp4j.SymbolInformation;
+import org.eclipse.lsp4j.WorkspaceSymbol;
+import org.eclipse.lsp4j.WorkspaceSymbolLocation;
+import org.eclipse.lsp4j.jsonrpc.messages.Either;
 
 import de.sebthom.eclipse.commons.ui.Editors;
 
@@ -18,39 +22,47 @@ import de.sebthom.eclipse.commons.ui.Editors;
  *
  * @author Sebastian Thomschke
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings({"restriction", "deprecation"})
 public final class FileTypePropertyTester extends PropertyTester {
 
    private static final String PROPERTY_CONTENT_TYPE_ID = "contentTypeId";
    private static final String PROPERTY_FILE_EXTENSION = "fileExtension";
 
-   @Override
-   public boolean test(final Object candidate, final String property, final Object[] args, final Object expectedValue) {
+   private boolean matchesPropertyValue(final String propertyName, final String fileName, final Object expectedPropertyValue) {
+      if (fileName == null)
+         return false;
 
-      if (candidate instanceof SymbolInformation) {
-         final var location = ((SymbolInformation) candidate).getLocation();
-         if (location == null || location.getUri() == null)
-            return false;
-
-         final var uri = location.getUri();
-
-         switch (property) {
-            case PROPERTY_CONTENT_TYPE_ID:
-               final var contentTypeManager = Platform.getContentTypeManager();
-               final var contentType = contentTypeManager.findContentTypeFor(uri);
-               return contentType != null && contentType.getId().equals(expectedValue.toString());
-            case PROPERTY_FILE_EXTENSION:
-               return uri.endsWith("." + expectedValue.toString());
-            default:
-               return false;
+      return switch (propertyName) {
+         case PROPERTY_CONTENT_TYPE_ID -> {
+            final var contentType = Platform.getContentTypeManager().findContentTypeFor(fileName);
+            yield contentType != null && contentType.getId().equals(expectedPropertyValue);
          }
+         case PROPERTY_FILE_EXTENSION -> fileName.endsWith("." + expectedPropertyValue);
+         default -> false;
+      };
+   }
+
+   @Override
+   public boolean test(final Object candidate, final String property, final Object[] args, final Object expectedPropertyValue) {
+
+      if (candidate instanceof final SymbolInformation symbolInfo) {
+         final var location = symbolInfo.getLocation();
+         if (location == null)
+            return false;
+         return matchesPropertyValue(property, location.getUri(), expectedPropertyValue);
       }
 
-      IFile file = null;
-      if (candidate instanceof IFile) {
-         file = (IFile) candidate;
-      } else if (candidate instanceof DocumentSymbolWithFile) {
-         file = ((DocumentSymbolWithFile) candidate).file;
+      if (candidate instanceof final WorkspaceSymbol wsSymbol) {
+         final Either<Location, WorkspaceSymbolLocation> location = wsSymbol.getLocation();
+         final String uri = location.isLeft() ? location.getLeft().getUri() : location.getRight().getUri();
+         return matchesPropertyValue(property, uri, expectedPropertyValue);
+      }
+
+      final IFile file;
+      if (candidate instanceof final IFile f) {
+         file = f;
+      } else if (candidate instanceof final DocumentSymbolWithFile d) {
+         file = d.file;
       } else if (candidate instanceof DocumentSymbol) {
          final var editor = Editors.getActiveTextEditor();
          if (editor == null)
@@ -59,15 +71,6 @@ public final class FileTypePropertyTester extends PropertyTester {
       } else
          return false;
 
-      switch (property) {
-         case PROPERTY_CONTENT_TYPE_ID:
-            final var contentTypeManager = Platform.getContentTypeManager();
-            final var contentType = contentTypeManager.findContentTypeFor(file.getName());
-            return contentType != null && contentType.getId().equals(expectedValue.toString());
-         case PROPERTY_FILE_EXTENSION:
-            return file.getFileExtension().equals(expectedValue.toString());
-         default:
-            return false;
-      }
+      return matchesPropertyValue(property, file.getName(), expectedPropertyValue);
    }
 }

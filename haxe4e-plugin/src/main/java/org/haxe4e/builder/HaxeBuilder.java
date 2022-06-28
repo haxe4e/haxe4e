@@ -4,38 +4,24 @@
  */
 package org.haxe4e.builder;
 
-import java.io.IOException;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.haxe4e.Constants;
-import org.haxe4e.Haxe4EPlugin;
+import org.haxe4e.model.buildsystem.LixVirtualBuildFile;
 import org.haxe4e.prefs.HaxeProjectPreference;
-
-import de.sebthom.eclipse.commons.ui.UI;
-import net.sf.jstuff.core.concurrent.Threads;
 
 /**
  * @author Sebastian Thomschke
  */
-@SuppressWarnings("restriction")
 public final class HaxeBuilder extends IncrementalProjectBuilder {
 
    public static final class Context {
@@ -103,15 +89,20 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
                         break;
                   }
 
+                  if (resource.getType() == IResource.FOLDER)
+                     return true;
+
                   final var resourceExt = resource.getFileExtension();
                   switch (resourceExt == null ? "" : resourceExt) {
                      case Constants.HAXE_FILE_EXTENSION:
                      case "json":
                      case "xml":
                         hasRelevantFileChange.setTrue();
+                        return false; // no further scanning necessary
                   }
                   if (prefs.getBuildSystem().getBuildFileExtension().equals(resourceExt)) {
                      hasRelevantFileChange.setTrue();
+                     return false; // no further scanning necessary
                   }
 
                   return true;
@@ -140,103 +131,14 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
          return;
 
       final var buildFile = prefs.getBuildFile();
-      if (buildFile == null)
+      if (buildFile == null || buildFile instanceof LixVirtualBuildFile)
          return;
 
-      monitor.setTaskName("Building project '" + project.getName() + "'");
+      final var buildFileProjectRelativePath = buildFile.location.getProjectRelativePath();
 
-      final var onTerminated = new CompletableFuture<Void>();
-      final var console = HaxeBuilderConsole.openConsole(new Context(project, monitor, onTerminated));
-
-      try (var out = console.newMessageStream();
-           var err = console.newMessageStream()) {
-
-         UI.run(() -> {
-            out.setColor(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR));
-            err.setColor(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR));
-         });
-
-         final var startAt = LocalTime.now();
-         final var startAtStr = startAt.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_TIME);
-         console.setTitle("<running> " + haxeSDK.getCompilerExecutable() + " (" + startAtStr + ")");
-
-         final var buildFileProjectRelativePath = buildFile.location.getProjectRelativePath();
-
-         out.println("Building project '" + project.getName() + "' using '" + buildFileProjectRelativePath + "'...");
-         out.println();
-
-         final var hasCompilerOutput = new AtomicBoolean(false);
-         final var proc = haxeSDK.getCompilerProcessBuilder(false) //
-            .withArg(buildFileProjectRelativePath.toOSString()) //
-            .withWorkingDirectory(project.getLocation().toFile()) //
-            .withEnvironment(env -> {
-               if (Platform.getBundle("net.mihai-nita.ansicon.plugin") != null) {
-                  env.put("ANSICON", "1");
-               }
-            }) //
-            .withRedirectOutput(line -> {
-               out.println(line);
-               hasCompilerOutput.set(true);
-            }) //
-            .withRedirectError(line -> {
-               err.println(line);
-               hasCompilerOutput.set(true);
-            }) //
-            .start();
-
-         while (proc.isAlive()) {
-            /*
-             * kill process if job was aborted by user
-             */
-            if (monitor.isCanceled()) {
-               proc.terminate() //
-                  .waitForExit(2, TimeUnit.SECONDS) //
-                  .kill();
-               proc.getProcess().descendants().forEach(ProcessHandle::destroy);
-               Threads.sleep(1000);
-               proc.getProcess().descendants().forEach(ProcessHandle::destroyForcibly);
-               err.println("Aborted on user request.");
-               break;
-            }
-            Threads.sleep(500);
-         }
-
-         final var endAt = LocalTime.now();
-         final var endAtStr = endAt.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_TIME);
-         console.setTitle("<terminated> " + haxeSDK.getCompilerExecutable() + " (" + startAtStr + " - " + endAtStr + ")");
-         if (monitor.isCanceled())
-            return;
-
-         if (hasCompilerOutput.get()) {
-            out.println();
-         }
-         if (proc.exitStatus() == 0) {
-            out.write("Build successful in ");
-         } else {
-            out.write("Build");
-            out.flush();
-            err.write(" failed ");
-            out.write("in ");
-         }
-
-         var elapsed = ChronoUnit.MILLIS.between(startAt, endAt);
-         if (elapsed < 1_000) { // prevent 'Build successful in 0 seconds'
-            elapsed = 1_000;
-         }
-         out.write(DurationFormatUtils.formatDurationWords(elapsed, true, true));
-         if (proc.exitStatus() != 0) {
-            out.write(" (exit code: " + proc.exitStatus() + ")");
-         }
-         out.println();
-
-      } catch (final IOException ex) {
-         throw new CoreException(Haxe4EPlugin.status().createError(ex, "Failed to run Haxe Builder."));
-      } catch (final InterruptedException ex) {
-         Thread.currentThread().interrupt();
-         throw new CoreException(Haxe4EPlugin.status().createError(ex, "Aborted."));
-      } finally {
-         onTerminated.complete(null);
-      }
+      HaxeBuilderConsole.runWithConsole(project, //
+         haxeSDK.getCompilerProcessBuilder(false).withArg(buildFileProjectRelativePath.toOSString()), //
+         monitor);
    }
 
    @Override

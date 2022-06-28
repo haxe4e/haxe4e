@@ -124,7 +124,7 @@ public final class HaxeProjectNature implements IProjectNature {
 
    @Override
    public void configure() throws CoreException {
-      HaxeDependenciesUpdater.INSTANCE.onHaxeProjectConfigChanged(project);
+      HaxeDependenciesUpdater.INSTANCE.onProjectConfigChanged(project);
       addBuilder(HaxeBuilder.ID);
    }
 

@@ -134,7 +134,7 @@ public class HaxeBuildFile extends BuildFile {
          final var libVer = Strings.substringAfter(lib, ":");
          try {
             deps.add(Haxelib.from(haxeSDK, libName, libVer, monitor));
-         } catch (final IOException ex) {
+         } catch (final Exception ex) {
             Haxe4EPlugin.log().error(ex);
             UI.run(() -> new NotificationPopup(ex.getMessage()).open());
          }

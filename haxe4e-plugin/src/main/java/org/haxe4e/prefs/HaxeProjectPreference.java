@@ -49,7 +49,7 @@ public final class HaxeProjectPreference {
    private final IPersistentPreferenceStore prefs;
    private final IProject project;
    private BuildFile effectiveBuildFileBeforeSave;
-   private List<PropertyChangeEvent> changeEvents = new ArrayList<>();
+   private final List<PropertyChangeEvent> changeEvents = new ArrayList<>();
 
    private HaxeProjectPreference(final IProject project) {
       Args.notNull("project", project);
@@ -169,7 +169,7 @@ public final class HaxeProjectPreference {
             );
             effectiveBuildFileBeforeSave = null;
          }
-         HaxeDependenciesUpdater.INSTANCE.onHaxeProjectConfigChanged(project);
+         HaxeDependenciesUpdater.INSTANCE.onProjectConfigChanged(project);
 
          return true;
       } catch (final IOException ex) {

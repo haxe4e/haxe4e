@@ -18,22 +18,22 @@ import de.sebthom.eclipse.commons.ui.UI;
 public final class ActiveEditorChangeListener implements IPartListener2 {
    public static final ActiveEditorChangeListener INSTANCE = new ActiveEditorChangeListener();
 
-   @Override
-   public void partBroughtToTop(final IWorkbenchPartReference partRef) {
-      if (HaxeBuildFileToolbarContribution.instance != null) {
-         HaxeBuildFileToolbarContribution.instance.refresh(UI.getActiveProjectWithNature(partRef, HaxeProjectNature.NATURE_ID));
-      }
-   }
-
    public void attach() {
       for (final var window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
          window.getPartService().addPartListener(this);
       }
    }
 
-   public void detatch() {
+   public void detach() {
       for (final var window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
          window.getPartService().removePartListener(this);
+      }
+   }
+
+   @Override
+   public void partBroughtToTop(final IWorkbenchPartReference partRef) {
+      if (HaxeBuildFileToolbarContribution.instance != null) {
+         HaxeBuildFileToolbarContribution.instance.refresh(UI.getActiveProjectWithNature(partRef, HaxeProjectNature.NATURE_ID));
       }
    }
 }
