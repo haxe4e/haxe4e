@@ -97,7 +97,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
             debuggerEnvVars.putAll(envVars);
             haxeSDK.configureEnvVars(debuggerEnvVars);
 
-            // to prevent stackoverflow in lsp4j
+            // to prevent StackOverflowError in lsp4j
             debuggerEnvVars.replaceAll((k, v) -> v = Objects.toString(v));
 
             // workaround for nodejs issue: https://github.com/nodejs/node/issues/20605 in conjunction with
