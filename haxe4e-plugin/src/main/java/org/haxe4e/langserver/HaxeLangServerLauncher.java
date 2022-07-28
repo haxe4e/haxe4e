@@ -70,10 +70,12 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    @Override
    public Map<String, Object> getInitializationOptions(final URI projectRootUri) {
       IProject project = null;
-      for (final var container : ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(projectRootUri)) {
-         if (container instanceof final IProject p) {
-            project = p;
-            break;
+      if (projectRootUri != null) {
+         for (final var container : ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(projectRootUri)) {
+            if (container instanceof final IProject p) {
+               project = p;
+               break;
+            }
          }
       }
 
