@@ -4,6 +4,8 @@
  */
 package org.haxe4e.project;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,8 +34,8 @@ import net.sf.jstuff.core.concurrent.Threads;
  */
 public final class NewHaxeFileWizard extends Wizard implements INewWizard {
 
-   private NewHaxeFilePage haxeFilePage;
-   private IStructuredSelection selection;
+   private NewHaxeFilePage haxeFilePage = eventuallyNonNull();
+   private IStructuredSelection selection = eventuallyNonNull();
 
    @Override
    public void addPages() {

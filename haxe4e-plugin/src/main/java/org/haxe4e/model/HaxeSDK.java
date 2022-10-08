@@ -4,6 +4,8 @@
  */
 package org.haxe4e.model;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -11,10 +13,12 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Haxe4EPlugin;
 
@@ -48,7 +52,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
 
    @JsonIgnore
    private static final Supplier<@Nullable HaxeSDK> HAXESDK_FROM_PATH = Suppliers.memoize(() -> {
-      final var haxepath = System.getenv(ENV_HAXEPATH);
+      final var haxepath = SystemUtils.getEnvironmentVariable(ENV_HAXEPATH, "");
       if (Strings.isBlank(haxepath))
          return null;
 
@@ -60,7 +64,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
       if (haxeCompiler == null)
          return null;
 
-      sdk = new HaxeSDK(haxeCompiler.getParent(), NekoVM.fromPath());
+      sdk = new HaxeSDK(asNonNullUnsafe(haxeCompiler.getParent()), NekoVM.fromPath());
       return sdk.isValid() ? sdk : null;
    }, haxeSDK -> haxeSDK == null ? 15_000 : 60_000);
 
@@ -189,7 +193,14 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    }
 
    @JsonIgnore
-   public Processes.Builder getHaxelibProcessBuilder(final Object... args) {
+   public Processes.Builder getHaxelibProcessBuilder(final List<Object> args) {
+      return Processes.builder(getHaxelibExecutable()) //
+         .withArgs(args) //
+         .withEnvironment(this::configureEnvVars);
+   }
+
+   @JsonIgnore
+   public Processes.Builder getHaxelibProcessBuilder(final @NonNull Object... args) {
       return Processes.builder(getHaxelibExecutable()) //
          .withArgs(args) //
          .withEnvironment(this::configureEnvVars);

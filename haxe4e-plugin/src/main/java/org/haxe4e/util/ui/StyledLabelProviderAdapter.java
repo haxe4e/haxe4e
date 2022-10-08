@@ -4,6 +4,7 @@
  */
 package org.haxe4e.util.ui;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -18,28 +19,33 @@ import org.eclipse.swt.graphics.Image;
  */
 public class StyledLabelProviderAdapter extends BaseLabelProvider implements IColorProvider, IFontProvider, IStyledLabelProvider {
 
+   @Nullable
    @Override
-   public Color getBackground(final Object element) {
+   public Color getBackground(@Nullable final Object element) {
       return null;
    }
 
+   @Nullable
    @Override
-   public Font getFont(final Object element) {
+   public Font getFont(@Nullable final Object element) {
       return null;
    }
 
+   @Nullable
    @Override
-   public Color getForeground(final Object element) {
+   public Color getForeground(@Nullable final Object element) {
       return null;
    }
 
+   @Nullable
    @Override
-   public Image getImage(final Object element) {
+   public Image getImage(@Nullable final Object element) {
       return null;
    }
 
+   @Nullable
    @Override
-   public StyledString getStyledText(final Object element) {
+   public StyledString getStyledText(@Nullable final Object element) {
       return null;
    }
 }

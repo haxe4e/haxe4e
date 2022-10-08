@@ -14,7 +14,9 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Constants;
 import org.haxe4e.model.buildsystem.LixVirtualBuildFile;
 import org.haxe4e.prefs.HaxeProjectPreference;
@@ -27,9 +29,9 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
    public static final class Context {
       public final IProject project;
       public final IProgressMonitor monitor;
-      public final CompletionStage<Void> onTerminated;
+      public final CompletionStage<@Nullable Void> onTerminated;
 
-      public Context(final IProject project, final IProgressMonitor monitor, final CompletionStage<Void> onTerminated) {
+      public Context(final IProject project, final IProgressMonitor monitor, final CompletionStage<@Nullable Void> onTerminated) {
          this.project = project;
          this.monitor = monitor;
          this.onTerminated = onTerminated;
@@ -39,7 +41,8 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
    public static final String ID = "org.haxe4e.builder";
 
    @Override
-   protected IProject[] build(final int kind, final Map<String, String> args, final IProgressMonitor monitor) throws CoreException {
+   protected IProject @Nullable [] build(final int kind, final @Nullable Map<String, String> args, final @Nullable IProgressMonitor monitor)
+      throws CoreException {
       final var project = getProject();
       final var prefs = HaxeProjectPreference.get(project);
 
@@ -119,7 +122,7 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
       }
 
       if (needsBuild) {
-         buildProject(project, prefs, monitor);
+         buildProject(project, prefs, monitor == null ? new NullProgressMonitor() : monitor);
       }
       return null;
    }
@@ -142,7 +145,7 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
    }
 
    @Override
-   public ISchedulingRule getRule(final int kind, final Map<String, String> args) {
+   public @Nullable ISchedulingRule getRule(final int kind, final Map<String, String> args) {
       return getProject();
    }
 }

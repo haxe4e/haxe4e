@@ -5,6 +5,7 @@
 package org.haxe4e.builder;
 
 import org.eclipse.debug.ui.console.FileLink;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.console.IPatternMatchListenerDelegate;
 import org.eclipse.ui.console.PatternMatchEvent;
@@ -19,7 +20,7 @@ import net.sf.jstuff.core.Strings;
  */
 public final class HaxeBuilderConsoleLinkifier implements IPatternMatchListenerDelegate {
 
-   private HaxeBuilderConsole console;
+   private @Nullable HaxeBuilderConsole console;
 
    @Override
    public void connect(final TextConsole console) {
@@ -31,15 +32,18 @@ public final class HaxeBuilderConsoleLinkifier implements IPatternMatchListenerD
       console = null;
    }
 
-   protected HaxeBuilderConsole getConsole() {
+   protected @Nullable HaxeBuilderConsole getConsole() {
       return console;
    }
 
    @Override
    public void matchFound(final PatternMatchEvent event) {
+      final var console = this.console;
+      if (console == null)
+         return;
+
       final var offset = event.getOffset();
       final var length = event.getLength();
-
       try {
          final var doc = console.getDocument();
          final var sourceLoc = doc.get(offset, length); // e.g. src/mypackage/Game.hx:123:

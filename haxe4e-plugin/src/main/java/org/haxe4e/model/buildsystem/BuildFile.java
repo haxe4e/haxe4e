@@ -4,6 +4,8 @@
  */
 package org.haxe4e.model.buildsystem;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -35,7 +37,7 @@ public abstract class BuildFile {
    public abstract Set<Haxelib> getDirectDependencies(HaxeSDK haxeSDK, IProgressMonitor monitor);
 
    public IProject getProject() {
-      return location.getProject();
+      return asNonNullUnsafe(location.getProject());
    }
 
    public String getProjectRelativePath() {

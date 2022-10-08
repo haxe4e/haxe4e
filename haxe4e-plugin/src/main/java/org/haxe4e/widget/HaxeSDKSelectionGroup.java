@@ -6,6 +6,7 @@ package org.haxe4e.widget;
 
 import java.util.function.Consumer;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -27,8 +28,8 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
  */
 public class HaxeSDKSelectionGroup extends Composite {
 
-   public final MutableObservableRef<HaxeSDK> selectedAltSDK = MutableObservableRef.of(null);
-   private HaxeSDK selectedAltSDK_internal;
+   public final MutableObservableRef<@Nullable HaxeSDK> selectedAltSDK = MutableObservableRef.of(null);
+   private @Nullable HaxeSDK selectedAltSDK_internal;
 
    public HaxeSDKSelectionGroup(final Composite parent, final Object layoutData) {
       this(parent, SWT.NONE, layoutData);
@@ -77,7 +78,7 @@ public class HaxeSDKSelectionGroup extends Composite {
                selectedAltSDK.set(sdk);
             }
          });
-      selectedAltSDK.subscribe((Consumer<HaxeSDK>) cmbAltSDK::setSelection);
+      selectedAltSDK.subscribe((Consumer<@Nullable HaxeSDK>) cmbAltSDK::setSelection);
 
       final var defaultSDK = HaxeWorkspacePreference.getDefaultHaxeSDK(false, true);
       final var sdks = HaxeWorkspacePreference.getHaxeSDKs();

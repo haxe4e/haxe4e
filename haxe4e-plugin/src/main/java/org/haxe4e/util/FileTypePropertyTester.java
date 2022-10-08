@@ -7,13 +7,11 @@ package org.haxe4e.util;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.lsp4e.outline.SymbolsModel.DocumentSymbolWithFile;
 import org.eclipse.lsp4j.DocumentSymbol;
-import org.eclipse.lsp4j.Location;
 import org.eclipse.lsp4j.SymbolInformation;
 import org.eclipse.lsp4j.WorkspaceSymbol;
-import org.eclipse.lsp4j.WorkspaceSymbolLocation;
-import org.eclipse.lsp4j.jsonrpc.messages.Either;
 
 import de.sebthom.eclipse.commons.ui.Editors;
 
@@ -28,7 +26,7 @@ public final class FileTypePropertyTester extends PropertyTester {
    private static final String PROPERTY_CONTENT_TYPE_ID = "contentTypeId";
    private static final String PROPERTY_FILE_EXTENSION = "fileExtension";
 
-   private boolean matchesPropertyValue(final String propertyName, final String fileName, final Object expectedPropertyValue) {
+   private boolean matchesPropertyValue(final String propertyName, @Nullable final String fileName, final Object expectedPropertyValue) {
       if (fileName == null)
          return false;
 
@@ -43,7 +41,10 @@ public final class FileTypePropertyTester extends PropertyTester {
    }
 
    @Override
-   public boolean test(final Object candidate, final String property, final Object[] args, final Object expectedPropertyValue) {
+   public boolean test(@Nullable final Object candidate, @Nullable final String property, final Object @Nullable [] args,
+      @Nullable final Object expectedPropertyValue) {
+      if (candidate == null || property == null || expectedPropertyValue == null)
+         return false;
 
       if (candidate instanceof final SymbolInformation symbolInfo) {
          final var location = symbolInfo.getLocation();
@@ -53,7 +54,7 @@ public final class FileTypePropertyTester extends PropertyTester {
       }
 
       if (candidate instanceof final WorkspaceSymbol wsSymbol) {
-         final Either<Location, WorkspaceSymbolLocation> location = wsSymbol.getLocation();
+         final var location = wsSymbol.getLocation();
          final String uri = location.isLeft() ? location.getLeft().getUri() : location.getRight().getUri();
          return matchesPropertyValue(property, uri, expectedPropertyValue);
       }
@@ -68,6 +69,8 @@ public final class FileTypePropertyTester extends PropertyTester {
          if (editor == null)
             return false;
          file = editor.getEditorInput().getAdapter(IFile.class);
+         if (file == null)
+            return false;
       } else
          return false;
 

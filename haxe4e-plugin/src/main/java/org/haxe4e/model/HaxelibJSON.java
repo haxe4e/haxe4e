@@ -4,7 +4,7 @@
  */
 package org.haxe4e.model;
 
-import static org.eclipse.jdt.annotation.DefaultLocation.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,26 +23,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Sebastian Thomschke
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-@NonNullByDefault({PARAMETER, RETURN_TYPE, TYPE_BOUND, TYPE_ARGUMENT})
 public class HaxelibJSON {
 
    private static final ObjectMapper JSON = new ObjectMapper();
 
    public static HaxelibJSON from(final Path path) throws IOException {
-      return JSON.readValue(path.normalize().toAbsolutePath().toFile(), HaxelibJSON.class);
+      return asNonNull(JSON.readValue(path.normalize().toAbsolutePath().toFile(), HaxelibJSON.class));
    }
 
-   public String name;
-   public String version;
-   public String description;
-   public String license;
-   public URL url;
-   public String main;
-   public String classPath;
-   public Map<String, String> dependencies;
-   public LinkedHashSet<String> contributors;
-   public LinkedHashSet<String> tags;
-   public String releasenote;
+   public String name = eventuallyNonNull();
+   public @Nullable String version;
+   public @Nullable String description;
+   public @Nullable String license;
+   public @Nullable URL url;
+   public @Nullable String main;
+   public @Nullable String classPath;
+   public @Nullable Map<String, String> dependencies;
+   public @Nullable LinkedHashSet<String> contributors;
+   public @Nullable LinkedHashSet<String> tags;
+   public @Nullable String releasenote;
 
    @Override
    public String toString() {

@@ -4,6 +4,8 @@
  */
 package org.haxe4e.project;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -13,6 +15,7 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.haxe4e.Haxe4EPlugin;
@@ -30,7 +33,7 @@ public final class HaxeProjectNature implements IProjectNature {
    public static final class AddNatureHandler extends AbstractHandler {
 
       @Override
-      public Object execute(final ExecutionEvent event) throws ExecutionException {
+      public @Nullable Object execute(final ExecutionEvent event) throws ExecutionException {
          final var currentSelection = HandlerUtil.getCurrentSelection(event);
          if (currentSelection instanceof IStructuredSelection) {
             final var selectedElement = ((IStructuredSelection) currentSelection).getFirstElement();
@@ -51,7 +54,7 @@ public final class HaxeProjectNature implements IProjectNature {
    public static final class RemoveNatureHandler extends AbstractHandler {
 
       @Override
-      public Object execute(final ExecutionEvent event) throws ExecutionException {
+      public @Nullable Object execute(final ExecutionEvent event) throws ExecutionException {
          final var currentSelection = HandlerUtil.getCurrentSelection(event);
          if (currentSelection instanceof IStructuredSelection) {
             final var selectedElement = ((IStructuredSelection) currentSelection).getFirstElement();
@@ -84,7 +87,7 @@ public final class HaxeProjectNature implements IProjectNature {
    /**
     * @return null if status cannot be determine
     */
-   public static Boolean hasNature(final IProject project) {
+   public static @Nullable Boolean hasNature(final @Nullable IProject project) {
       if (project == null)
          return false;
 
@@ -106,7 +109,7 @@ public final class HaxeProjectNature implements IProjectNature {
       }
    }
 
-   private IProject project;
+   private IProject project = eventuallyNonNull();
 
    private void addBuilder(final String builderId) throws CoreException {
       final var desc = project.getDescription();

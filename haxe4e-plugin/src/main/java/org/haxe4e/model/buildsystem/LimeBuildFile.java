@@ -21,7 +21,6 @@ import org.w3c.dom.Element;
 
 import de.sebthom.eclipse.commons.ui.UI;
 import de.sebthom.eclipse.commons.ui.widgets.NotificationPopup;
-import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.exception.Exceptions;
 import net.sf.jstuff.core.io.RuntimeIOException;
 import net.sf.jstuff.core.validation.Args;
@@ -47,7 +46,7 @@ public class LimeBuildFile extends BuildFile {
       final var domFile = parseFile();
       for (final var srcNode : domFile.findNodes("/project/haxelib")) {
          final var libName = ((Element) srcNode).getAttribute("name");
-         if (Strings.isNotBlank(libName)) {
+         if (libName != null && !libName.isBlank()) {
             final var libVer = ((Element) srcNode).getAttribute("version");
             try {
                deps.add(Haxelib.from(haxeSDK, libName, libVer, monitor));
@@ -66,7 +65,7 @@ public class LimeBuildFile extends BuildFile {
       final var domFile = parseFile();
       for (final var srcNode : domFile.findNodes("/project/source")) {
          final var path = ((Element) srcNode).getAttribute("path");
-         if (Strings.isNotBlank(path)) {
+         if (path != null && !path.isBlank()) {
             try {
                paths.add(Paths.get(path));
             } catch (final InvalidPathException ex) {

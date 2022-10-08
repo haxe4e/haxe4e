@@ -4,10 +4,13 @@
  */
 package org.haxe4e.launch;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -26,7 +29,7 @@ import de.sebthom.eclipse.commons.ui.Dialogs;
  */
 public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
 
-   private LaunchConfigForm form;
+   private LaunchConfigForm form = eventuallyNonNull();
 
    @Override
    public void createControl(final Composite parent) {
@@ -35,7 +38,7 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
    }
 
    @Override
-   public Image getImage() {
+   public @Nullable Image getImage() {
       return Haxe4EPlugin.get().getImageRegistry().get(Constants.IMAGE_ICON);
    }
 
@@ -76,9 +79,10 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
 
    @Override
    public void performApply(final ILaunchConfigurationWorkingCopy config) {
-      config.setAttribute(Constants.LAUNCH_ATTR_PROJECT, form.selectedProject.get() == null ? null : form.selectedProject.get().getName());
+      config.setAttribute(Constants.LAUNCH_ATTR_PROJECT, form.selectedProject.get() == null ? null
+         : asNonNull(form.selectedProject.get()).getName());
       config.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, form.selectedBuildFile.get() == null ? null
-         : form.selectedBuildFile.get().getProjectRelativePath());
+         : asNonNull(form.selectedBuildFile.get()).getProjectRelativePath());
       final var altSDK = form.selectedAltSDK.get();
       config.setAttribute(Constants.LAUNCH_ATTR_HAXE_SDK, altSDK == null ? "" : altSDK.getName());
    }

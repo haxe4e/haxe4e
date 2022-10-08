@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.haxe4e.Haxe4EPlugin;
 
@@ -36,10 +38,12 @@ import net.sf.jstuff.core.Strings;
 public final class FormatFileCommand extends AbstractHandler {
 
    @Override
-   public Object execute(final ExecutionEvent event) throws ExecutionException {
+   public @Nullable Object execute(final ExecutionEvent event) throws ExecutionException {
       final var window = UI.getActiveWorkbenchWindow();
       if (window != null) {
          final var selection = (IStructuredSelection) window.getSelectionService().getSelection();
+         if (selection == null)
+            return null;
          final var job = Job.create("Formatting Haxe source files...", monitor -> {
             final var haxeFiles = getSelectedHaxeFiles(selection);
             if (haxeFiles.isEmpty()) {
@@ -84,10 +88,11 @@ public final class FormatFileCommand extends AbstractHandler {
             null, //
             null //
          );
-         if (result instanceof Result.Success) {
-            final var formatted = ((Result.Success) result).formattedCode;
+         if (result instanceof final Result.Success successResult) {
+            final var formatted = successResult.formattedCode;
             if (!unformatted.equals(formatted)) {
-               file.setContents(new ByteArrayInputStream(formatted.getBytes(file.getCharset())), true, true, monitor);
+               final var cs = file.getCharset();
+               file.setContents(new ByteArrayInputStream(cs == null ? formatted.getBytes() : formatted.getBytes(cs)), true, true, monitor);
             }
          } else {
             new NotificationPopup(((Result.Failure) result).errorMessage).open();
@@ -101,19 +106,17 @@ public final class FormatFileCommand extends AbstractHandler {
    private List<IFile> getSelectedHaxeFiles(final IStructuredSelection selection) throws CoreException {
       final var haxeFiles = new ArrayList<IFile>();
       for (final var item : selection) {
-         if (item instanceof IFile) {
-            haxeFiles.add((IFile) item);
+         if (item instanceof @NonNull final IFile file) {
+            haxeFiles.add(file);
          } else if (item instanceof IFolder) {
             final var folder = (IFolder) item;
             folder.accept(res -> {
                if (res.isLinked() || res.isVirtual())
                   return false;
 
-               if (res instanceof IFile) {
-                  final var file = (IFile) res;
-                  if ("org.haxe4e.content.haxe".equals(file.getContentDescription().getContentType().getId())) {
-                     haxeFiles.add(file);
-                  }
+               if (res instanceof final IFile file //
+                  && "org.haxe4e.content.haxe".equals(file.getContentDescription().getContentType().getId())) {
+                  haxeFiles.add(file);
                }
                return true;
             });

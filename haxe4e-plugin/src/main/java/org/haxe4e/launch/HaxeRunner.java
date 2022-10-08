@@ -15,6 +15,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.osgi.util.NLS;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
@@ -29,7 +30,7 @@ import net.sf.jstuff.core.io.Processes.ProcessWrapper;
 public final class HaxeRunner {
 
    public static void launchHxmlFile(final ILaunch launch, final HaxeSDK haxeSDK, final Path hxmlFile, final Path workDir,
-      final Map<String, String> envVars, final boolean appendEnvVars, final Consumer<ProcessWrapper> action) {
+      final Map<String, String> envVars, final boolean appendEnvVars, final @Nullable Consumer<ProcessWrapper> action) {
       final var job = Job.create(NLS.bind(Messages.Launch_RunningFile, hxmlFile), monitor -> {
          try {
             final var proc = haxeSDK.getCompilerProcessBuilder(!appendEnvVars) //

@@ -6,6 +6,7 @@ package org.haxe4e.model.buildsystem;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -13,6 +14,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.model.Haxelib;
@@ -35,10 +37,10 @@ public class LixBuildFile extends HaxeBuildFile {
 
    private String getHaxeLibCachePath() {
       var cachePath = System.getenv("HAXE_LIBCACHE");
-      if (Strings.isBlank(cachePath)) {
+      if (cachePath == null || cachePath.isBlank()) {
          cachePath = System.getenv("HAXESHIM_LIBCACHE");
       }
-      if (Strings.isBlank(cachePath)) {
+      if (cachePath == null || cachePath.isBlank()) {
          var haxeShimRoot = System.getenv("HAXE_ROOT");
          if (Strings.isBlank(haxeShimRoot)) {
             haxeShimRoot = System.getenv("HAXESHIM_ROOT");
@@ -80,7 +82,8 @@ public class LixBuildFile extends HaxeBuildFile {
                default -> false;
             }).get(0), "${HAXE_LIBCACHE}", haxeLibCachePath);
 
-            for (var folder = Paths.get(cp); folder != null && Files.exists(folder); folder = folder.getParent()) {
+            for (@Nullable
+            Path folder = Paths.get(cp); folder != null && Files.exists(folder); folder = folder.getParent()) {
                if (Files.exists(folder.resolve("haxelib.json"))) {
                   deps.add(new Haxelib(folder, false));
                   break;

@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
 import org.haxe4e.Haxe4EPlugin;
@@ -57,7 +58,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    }
 
    @Override
-   public InputStream getErrorStream() {
+   public @Nullable InputStream getErrorStream() {
       final var stream = super.getErrorStream();
       if (!TRACE_IO)
          return stream;
@@ -68,7 +69,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    }
 
    @Override
-   public Map<String, Object> getInitializationOptions(final URI projectRootUri) {
+   public Map<String, Object> getInitializationOptions(final @Nullable URI projectRootUri) {
       IProject project = null;
       if (projectRootUri != null) {
          for (final var container : ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(projectRootUri)) {
@@ -79,7 +80,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
          }
       }
 
-      final HaxeSDK haxeSDK;
+      final @Nullable HaxeSDK haxeSDK;
       final var displayServerArgs = new ArrayList<String>();
 
       if (project == null) {
@@ -98,12 +99,14 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
                      displayServerArgs.add("--class-path");
                      displayServerArgs.add(source.toString());
                   }
-                  for (final var haxelib : buildFile.getDirectDependencies(haxeSDK, new NullProgressMonitor())) {
-                     displayServerArgs.add("--library");
-                     if (Strings.isBlank(haxelib.meta.version)) {
-                        displayServerArgs.add(haxelib.meta.name);
-                     } else {
-                        displayServerArgs.add(haxelib.meta.name + ":" + haxelib.meta.version);
+                  if (haxeSDK != null) {
+                     for (final var haxelib : buildFile.getDirectDependencies(haxeSDK, new NullProgressMonitor())) {
+                        displayServerArgs.add("--library");
+                        if (Strings.isBlank(haxelib.meta.version)) {
+                           displayServerArgs.add(haxelib.meta.name);
+                        } else {
+                           displayServerArgs.add(haxelib.meta.name + ":" + haxelib.meta.version);
+                        }
                      }
                   }
                   break;
@@ -112,10 +115,11 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
                      displayServerArgs.add("--class-path");
                      displayServerArgs.add(source.toString());
                   }
-                  for (final var haxelib : buildFile.getDirectDependencies(haxeSDK, new NullProgressMonitor())) {
-                     displayServerArgs.add("--class-path");
-                     displayServerArgs.add(haxelib.location.resolve(haxelib.meta.classPath == null ? "." : haxelib.meta.classPath)
-                        .toString());
+                  if (haxeSDK != null) {
+                     for (final var haxelib : buildFile.getDirectDependencies(haxeSDK, new NullProgressMonitor())) {
+                        displayServerArgs.add("--class-path");
+                        displayServerArgs.add(haxelib.location.resolve(Strings.defaultIfNull(haxelib.meta.classPath, ".")).toString());
+                     }
                   }
                   break;
                default:
@@ -160,7 +164,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    }
 
    @Override
-   public InputStream getInputStream() {
+   public @Nullable InputStream getInputStream() {
       final var stream = super.getInputStream();
 
       if (!TRACE_IO)
@@ -170,7 +174,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    }
 
    @Override
-   public OutputStream getOutputStream() {
+   public @Nullable OutputStream getOutputStream() {
       final var stream = super.getOutputStream();
 
       if (!TRACE_IO)
@@ -180,7 +184,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    }
 
    @Override
-   public String getTrace(final URI rootUri) {
+   public String getTrace(final @Nullable URI rootUri) {
       // return "verbose"; // has no effect, maybe not implemented in Haxe language server
       return "off";
    }

@@ -4,6 +4,8 @@
  */
 package org.haxe4e.builder;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleFactory;
@@ -71,7 +74,7 @@ public final class HaxeBuilderConsole extends MessageConsole {
 
       monitor.setTaskName("Building project '" + project.getName() + "'");
 
-      final var onTerminated = new CompletableFuture<Void>();
+      final var onTerminated = new CompletableFuture<@Nullable Void>();
       final var console = HaxeBuilderConsole.openConsole(new Context(project, monitor, onTerminated));
 
       try (var out = console.newMessageStream();
@@ -90,7 +93,7 @@ public final class HaxeBuilderConsole extends MessageConsole {
 
          final var hasOutput = new AtomicBoolean(false);
          final var proc = processBuilder //
-            .withWorkingDirectory(project.getLocation().toFile()) //
+            .withWorkingDirectory(asNonNull(project.getLocation()).toFile()) //
             .withEnvironment(env -> {
                if (Platform.getBundle("net.mihai-nita.ansicon.plugin") != null) {
                   env.put("ANSICON", "1");

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -25,7 +26,8 @@ import net.sf.jstuff.core.validation.Args;
  */
 public final class Haxelib implements Comparable<Haxelib> {
 
-   public static Haxelib from(final HaxeSDK sdk, final String name, String version, final IProgressMonitor monitor) throws IOException {
+   public static Haxelib from(final HaxeSDK sdk, final String name, @Nullable String version, final IProgressMonitor monitor)
+      throws IOException {
       Args.notNull("sdk", sdk);
       Args.isDirectoryReadable("sdk.getLibsDir()", sdk.getHaxelibsDir());
 
@@ -33,7 +35,7 @@ public final class Haxelib implements Comparable<Haxelib> {
        * determine expected location on file system
        */
       monitor.setTaskName("Locating haxelib " + name + "...");
-      if (Strings.isNotEmpty(version)) {
+      if (version != null && !version.isBlank()) {
          final var libLocation = sdk.getHaxelibsDir().resolve(name).resolve(Strings.replace(version, ".", ","));
          if (Files.exists(libLocation))
             return new Haxelib(libLocation, false);
@@ -54,7 +56,7 @@ public final class Haxelib implements Comparable<Haxelib> {
          if (Files.exists(currentFile)) {
             try (var stream = Files.lines(currentFile)) {
                version = stream.findFirst().orElse("");
-               if (Strings.isNotEmpty(version)) {
+               if (version != null && !version.isBlank()) {
                   final var libLocation = sdk.getHaxelibsDir().resolve(name).resolve(Strings.replace(version, ".", ","));
                   if (Files.exists(libLocation))
                      return new Haxelib(libLocation, false);
@@ -65,7 +67,10 @@ public final class Haxelib implements Comparable<Haxelib> {
 
       monitor.setTaskName("Installing haxelib " + name + ":" + version);
       final var out = new EvictingDeque<String>(4);
-      final var haxelibProcessBuilder = sdk.getHaxelibProcessBuilder("install", name, version) //
+      final var haxelibProcessBuilder = sdk.getHaxelibProcessBuilder( //
+         version == null //
+            ? List.of("install", name)
+            : List.of("install", name, version)) //
          .withWorkingDirectory(sdk.getInstallRoot()) //
          .withRedirectErrorToOutput() //
          .withRedirectOutput(line -> {

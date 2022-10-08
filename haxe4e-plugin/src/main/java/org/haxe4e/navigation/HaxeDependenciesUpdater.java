@@ -4,6 +4,8 @@
  */
 package org.haxe4e.navigation;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
@@ -157,13 +159,14 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
             depsFolder.create(IResource.VIRTUAL, true, monitor);
          }
 
+         @SuppressWarnings("null")
          final var depsToCheck = buildFile //
             .getDirectDependencies(sdk, monitor).stream() //
             .collect(Collectors.toMap(d -> d.meta.name + " [" + (d.isDevVersion ? "dev" : d.meta.version) + "]", Function.identity()));
 
          for (final var folder : depsFolder.members()) {
             if (depsToCheck.containsKey(folder.getName())) {
-               final var dep = depsToCheck.get(folder.getName());
+               final var dep = asNonNullUnsafe(depsToCheck.get(folder.getName()));
                if (folder.getRawLocation() != null && dep.location.equals(folder.getRawLocation().toFile().toPath())) {
                   depsToCheck.remove(folder.getName());
                } else {

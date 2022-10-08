@@ -7,6 +7,7 @@ package org.haxe4e.project;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
@@ -27,13 +28,13 @@ public class HaxeProjectSelectionDialog {
       final var haxeProjectIcon = Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_NAVIGATOR_HAXE_PROJECT);
       dialog = new ElementListSelectionDialog(parent, new LabelProvider() {
          @Override
-         public Image getImage(final Object element) {
+         public @Nullable Image getImage(final @Nullable Object element) {
             return haxeProjectIcon;
          }
 
          @Override
-         public String getText(final Object item) {
-            return " " + ((IProject) item).getName();
+         public String getText(final @Nullable Object item) {
+            return item == null ? "" : " " + ((IProject) item).getName();
          }
       });
       dialog.setImage(haxeProjectIcon);
@@ -43,7 +44,7 @@ public class HaxeProjectSelectionDialog {
       setProjects(Projects.getOpenProjectsWithNature(HaxeProjectNature.NATURE_ID));
    }
 
-   public IProject getSelectedProject() {
+   public @Nullable IProject getSelectedProject() {
       return (IProject) dialog.getFirstResult();
    }
 
@@ -57,7 +58,7 @@ public class HaxeProjectSelectionDialog {
       return this;
    }
 
-   public HaxeProjectSelectionDialog setSelectedProject(final IProject project) {
+   public HaxeProjectSelectionDialog setSelectedProject(final @Nullable IProject project) {
       dialog.setInitialSelections(project);
       return this;
    }
@@ -65,7 +66,7 @@ public class HaxeProjectSelectionDialog {
    /**
     * @return null if cancelled
     */
-   public IProject show() {
+   public @Nullable IProject show() {
       if (dialog.open() == Window.OK)
          return getSelectedProject();
       return null;

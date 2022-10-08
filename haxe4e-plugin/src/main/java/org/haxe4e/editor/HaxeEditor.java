@@ -11,6 +11,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
@@ -43,7 +44,7 @@ import net.sf.jstuff.core.reflection.Fields;
 @SuppressWarnings("restriction")
 public final class HaxeEditor extends ExtensionBasedTextEditor {
 
-   private volatile Position caretPosition;
+   private volatile @Nullable Position caretPosition;
 
    private final CaretListener caretListener = event -> {
       try {
@@ -116,11 +117,11 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
       super.dispose();
    }
 
-   private ContentAssistant getContentAssistant() {
+   private @Nullable ContentAssistant getContentAssistant() {
       final var viewer = getSourceViewer();
 
-      if (viewer instanceof ISourceViewerExtension4) {
-         final var contentAssistantFacade = ((ISourceViewerExtension4) viewer).getContentAssistantFacade();
+      if (viewer instanceof final ISourceViewerExtension4 viewer4) {
+         final var contentAssistantFacade = viewer4.getContentAssistantFacade();
          if (contentAssistantFacade != null) {
             final var contentAssistant = Fields.read(contentAssistantFacade, "fContentAssistant");
             if (contentAssistant instanceof ContentAssistant)
@@ -137,13 +138,17 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
       return null;
    }
 
-   private IDocument getDocument() {
+   private @Nullable IDocument getDocument() {
       return getDocumentProvider().getDocument(getEditorInput());
    }
 
    @SuppressWarnings("unused")
    private void highlightMatchingOccurrences() {
-      final var infos = LanguageServiceAccessor.getLSPDocumentInfosFor(getDocument(), capabilities -> {
+      final var doc = getDocument();
+      if (doc == null)
+         return;
+
+      final var infos = LanguageServiceAccessor.getLSPDocumentInfosFor(doc, capabilities -> {
          final var docHighlight = capabilities.getDocumentHighlightProvider();
          return docHighlight != null && (docHighlight.getLeft() == Boolean.TRUE || docHighlight.isRight());
       });
@@ -161,10 +166,12 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
    }
 
    @Override
-   protected void performSave(final boolean overwrite, final IProgressMonitor progressMonitor) {
+   protected void performSave(final boolean overwrite, final @Nullable IProgressMonitor progressMonitor) {
 
       // TODO workaround for https://github.com/vshaxe/vshaxe/issues/507
       final var res = getEditorInput().getAdapter(IResource.class);
+      if (res == null)
+         return;
       try {
          for (final var marker : res.findMarkers(LSPDiagnosticsToMarkers.LS_DIAGNOSTIC_MARKER_TYPE, false, IResource.DEPTH_ONE)) {
             if ("org.haxe4e.langserv".equals(marker.getAttribute(LSPDiagnosticsToMarkers.LANGUAGE_SERVER_ID))) {
@@ -179,8 +186,12 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
 
    private void toggleBreakpoint() {
       final var doc = getDocument();
+      if (doc == null)
+         return;
       final var parsedDoc = TMUIPlugin.getTMModelManager().connect(doc);
       final var rulerInfo = getAdapter(IVerticalRulerInfo.class);
+      if (rulerInfo == null)
+         return;
       final var lineNumber = rulerInfo.getLineOfLastMouseButtonActivity();
 
       final var tokens = parsedDoc.getLineTokens(lineNumber);
@@ -215,6 +226,8 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
             return;
 
          final var resource = getEditorInput().getAdapter(IResource.class);
+         if (resource == null)
+            return;
          for (final IBreakpoint breakpoint : breakpoints) {
             try {
                if (breakpoint instanceof ILineBreakpoint //

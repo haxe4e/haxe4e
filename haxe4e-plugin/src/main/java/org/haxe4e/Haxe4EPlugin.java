@@ -4,8 +4,11 @@
  */
 package org.haxe4e;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.haxe4e.navigation.HaxeDependenciesUpdater;
 import org.haxe4e.navigation.WindowListener;
@@ -26,16 +29,16 @@ public class Haxe4EPlugin extends AbstractEclipsePlugin {
    /**
     * during runtime you can get ID with getBundle().getSymbolicName()
     */
-   public static final String PLUGIN_ID = Haxe4EPlugin.class.getPackage().getName();
+   public static final String PLUGIN_ID = asNonNull(Haxe4EPlugin.class.getPackage()).getName();
 
-   private static Haxe4EPlugin instance;
+   private static @Nullable Haxe4EPlugin instance;
 
    /**
     * @return the shared instance
     */
    public static Haxe4EPlugin get() {
       Assert.notNull(instance, "Default plugin instance is still null.");
-      return instance;
+      return asNonNullUnsafe(instance);
    }
 
    public static PluginLogger log() {
@@ -52,8 +55,9 @@ public class Haxe4EPlugin extends AbstractEclipsePlugin {
 
    @Override
    public BundleResources getBundleResources() {
+      var bundleResources = this.bundleResources;
       if (bundleResources == null) {
-         bundleResources = new BundleResources(this, "src/main/resources");
+         bundleResources = this.bundleResources = new BundleResources(this, "src/main/resources");
       }
       return bundleResources;
    }
@@ -62,7 +66,10 @@ public class Haxe4EPlugin extends AbstractEclipsePlugin {
    protected void initializeImageRegistry(final ImageRegistry registry) {
       for (final var field : Constants.class.getFields()) {
          if (Fields.isStatic(field) && field.getType() == String.class && field.getName().startsWith("IMAGE_")) {
-            registerImage(registry, Fields.read(null, field));
+            final String imagePath = Fields.read(null, field);
+            if (imagePath != null) {
+               registerImage(registry, imagePath);
+            }
          }
       }
    }

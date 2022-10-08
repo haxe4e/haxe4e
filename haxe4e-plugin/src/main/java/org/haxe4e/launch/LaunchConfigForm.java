@@ -5,6 +5,7 @@
 package org.haxe4e.launch;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -30,9 +31,9 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
  */
 public class LaunchConfigForm extends Composite {
 
-   public final MutableObservableRef<IProject> selectedProject = MutableObservableRef.of(null);
-   public final MutableObservableRef<BuildFile> selectedBuildFile;
-   public final MutableObservableRef<HaxeSDK> selectedAltSDK;
+   public final MutableObservableRef<@Nullable IProject> selectedProject = MutableObservableRef.of(null);
+   public final MutableObservableRef<@Nullable BuildFile> selectedBuildFile;
+   public final MutableObservableRef<@Nullable HaxeSDK> selectedAltSDK;
 
    public LaunchConfigForm(final Composite parent, final int style) {
       super(parent, style);

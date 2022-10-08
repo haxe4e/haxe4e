@@ -4,11 +4,14 @@
  */
 package org.haxe4e.prefs;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -45,9 +48,9 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
  */
 public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-   private CheckboxTableViewer sdkTable;
+   private CheckboxTableViewer sdkTable = eventuallyNonNull();
    private final ObservableSet<HaxeSDK> sdks = new ObservableSet<>(new HashSet<>());
-   private final MutableObservableRef<HaxeSDK> defaultSDK = MutableObservableRef.of(null);
+   private final MutableObservableRef<@Nullable HaxeSDK> defaultSDK = MutableObservableRef.of(null);
 
    public HaxeSDKPreferencePage() {
       setDescription(Messages.Prefs_ManageSDKsDescription);
@@ -69,12 +72,12 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       });
       sdkTable.setCheckStateProvider(new ICheckStateProvider() {
          @Override
-         public boolean isChecked(final Object element) {
-            return isDefaultHaxeSDK((HaxeSDK) element);
+         public boolean isChecked(final @Nullable Object element) {
+            return element == null ? false : isDefaultHaxeSDK((HaxeSDK) element);
          }
 
          @Override
-         public boolean isGrayed(final Object element) {
+         public boolean isGrayed(final @Nullable Object element) {
             return false;
          }
       });
@@ -91,14 +94,16 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
 
       sdkTable.setContentProvider(new IStructuredContentProvider() {
          @Override
-         public Object[] getElements(final Object input) {
+         public Object[] getElements(final @Nullable Object input) {
+            if (input == null)
+               return new Object[0];
             @SuppressWarnings("unchecked")
             final var items = (Collection<HaxeSDK>) input;
             return items.toArray(new HaxeSDK[items.size()]);
          }
 
          @Override
-         public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
+         public void inputChanged(final Viewer viewer, final @Nullable Object oldInput, final @Nullable Object newInput) {
             refreshTable();
          }
       });
@@ -106,10 +111,14 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       final var colName = new TableViewerColumn(sdkTable, SWT.NONE);
       colName.setLabelProvider(new DelegatingStyledCellLabelProvider(new StyledLabelProviderAdapter()) {
          @Override
-         public StyledString getStyledText(final Object element) {
-            return isDefaultHaxeSDK((HaxeSDK) element) //
-               ? new StyledString(((HaxeSDK) element).getName(), Fonts.DEFAULT_FONT_BOLD_STYLER)
-               : new StyledString(((HaxeSDK) element).getName());
+         public StyledString getStyledText(final @Nullable Object element) {
+            if (element == null)
+               return new StyledString("");
+            final var sdk = (HaxeSDK) element;
+            return isDefaultHaxeSDK(sdk) //
+               ? new StyledString(sdk.getName(), Fonts.DEFAULT_FONT_BOLD_STYLER)
+               : new StyledString(sdk.getName());
+
          }
       });
       colName.getColumn().setWidth(100);
@@ -118,8 +127,8 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       final var colVer = new TableViewerColumn(sdkTable, SWT.NONE);
       colVer.setLabelProvider(new ColumnLabelProvider() {
          @Override
-         public String getText(final Object element) {
-            return ((HaxeSDK) element).getVersion();
+         public @Nullable String getText(final @Nullable Object element) {
+            return element == null ? null : ((HaxeSDK) element).getVersion();
          }
       });
       colVer.getColumn().setWidth(100);
@@ -128,8 +137,8 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       final var colPath = new TableViewerColumn(sdkTable, SWT.NONE);
       colPath.setLabelProvider(new ColumnLabelProvider() {
          @Override
-         public String getText(final Object element) {
-            return ((HaxeSDK) element).getInstallRoot().toString();
+         public @Nullable String getText(final @Nullable Object element) {
+            return element == null ? null : ((HaxeSDK) element).getInstallRoot().toString();
          }
       });
       colPath.getColumn().setWidth(100);
@@ -185,7 +194,11 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
    private void onButton_Add() {
       final var dialog = new HaxeSDKEditDialog(getShell());
       if (dialog.open() == Window.OK) {
-         sdks.add(new HaxeSDK(dialog.haxeSDKName.get(), dialog.haxeSDKPath.get(), new NekoVM(dialog.nekoVMPath.get())));
+         sdks.add(new HaxeSDK( //
+            asNonNullUnsafe(dialog.haxeSDKName.get()), //
+            asNonNullUnsafe(dialog.haxeSDKPath.get()), //
+            new NekoVM(asNonNullUnsafe(dialog.nekoVMPath.get())) //
+         ));
       }
    }
 
@@ -194,11 +207,15 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       if (sel.isEmpty())
          return;
 
-      final var sdk = (HaxeSDK) sel.getFirstElement();
+      final var sdk = asNonNullUnsafe((HaxeSDK) sel.getFirstElement());
       final var dialog = new HaxeSDKEditDialog(getShell(), sdk);
       if (dialog.open() == Window.OK) {
          sdks.remove(sdk);
-         sdks.add(new HaxeSDK(dialog.haxeSDKName.get(), dialog.haxeSDKPath.get(), new NekoVM(dialog.nekoVMPath.get())));
+         sdks.add(new HaxeSDK( //
+            asNonNullUnsafe(dialog.haxeSDKName.get()), //
+            asNonNullUnsafe(dialog.haxeSDKPath.get()), //
+            new NekoVM(asNonNullUnsafe(dialog.nekoVMPath.get())) //
+         ));
       }
    }
 
@@ -219,8 +236,9 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
    @Override
    public boolean performOk() {
       HaxeWorkspacePreference.setHaxeSDKs(sdks);
-      if (defaultSDK.get() != null) {
-         HaxeWorkspacePreference.setDefaultHaxeSDK(defaultSDK.get().getName());
+      final var sdk = defaultSDK.get();
+      if (sdk != null) {
+         HaxeWorkspacePreference.setDefaultHaxeSDK(sdk.getName());
       }
       if (!HaxeWorkspacePreference.save()) {
          setValid(false);

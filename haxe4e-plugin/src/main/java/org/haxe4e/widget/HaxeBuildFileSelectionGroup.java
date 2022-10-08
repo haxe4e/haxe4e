@@ -4,9 +4,12 @@
  */
 package org.haxe4e.widget;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -36,9 +39,9 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
  */
 public class HaxeBuildFileSelectionGroup extends Composite {
 
-   private HaxeProjectPreference projectPrefs;
+   private @Nullable HaxeProjectPreference projectPrefs;
    private Button btnBrowseForBuildFile;
-   public final MutableObservableRef<BuildFile> selectedBuildFile = MutableObservableRef.of(null);
+   public final MutableObservableRef<@Nullable BuildFile> selectedBuildFile = MutableObservableRef.of(null);
 
    public HaxeBuildFileSelectionGroup(final Composite parent, final int style, final Object layoutData) {
       super(parent, style);
@@ -66,34 +69,35 @@ public class HaxeBuildFileSelectionGroup extends Composite {
       this(parent, SWT.NONE, layoutData);
    }
 
-   private BuildFile getBuildFile(final String path) {
+   private @Nullable BuildFile getBuildFile(final String path) {
+      final var projectPrefs = this.projectPrefs;
       if (projectPrefs == null || Strings.isBlank(path))
          return null;
       final var buildSystem = projectPrefs.getBuildSystem();
-      if (buildSystem == null)
-         return null;
       return buildSystem.toBuildFile(projectPrefs.getProject().getFile(path));
    }
 
    private AbstractElementListSelectionDialog createSelectBuildFileDialog() {
       final var dlg = new ElementListSelectionDialog(getShell(), new LabelProvider() {
          @Override
-         public Image getImage(final Object element) {
+         public @Nullable Image getImage(final @Nullable Object element) {
             return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_BUILD_FILE);
          }
 
          @Override
-         public String getText(final Object element) {
+         public String getText(final @Nullable Object element) {
+            if (element == null)
+               return "";
             return ((IFile) element).getProjectRelativePath().toPortableString();
          }
       });
-      final var buildSystem = projectPrefs.getBuildSystem();
+      final var buildSystem = asNonNull(projectPrefs).getBuildSystem();
       dlg.setTitle("Select a build file (*." + buildSystem.getBuildFileExtension() + ")");
       dlg.setMessage("Enter a string to search for a file:");
       dlg.setEmptyListMessage("The project has no build files.");
       dlg.setEmptySelectionMessage("No matches found.");
       try {
-         final var buildFiles = buildSystem.findFilesWithBuildFileExtension(projectPrefs.getProject(), true);
+         final var buildFiles = buildSystem.findFilesWithBuildFileExtension(asNonNull(projectPrefs).getProject(), true);
          if (!buildFiles.isEmpty()) {
             dlg.setElements(buildFiles.toArray(IFile[]::new));
             dlg.setInitialSelections(selectedBuildFile.get());
@@ -111,13 +115,13 @@ public class HaxeBuildFileSelectionGroup extends Composite {
          final var buildFile = (IFile) dialog.getFirstResult();
 
          if (buildFile != null) {
-            final var buildSystem = projectPrefs.getBuildSystem();
+            final var buildSystem = asNonNull(projectPrefs).getBuildSystem();
             selectedBuildFile.set(buildSystem.toBuildFile(buildFile));
          }
       }
    }
 
-   public void setProject(final IProject project) {
+   public void setProject(final @Nullable IProject project) {
       if (project == null) {
          projectPrefs = null;
          btnBrowseForBuildFile.setEnabled(false);

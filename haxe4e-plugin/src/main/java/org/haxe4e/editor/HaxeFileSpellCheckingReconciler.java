@@ -54,9 +54,9 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
 
    private static final SpellingService SPELLING_SERVICE = EditorsUI.getSpellingService();
 
-   private ITextViewer viewer;
+   private @Nullable ITextViewer viewer;
 
-   private Job spellcheckJob;
+   private @Nullable Job spellcheckJob;
 
    private List<Region> collectRegionsToSpellcheck(final TMDocumentModel docModel, final List<Range> changedRanges) {
       if (TRACE_SPELLCHECK_REGIONS) {
@@ -118,11 +118,12 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
    }
 
    @Override
-   public void inputDocumentAboutToBeChanged(final IDocument oldInput, final IDocument newInput) {
+   public void inputDocumentAboutToBeChanged(final @Nullable IDocument oldInput, final @Nullable IDocument newInput) {
    }
 
    @Override
-   public void inputDocumentChanged(final IDocument oldInput, final IDocument newInput) {
+   public void inputDocumentChanged(final @Nullable IDocument oldInput, final @Nullable IDocument newInput) {
+      final var viewer = this.viewer;
       if (viewer == null)
          return;
 
@@ -160,13 +161,15 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
       }
 
       final var loc = textFileBuffer.getLocation();
-      spellcheckJob = new Job("Spellchecking" + (loc == null ? "" : " [" + loc + "]") + "...") {
+      final var spellcheckJob = this.spellcheckJob = new Job("Spellchecking" + (loc == null ? "" : " [" + loc + "]") + "...") {
          @Override
          protected IStatus run(final IProgressMonitor monitor) {
-            final var regionsToSpellcheck = collectRegionsToSpellcheck(docModel, event.ranges);
             final var annotationModel = textFileBuffer.getAnnotationModel();
 
-            spellcheck(doc, regionsToSpellcheck, annotationModel, monitor);
+            if (annotationModel != null) {
+               final var regionsToSpellcheck = collectRegionsToSpellcheck(docModel, event.ranges);
+               spellcheck(doc, regionsToSpellcheck, annotationModel, monitor);
+            }
             return Status.OK_STATUS;
          }
       };
@@ -209,8 +212,8 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
                   }
                });
 
-               if (annotationModel instanceof IAnnotationModelExtension) {
-                  ((IAnnotationModelExtension) annotationModel).replaceAnnotations( //
+               if (annotationModel instanceof final IAnnotationModelExtension annotationModelExt) {
+                  annotationModelExt.replaceAnnotations( //
                      outdatedAnnotations.toArray(new SpellingAnnotation[outdatedAnnotations.size()]), //
                      newSpellingErrors //
                   );
@@ -225,7 +228,9 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
    @Override
    public void uninstall() {
       super.uninstall();
-      viewer.removeTextInputListener(this);
-      viewer = null;
+      if (viewer != null) {
+         viewer.removeTextInputListener(this);
+         viewer = null;
+      }
    }
 }

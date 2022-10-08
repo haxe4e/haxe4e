@@ -5,6 +5,7 @@
 package org.haxe4e.widget;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -23,7 +24,7 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
 public class HaxeBuildSystemSelectionGroup extends Composite {
 
    private final ComboWrapper<BuildSystem> cmbBuildSystem;
-   public final MutableObservableRef<BuildSystem> selectedBuildSystem = MutableObservableRef.of(null);
+   public final MutableObservableRef<@Nullable BuildSystem> selectedBuildSystem = MutableObservableRef.of(null);
 
    public HaxeBuildSystemSelectionGroup(final Composite parent, final Object layoutData) {
       this(parent, SWT.NONE, layoutData);
@@ -56,7 +57,7 @@ public class HaxeBuildSystemSelectionGroup extends Composite {
 
    }
 
-   public void setProject(final IProject project) {
+   public void setProject(final @Nullable IProject project) {
       if (project == null) {
          cmbBuildSystem.setEnabled(false);
       } else {

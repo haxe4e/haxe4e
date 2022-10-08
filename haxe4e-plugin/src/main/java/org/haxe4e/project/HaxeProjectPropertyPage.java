@@ -4,6 +4,8 @@
  */
 package org.haxe4e.project;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -24,7 +26,7 @@ import de.sebthom.eclipse.commons.ui.Buttons;
  */
 public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
-   private HaxeProjectPreference prefs;
+   private HaxeProjectPreference prefs = eventuallyNonNull();
 
    @Override
    protected Control createContents(final Composite parent) {
@@ -38,7 +40,7 @@ public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.Proper
       /*
        * alt SDK selection
        */
-      final var project = Projects.adapt(getElement());
+      final var project = asNonNullUnsafe(Projects.adapt(getElement()));
       prefs = HaxeProjectPreference.get(project);
       final var grpHaxeSDKSelection = new HaxeSDKSelectionGroup(container, GridDataFactory.fillDefaults().create());
       grpHaxeSDKSelection.selectedAltSDK.subscribe(prefs::setAlternateHaxeSDK);

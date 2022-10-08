@@ -12,6 +12,7 @@ import java.util.WeakHashMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -41,6 +42,8 @@ public final class HaxeProjectPreference {
    private static final String PROPERTY_BUILD_SYSTEM = "haxe.project.build_system";
 
    public static HaxeProjectPreference get(final IProject project) {
+      Args.notNull("project", project);
+
       synchronized (PREFS_BY_PROJECT) {
          return PREFS_BY_PROJECT.computeIfAbsent(project, HaxeProjectPreference::new);
       }
@@ -48,7 +51,7 @@ public final class HaxeProjectPreference {
 
    private final IPersistentPreferenceStore prefs;
    private final IProject project;
-   private BuildFile effectiveBuildFileBeforeSave;
+   private @Nullable BuildFile effectiveBuildFileBeforeSave;
    private final List<PropertyChangeEvent> changeEvents = new ArrayList<>();
 
    private HaxeProjectPreference(final IProject project) {
@@ -63,7 +66,7 @@ public final class HaxeProjectPreference {
    /**
     * @return null if none configured
     */
-   public HaxeSDK getAlternateHaxeSDK() {
+   public @Nullable HaxeSDK getAlternateHaxeSDK() {
       return HaxeWorkspacePreference.getHaxeSDK(prefs.getString(PROPERTY_ALTERNATE_HAXE_SDK));
    }
 
@@ -72,7 +75,7 @@ public final class HaxeProjectPreference {
     *
     * @return null if none configured/not found/not compatible with selected build system
     */
-   public BuildFile getBuildFile() {
+   public @Nullable BuildFile getBuildFile() {
       final var buildSystem = getBuildSystem();
 
       // build file manually configured?
@@ -112,7 +115,7 @@ public final class HaxeProjectPreference {
    /**
     * @return null if none found
     */
-   public HaxeSDK getEffectiveHaxeSDK() {
+   public @Nullable HaxeSDK getEffectiveHaxeSDK() {
       final var sdk = getAlternateHaxeSDK();
       if (sdk == null)
          return HaxeWorkspacePreference.getDefaultHaxeSDK(false, true);
@@ -161,13 +164,14 @@ public final class HaxeProjectPreference {
          prefs.save();
 
          // force refresh of the affected build file icons
+         final var effectiveBuildFileBeforeSave = this.effectiveBuildFileBeforeSave;
          if (effectiveBuildFileBeforeSave != null) {
             final var effectiveBuildFile = getBuildFile();
             HaxeResourcesDecorator.getInstance().refreshElements( //
-               effectiveBuildFileBeforeSave == null ? null : effectiveBuildFileBeforeSave.location, //
+               effectiveBuildFileBeforeSave.location, //
                effectiveBuildFile == null ? null : effectiveBuildFile.location //
             );
-            effectiveBuildFileBeforeSave = null;
+            this.effectiveBuildFileBeforeSave = null;
          }
          HaxeDependenciesUpdater.INSTANCE.onProjectConfigChanged(project);
 
@@ -178,7 +182,7 @@ public final class HaxeProjectPreference {
       }
    }
 
-   public void setAlternateHaxeSDK(final HaxeSDK sdk) {
+   public void setAlternateHaxeSDK(final @Nullable HaxeSDK sdk) {
       prefs.setValue(PROPERTY_ALTERNATE_HAXE_SDK, sdk == null ? "" : sdk.getName());
    }
 
@@ -186,14 +190,14 @@ public final class HaxeProjectPreference {
       prefs.setValue(PROPERTY_ALTERNATE_AUTO_BUILD, value);
    }
 
-   public void setBuildFilePath(final String projectRelativePath) {
+   public void setBuildFilePath(final @Nullable String projectRelativePath) {
       if (effectiveBuildFileBeforeSave == null) {
          effectiveBuildFileBeforeSave = getBuildFile();
       }
       prefs.setValue(PROPERTY_BUILD_FILE, projectRelativePath == null ? "" : projectRelativePath);
    }
 
-   public void setBuildSystem(final BuildSystem buildSystem) {
+   public void setBuildSystem(final @Nullable BuildSystem buildSystem) {
       prefs.setValue(PROPERTY_BUILD_SYSTEM, buildSystem == null ? "" : buildSystem.name());
    }
 }

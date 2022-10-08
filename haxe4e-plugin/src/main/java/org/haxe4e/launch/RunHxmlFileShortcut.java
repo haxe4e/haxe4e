@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -31,18 +32,16 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
    @Override
    public void launch(final IEditorPart editor, final String mode) {
       final var editorInput = editor.getEditorInput();
-      if (editorInput instanceof FileEditorInput) {
-         final var fileInput = (FileEditorInput) editorInput;
+      if (editorInput instanceof final FileEditorInput fileInput) {
          launchHxmlFile(fileInput.getFile(), mode);
       }
    }
 
    @Override
    public void launch(final ISelection selection, final String mode) {
-      if (selection instanceof IStructuredSelection) {
-         final var firstElement = ((IStructuredSelection) selection).getFirstElement();
-         if (firstElement instanceof IFile) {
-            final var file = (IFile) firstElement;
+      if (selection instanceof final IStructuredSelection structuredSelection) {
+         final var firstElement = structuredSelection.getFirstElement();
+         if (firstElement instanceof @NonNull final IFile file) {
             launchHxmlFile(file, mode);
          }
       }

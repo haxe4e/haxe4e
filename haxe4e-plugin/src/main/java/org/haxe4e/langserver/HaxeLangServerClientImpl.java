@@ -4,6 +4,8 @@
  */
 package org.haxe4e.langserver;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -13,6 +15,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.lsp4e.LanguageClientImpl;
 import org.eclipse.lsp4j.DidChangeConfigurationParams;
 import org.eclipse.lsp4j.ProgressParams;
@@ -34,21 +38,20 @@ public final class HaxeLangServerClientImpl extends LanguageClientImpl implement
 
    private boolean isInitTriggered = false;
 
-   private final Map<Either<String, Integer>, CountDownLatch> progressMonitors = new HashMap<>();
+   private final Map<@NonNull Either<?, ?>, CountDownLatch> progressMonitors = new HashMap<>();
 
    @Override
-   public CompletableFuture<Void> createProgress(final WorkDoneProgressCreateParams params) {
+   public @NonNullByDefault({}) CompletableFuture<Void> createProgress(final WorkDoneProgressCreateParams params) {
       Haxe4EPlugin.log().debug("createProgress: {0}", params);
       return CompletableFuture.completedFuture(null);
    }
 
    @Override
-   public void notifyProgress(final ProgressParams params) {
+   public void notifyProgress(final @NonNullByDefault({}) ProgressParams params) {
       synchronized (progressMonitors) {
          if (params.getValue().isLeft()) {
             final var notification = params.getValue().getLeft();
-            if (notification instanceof WorkDoneProgressBegin) {
-               final var progressBegin = (WorkDoneProgressBegin) notification;
+            if (notification instanceof final WorkDoneProgressBegin progressBegin) {
                final var signal = new CountDownLatch(1);
                final var job = new Job(progressBegin.getTitle()) {
                   @Override
@@ -75,7 +78,7 @@ public final class HaxeLangServerClientImpl extends LanguageClientImpl implement
                };
                job.setPriority(Job.INTERACTIVE);
                job.schedule();
-               progressMonitors.put(params.getToken(), signal);
+               progressMonitors.put(asNonNull(params.getToken()), signal);
             } else if (notification instanceof WorkDoneProgressEnd) {
                final var signal = progressMonitors.get(params.getToken());
                if (signal != null) {
@@ -104,7 +107,7 @@ public final class HaxeLangServerClientImpl extends LanguageClientImpl implement
    }
 
    @Override
-   public CompletableFuture<Void> registerCapability(final RegistrationParams params) {
+   public @NonNullByDefault({}) CompletableFuture<Void> registerCapability(final RegistrationParams params) {
       if (!isInitTriggered) {
          // workaround for https://github.com/vshaxe/vshaxe/issues/501
          final var event = new DidChangeConfigurationParams(new TreeBuilder<String>() //

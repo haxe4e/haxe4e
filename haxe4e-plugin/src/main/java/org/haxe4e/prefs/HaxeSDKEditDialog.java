@@ -4,11 +4,14 @@
  */
 package org.haxe4e.prefs;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.osgi.util.NLS;
@@ -38,15 +41,15 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
  * @author Sebastian Thomschke
  */
 public class HaxeSDKEditDialog extends TitleAreaDialog {
-   public final MutableObservableRef<String> haxeSDKName = MutableObservableRef.of(null);
-   public final MutableObservableRef<Path> haxeSDKPath = MutableObservableRef.of(null);
-   public final MutableObservableRef<Path> nekoVMPath = MutableObservableRef.of(null);
+   public final MutableObservableRef<@Nullable String> haxeSDKName = MutableObservableRef.of(null);
+   public final MutableObservableRef<@Nullable Path> haxeSDKPath = MutableObservableRef.of(null);
+   public final MutableObservableRef<@Nullable Path> nekoVMPath = MutableObservableRef.of(null);
 
    private boolean isEditSDK;
 
-   private Text txtName;
-   private Text txtHaxePath;
-   private Text txtNekoPath;
+   private Text txtName = eventuallyNonNull();
+   private Text txtHaxePath = eventuallyNonNull();
+   private Text txtNekoPath = eventuallyNonNull();
 
    /**
     * @wbp.parser.constructor
@@ -123,7 +126,7 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       txtHaxePath = new Text(container, SWT.BORDER);
       txtHaxePath.setEditable(false);
       txtHaxePath.setLayoutData(GridDatas.fillHorizontalExcessive());
-      Texts.bind(txtHaxePath, haxeSDKPath, Paths::get, Path::toString);
+      Texts.bind(txtHaxePath, haxeSDKPath, Paths::get, p -> p == null ? "" : p.toString());
       Texts.onModified(txtHaxePath, () -> setErrorMessage(null));
 
       final var btnBrowse = new Button(container, SWT.NONE);
@@ -139,7 +142,7 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       txtNekoPath = new Text(container, SWT.BORDER);
       txtNekoPath.setEditable(false);
       txtNekoPath.setLayoutData(GridDatas.fillHorizontalExcessive());
-      Texts.bind(txtNekoPath, nekoVMPath, Paths::get, Path::toString);
+      Texts.bind(txtNekoPath, nekoVMPath, Paths::get, p -> p == null ? "" : p.toString());
       Texts.onModified(txtNekoPath, () -> setErrorMessage(null));
 
       final var btnNekoBrowse = new Button(container, SWT.NONE);
@@ -157,25 +160,27 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
          return;
       }
 
-      if (haxeSDKPath.get() == null) {
+      final var sdkPath = haxeSDKPath.get();
+      if (sdkPath == null) {
          setErrorMessage(NLS.bind(Messages.Error_ValueMustBeSpecified, Messages.Label_Path));
          txtHaxePath.setFocus();
          return;
       }
 
-      if (nekoVMPath.get() == null) {
-         setErrorMessage(NLS.bind(Messages.Error_ValueMustBeSpecified, Messages.Label_Path));
-         txtNekoPath.setFocus();
-         return;
-      }
-
-      if (!Files.isDirectory(haxeSDKPath.get()) || !new HaxeSDK("whatever", haxeSDKPath.get()).isValid()) {
+      if (!Files.isDirectory(sdkPath) || !new HaxeSDK("whatever", sdkPath).isValid()) {
          setErrorMessage(Messages.SDKPathInvalid);
          txtHaxePath.setFocus();
          return;
       }
 
-      if (!Files.isDirectory(nekoVMPath.get()) || !new NekoVM("whatever", nekoVMPath.get()).isValid()) {
+      final var nekoPath = nekoVMPath.get();
+      if (nekoPath == null) {
+         setErrorMessage(NLS.bind(Messages.Error_ValueMustBeSpecified, Messages.Label_Path));
+         txtNekoPath.setFocus();
+         return;
+      }
+
+      if (!Files.isDirectory(nekoPath) || !new NekoVM("whatever", nekoPath).isValid()) {
          setErrorMessage(Messages.NekoPathInvalid);
          txtNekoPath.setFocus();
          return;
@@ -189,7 +194,8 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       dlg.setText(Messages.Label_Path + ": Haxe SDK");
       dlg.setMessage("Select a directory containing a Haxe SDK");
 
-      var dir = txtHaxePath.getText();
+      @Nullable
+      String dir = txtHaxePath.getText();
       if (Strings.isBlank(dir)) {
          final var p = HaxeSDK.fromPath();
          if (p != null) {
@@ -220,7 +226,8 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       dlg.setText(Messages.Label_Path + ": Neko VM");
       dlg.setMessage("Select a directory containing the Neko VM");
 
-      var dir = txtNekoPath.getText();
+      @Nullable
+      String dir = txtNekoPath.getText();
       if (Strings.isBlank(dir)) {
          final var p = NekoVM.fromPath();
          if (p != null) {

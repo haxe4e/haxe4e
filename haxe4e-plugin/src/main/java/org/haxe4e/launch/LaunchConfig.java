@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.lsp4e.debug.DSPPlugin;
 import org.eclipse.lsp4e.debug.launcher.DSPLaunchDelegate.DSPLaunchDelegateLaunchBuilder;
@@ -44,7 +45,7 @@ import net.sf.jstuff.core.Strings;
 public class LaunchConfig extends LaunchConfigurationDelegate {
 
    @Override
-   public void launch(final ILaunchConfiguration config, final String mode, final ILaunch launch, final IProgressMonitor monitor)
+   public void launch(final ILaunchConfiguration config, final String mode, final ILaunch launch, final @Nullable IProgressMonitor monitor)
       throws CoreException {
 
       final var projectName = config.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "");
@@ -56,7 +57,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
 
       final var prefs = HaxeProjectPreference.get(project);
       final var haxeSDK = prefs.getEffectiveHaxeSDK();
-      if (!haxeSDK.isValid()) {
+      if (haxeSDK == null || !haxeSDK.isValid()) {
          Dialogs.showError(Messages.Prefs_NoSDKRegistered_Title, Messages.Prefs_NoSDKRegistered_Body);
          return;
       }
@@ -114,7 +115,10 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                   .put("executable", haxeSDK.getCompilerExecutable().toString()) //
                   .put("env", debuggerEnvVars) //
                ) //
+               .put("noDebug", false) //
+               .put("showGeneratedVariables", true) //
                .put("stopOnEntry", false) //
+               .put("trace", true) //
                .getMap();
 
             try {

@@ -4,6 +4,8 @@
  */
 package org.haxe4e.project;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -16,6 +18,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
@@ -36,8 +40,8 @@ import net.sf.jstuff.core.concurrent.Threads;
  */
 public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
 
-   private NewHaxeProjectPage newHaxeProjectPage;
-   private IProject newProject;
+   private NewHaxeProjectPage newHaxeProjectPage = eventuallyNonNull();
+   private @Nullable IProject newProject;
 
    @Override
    public void addPages() {
@@ -72,15 +76,15 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
                final var create = new CreateProjectOperation(projConfig, Messages.NewHaxeProject);
                create.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
 
-               newProject = (IProject) create.getAffectedObjects()[0];
+               final var newProject = this.newProject = (IProject) asNonNullUnsafe(create.getAffectedObjects())[0];
                HaxeProjectNature.addToProject(newProject);
                final var prefs = HaxeProjectPreference.get(newProject);
                prefs.setAlternateHaxeSDK(newHaxeProjectPage.selectedAltSDK.get());
                prefs.save();
 
                // may want system to create different types of projects, for now this is better than empty
-               createFile(newProject, monitor, "templates/new-project/default/build.hxml", "build.hxml");
-               createFile(newProject, monitor, "templates/new-project/default/src/Main.hx", "src/Main.hx");
+               createFile(newProject, "templates/new-project/default/build.hxml", "build.hxml", monitor);
+               createFile(newProject, "templates/new-project/default/src/Main.hx", "src/Main.hx", monitor);
 
                newProject.open(monitor);
             } catch (final Exception ex) {
@@ -93,8 +97,7 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
       } catch (final InvocationTargetException ex) {
          final var exUnwrapped = ex.getTargetException();
          final IStatus status;
-         if (exUnwrapped.getCause() instanceof CoreException) {
-            final var exCore = (CoreException) exUnwrapped.getCause();
+         if (exUnwrapped.getCause() instanceof final CoreException exCore) {
             if (exCore.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
                status = Haxe4EPlugin.status().createError(exCore, Messages.NewHaxeProject_CaseVariantExistsError, projHandle.getName());
             } else {
@@ -115,13 +118,13 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
       return true;
    }
 
-   private void createFile(final IProject project, final IProgressMonitor monitor, final String from, final String to) throws CoreException,
-      IOException {
-      createFile(project, monitor, from, to, false);
+   private void createFile(final IProject project, final String from, final String to, final @Nullable IProgressMonitor monitor)
+      throws CoreException, IOException {
+      createFile(project, from, to, false, monitor);
    }
 
-   private void createFile(final IProject project, final IProgressMonitor monitor, final String from, final String to,
-      final boolean isBinary) throws CoreException, IOException {
+   private void createFile(final IProject project, final String from, final String to, final boolean isBinary,
+      final @Nullable IProgressMonitor monitor) throws CoreException, IOException {
       final var f = project.getFile(to);
       createParents(f, monitor);
 
@@ -134,21 +137,20 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
       }
    }
 
-   private void createParents(final IFile f, final IProgressMonitor monitor) throws CoreException {
+   private void createParents(final IFile f, final @Nullable IProgressMonitor monitor) throws CoreException {
       final var dir = f.getParent();
       if (!dir.exists()) {
-         if (dir instanceof IFolder) {
-            final var folder = (IFolder) dir;
+         if (dir instanceof @NonNull final IFolder folder) {
             createParents(folder, monitor);
          }
       }
    }
 
-   private void createParents(final IFolder f, final IProgressMonitor monitor) throws CoreException {
+   private void createParents(final IFolder f, final @Nullable IProgressMonitor monitor) throws CoreException {
       if (!f.exists()) {
          final var parent = f.getParent();
-         if (parent instanceof IFolder) {
-            createParents((IFolder) parent, monitor);
+         if (parent instanceof @NonNull final IFolder folder) {
+            createParents(folder, monitor);
          }
          f.create(true, true, monitor);
       }

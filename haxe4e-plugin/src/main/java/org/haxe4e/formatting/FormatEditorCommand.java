@@ -8,6 +8,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
@@ -28,7 +29,7 @@ import net.sf.jstuff.core.Strings;
 public final class FormatEditorCommand extends AbstractHandler {
 
    @Override
-   public Object execute(final ExecutionEvent event) throws ExecutionException {
+   public @Nullable Object execute(final ExecutionEvent event) throws ExecutionException {
       final var editor = Editors.getActiveTextEditor();
       if (editor == null)
          return null;
@@ -63,8 +64,8 @@ public final class FormatEditorCommand extends AbstractHandler {
                range //
             );
 
-            if (result instanceof Result.Success) {
-               final var formatted = ((Result.Success) result).formattedCode;
+            if (result instanceof final Result.Success successResult) {
+               final var formatted = successResult.formattedCode;
                if (!sel.getText().equals(formatted)) {
                   final var sel_startLineOffset = doc.getLineOffset(sel.getStartLine());
                   final var sel_offset = sel.getOffset();
@@ -87,8 +88,8 @@ public final class FormatEditorCommand extends AbstractHandler {
                null //
             );
 
-            if (result instanceof Result.Success) {
-               final var formatted = ((Result.Success) result).formattedCode;
+            if (result instanceof final Result.Success successResult) {
+               final var formatted = successResult.formattedCode;
                if (!sourceCode.equals(formatted)) {
                   final var selStartLine = sel.getStartLine();
                   doc.set(formatted);

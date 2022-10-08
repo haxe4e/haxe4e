@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
-import net.sf.jstuff.core.validation.Args;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Builder to create Map with maps.
@@ -29,15 +29,12 @@ public final class TreeBuilder<K> {
    }
 
    public TreeBuilder<K> compute(final Consumer<TreeBuilder<K>> action) {
-      Args.notNull("action", action);
       action.accept(this);
       return this;
    }
 
    @SuppressWarnings("unchecked")
    public TreeBuilder<K> compute(final K k, final Consumer<TreeBuilder<K>> action) {
-      Args.notNull("action", action);
-
       final TreeBuilder<K> leafBuilder;
       final var leaf = map.get(k);
       if (leaf instanceof Map) {
@@ -55,7 +52,7 @@ public final class TreeBuilder<K> {
       return map;
    }
 
-   public TreeBuilder<K> put(final K k, final Boolean v) {
+   public TreeBuilder<K> put(final K k, @Nullable final Boolean v) {
       if (v == null)
          return this;
 
@@ -63,23 +60,23 @@ public final class TreeBuilder<K> {
       return this;
    }
 
-   public TreeBuilder<K> put(final K k, final K k2, final Boolean v) {
+   public TreeBuilder<K> put(final K k, final K k2, @Nullable final Boolean v) {
       put(k, k2, (Object) v);
       return this;
    }
 
-   public TreeBuilder<K> put(final K k, final K k2, final List<String> v) {
+   public TreeBuilder<K> put(final K k, final K k2, @Nullable final List<String> v) {
       put(k, k2, (Object) v);
       return this;
    }
 
-   public TreeBuilder<K> put(final K k, final K k2, final Number v) {
+   public TreeBuilder<K> put(final K k, final K k2, @Nullable final Number v) {
       put(k, k2, (Object) v);
       return this;
    }
 
    @SuppressWarnings("unchecked")
-   private void put(final K k, final K k2, final Object v) {
+   private void put(final K k, final K k2, @Nullable final Object v) {
       if (v == null)
          return;
       final var leaf = map.get(k);
@@ -92,12 +89,12 @@ public final class TreeBuilder<K> {
       }
    }
 
-   public TreeBuilder<K> put(final K k, final K k2, final String v) {
+   public TreeBuilder<K> put(final K k, final K k2, @Nullable final String v) {
       put(k, k2, (Object) v);
       return this;
    }
 
-   public TreeBuilder<K> put(final K k, final List<String> v) {
+   public TreeBuilder<K> put(final K k, @Nullable final List<String> v) {
       if (v == null)
          return this;
 
@@ -105,7 +102,7 @@ public final class TreeBuilder<K> {
       return this;
    }
 
-   public TreeBuilder<K> put(final K k, final Map<K, ?> v) {
+   public TreeBuilder<K> put(final K k, @Nullable final Map<K, ?> v) {
       if (v == null)
          return this;
 
@@ -116,7 +113,7 @@ public final class TreeBuilder<K> {
       return this;
    }
 
-   public TreeBuilder<K> put(final K k, final Number v) {
+   public TreeBuilder<K> put(final K k, @Nullable final Number v) {
       if (v == null)
          return this;
 
@@ -124,7 +121,7 @@ public final class TreeBuilder<K> {
       return this;
    }
 
-   public TreeBuilder<K> put(final K k, final String v) {
+   public TreeBuilder<K> put(final K k, @Nullable final String v) {
       if (v == null)
          return this;
 
@@ -132,7 +129,7 @@ public final class TreeBuilder<K> {
       return this;
    }
 
-   public TreeBuilder<K> put(final K k, final TreeBuilder<K> v) {
+   public TreeBuilder<K> put(final K k, @Nullable final TreeBuilder<K> v) {
       if (v == null)
          return this;
 

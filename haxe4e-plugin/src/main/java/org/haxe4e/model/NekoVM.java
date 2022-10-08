@@ -4,6 +4,8 @@
  */
 package org.haxe4e.model;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,14 +38,14 @@ public final class NekoVM implements Comparable<NekoVM> {
 
    @JsonIgnore
    private static final Supplier<@Nullable NekoVM> NEKO_FROM_PATH = Suppliers.memoize(() -> {
-      final var nekoPath = System.getenv(ENV_NEKOPATH);
+      final var nekoPath = SystemUtils.getEnvironmentVariable(ENV_NEKOPATH, "");
       if (Strings.isNotBlank(nekoPath)) {
          final var sdk = new NekoVM(Paths.get(nekoPath));
          if (sdk.isValid())
             return sdk;
       }
 
-      final var nekoInstPath = System.getenv(ENV_NEKO_INSTPATH);
+      final var nekoInstPath = SystemUtils.getEnvironmentVariable(ENV_NEKO_INSTPATH, "");
       if (Strings.isNotBlank(nekoInstPath)) {
          final var sdk = new NekoVM(Paths.get(nekoInstPath));
          if (sdk.isValid())
@@ -52,7 +54,7 @@ public final class NekoVM implements Comparable<NekoVM> {
 
       final var nekoExe = SystemUtils.findExecutable("neko", true);
       if (nekoExe != null) {
-         final var sdk = new NekoVM(nekoExe.getParent());
+         final var sdk = new NekoVM(asNonNullUnsafe(nekoExe.getParent()));
          if (sdk.isValid())
             return sdk;
       }
@@ -152,7 +154,7 @@ public final class NekoVM implements Comparable<NekoVM> {
 
       final var processBuilder = Processes.builder(getExecutable());
       try (var reader = new BufferedReader(new InputStreamReader(processBuilder.start().getStdOut()))) {
-         final var version = Strings.substringBetween(reader.readLine(), "NekoVM ", " (c)");
+         final var version = Strings.substringBetweenNullable(reader.readLine(), "NekoVM ", " (c)");
          return Strings.isBlank(version) ? null : version;
       } catch (final IOException ex) {
          Haxe4EPlugin.log().error(ex);

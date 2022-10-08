@@ -4,6 +4,9 @@
  */
 package org.haxe4e.builder;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.console.IConsole;
@@ -18,7 +21,7 @@ import org.haxe4e.Haxe4EPlugin;
  */
 public final class HaxeBuilderConsoleActions implements IConsolePageParticipant {
 
-   private Action terminate;
+   private Action terminate = eventuallyNonNull();
 
    @Override
    public void activated() {
@@ -33,8 +36,7 @@ public final class HaxeBuilderConsoleActions implements IConsolePageParticipant 
    }
 
    @Override
-   @SuppressWarnings("null")
-   public <T> T getAdapter(final Class<T> adapter) {
+   public <T> @Nullable T getAdapter(final @Nullable Class<T> adapter) {
       return null;
    }
 

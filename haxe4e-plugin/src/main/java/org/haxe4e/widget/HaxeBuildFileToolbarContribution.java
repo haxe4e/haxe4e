@@ -4,8 +4,11 @@
  */
 package org.haxe4e.widget;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,10 +30,10 @@ import de.sebthom.eclipse.commons.ui.Editors;
  */
 public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlContribution implements SelectionListener {
 
-   public static HaxeBuildFileToolbarContribution instance;
-   private static IProject currentProject;
+   public static @Nullable HaxeBuildFileToolbarContribution instance;
+   private static @Nullable IProject currentProject;
 
-   private CCombo buildFileDropDown;
+   private CCombo buildFileDropDown = eventuallyNonNull();
 
    public HaxeBuildFileToolbarContribution() {
       instance = this;
@@ -64,7 +67,7 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
       return container;
    }
 
-   public void refresh(final IProject project) {
+   public void refresh(final @Nullable IProject project) {
       if (project == null || project == currentProject || buildFileDropDown.getListVisible())
          return;
 
@@ -112,18 +115,20 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
    }
 
    private void handleSelectionChanged() {
-      if (currentProject != null) {
-         final var newBuildFilePath = buildFileDropDown.getItem(buildFileDropDown.getSelectionIndex());
+      final var currentProject = HaxeBuildFileToolbarContribution.currentProject;
+      if (currentProject == null)
+         return;
 
-         final var prefs = HaxeProjectPreference.get(currentProject);
-         prefs.setBuildFilePath(newBuildFilePath);
-         prefs.save();
+      final var newBuildFilePath = buildFileDropDown.getItem(buildFileDropDown.getSelectionIndex());
 
-         // dropdown steals focus, lets set it back to any active editor
-         final var editor = Editors.getActiveEditor();
-         if (editor != null) {
-            editor.setFocus();
-         }
+      final var prefs = HaxeProjectPreference.get(currentProject);
+      prefs.setBuildFilePath(newBuildFilePath);
+      prefs.save();
+
+      // dropdown steals focus, lets set it back to any active editor
+      final var editor = Editors.getActiveEditor();
+      if (editor != null) {
+         editor.setFocus();
       }
    }
 }

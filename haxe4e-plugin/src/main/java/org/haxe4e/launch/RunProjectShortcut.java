@@ -33,23 +33,27 @@ public class RunProjectShortcut implements ILaunchShortcut {
    public void launch(final IEditorPart editor, final String mode) {
       IProject project = null;
       final var editorInput = editor.getEditorInput();
-      if (editorInput instanceof IFileEditorInput) {
-         project = ((IFileEditorInput) editorInput).getFile().getProject();
+      if (editorInput instanceof final IFileEditorInput fileInput) {
+         project = fileInput.getFile().getProject();
       }
 
+      if (project == null)
+         throw new IllegalArgumentException("RunProjectShortcut: No project found for editor " + editor);
       launchProject(project, mode);
    }
 
    @Override
    public void launch(final ISelection selection, final String mode) {
       IProject project = null;
-      if (selection instanceof StructuredSelection) {
-         final var firstElement = ((StructuredSelection) selection).getFirstElement();
-         if (firstElement instanceof IResource) {
-            project = ((IResource) firstElement).getProject();
+      if (selection instanceof final StructuredSelection structuredSel) {
+         final var firstElement = structuredSel.getFirstElement();
+         if (firstElement instanceof final IResource res) {
+            project = res.getProject();
          }
       }
 
+      if (project == null)
+         throw new IllegalArgumentException("RunProjectShortcut: No project found for selection " + selection);
       launchProject(project, mode);
    }
 

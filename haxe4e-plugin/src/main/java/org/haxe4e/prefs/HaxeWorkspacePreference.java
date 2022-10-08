@@ -14,6 +14,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -24,6 +25,7 @@ import org.haxe4e.model.HaxeSDK;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.FromStringDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -50,7 +52,9 @@ public final class HaxeWorkspacePreference {
       // which results in freezes because on first usage all drive letters are iterated
       // which will hang for mapped but currently not reachable network drives
       final var m = new SimpleModule("CustomNioPathSerialization");
-      m.addSerializer(Path.class, new ToStringSerializer());
+      @SuppressWarnings("null")
+      final JsonSerializer<@Nullable Object> serializer = new ToStringSerializer();
+      m.addSerializer(Path.class, serializer);
       m.addDeserializer(Path.class, new FromStringDeserializer<Path>(Path.class) {
          private static final long serialVersionUID = 1L;
 
@@ -121,7 +125,7 @@ public final class HaxeWorkspacePreference {
    /**
     * @return null if not found
     */
-   public static HaxeSDK getDefaultHaxeSDK(final boolean verify, final boolean searchPATH) {
+   public static @Nullable HaxeSDK getDefaultHaxeSDK(final boolean verify, final boolean searchPATH) {
       final var defaultSDK = getHaxeSDK(PREFS.getString(PROPERTY_DEFAULT_HAXE_SDK));
 
       if (defaultSDK != null) {
@@ -155,7 +159,7 @@ public final class HaxeWorkspacePreference {
    /**
     * @return null if not found
     */
-   public static HaxeSDK getHaxeSDK(final String name) {
+   public static @Nullable HaxeSDK getHaxeSDK(final String name) {
       if (Strings.isEmpty(name))
          return null;
 
@@ -191,7 +195,7 @@ public final class HaxeWorkspacePreference {
       PREFS.setValue(PROPERTY_DEFAULT_HAXE_SDK, name);
    }
 
-   public static void setHaxeSDKs(final Set<HaxeSDK> newSDKs) {
+   public static void setHaxeSDKs(final @Nullable Set<HaxeSDK> newSDKs) {
       ensureHaxeSDKsInitialized();
 
       synchronized (haxeSDKs) {

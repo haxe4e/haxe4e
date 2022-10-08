@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
 import org.haxe4e.Haxe4EPlugin;
 
@@ -34,7 +35,7 @@ import net.sf.jstuff.core.collection.Sets;
 public final class HaxeProjectImportConfigurator implements ProjectConfigurator {
 
    @Override
-   public Set<File> findConfigurableLocations(final File root, final IProgressMonitor monitor) {
+   public Set<File> findConfigurableLocations(final File root, final @Nullable IProgressMonitor monitor) {
       final var haxeProjects = new HashSet<File>();
 
       try {
@@ -67,12 +68,12 @@ public final class HaxeProjectImportConfigurator implements ProjectConfigurator 
    }
 
    @Override
-   public boolean shouldBeAnEclipseProject(final IContainer container, final IProgressMonitor monitor) {
+   public boolean shouldBeAnEclipseProject(final IContainer container, final @Nullable IProgressMonitor monitor) {
       return true;
    }
 
    @Override
-   public Set<IFolder> getFoldersToIgnore(final IProject project, final IProgressMonitor monitor) {
+   public Set<IFolder> getFoldersToIgnore(final IProject project, final @Nullable IProgressMonitor monitor) {
       final var result = Sets.newHashSet( //
          project.getFolder("bin"), //
          project.getFolder("dump"), //
@@ -97,12 +98,12 @@ public final class HaxeProjectImportConfigurator implements ProjectConfigurator 
    }
 
    @Override
-   public boolean canConfigure(final IProject project, final Set<IPath> ignoredPaths, final IProgressMonitor monitor) {
+   public boolean canConfigure(final IProject project, final Set<IPath> ignoredPaths, final @Nullable IProgressMonitor monitor) {
       return false;
    }
 
    @Override
-   public void configure(final IProject project, final Set<IPath> ignoredPaths, final IProgressMonitor monitor) {
+   public void configure(final IProject project, final Set<IPath> ignoredPaths, final @Nullable IProgressMonitor monitor) {
       try {
          HaxeProjectNature.addToProject(project);
       } catch (final CoreException ex) {

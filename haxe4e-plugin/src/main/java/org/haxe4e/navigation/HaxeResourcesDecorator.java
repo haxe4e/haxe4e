@@ -4,9 +4,12 @@
  */
 package org.haxe4e.navigation;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
@@ -25,17 +28,20 @@ import de.sebthom.eclipse.commons.ui.UI;
 public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelDecorator {
 
    public static HaxeResourcesDecorator getInstance() {
-      return (HaxeResourcesDecorator) PlatformUI.getWorkbench().getDecoratorManager() //
-         .getLabelDecorator(HaxeResourcesDecorator.class.getName());
+      return (HaxeResourcesDecorator) asNonNullUnsafe(PlatformUI.getWorkbench().getDecoratorManager() //
+         .getLabelDecorator(HaxeResourcesDecorator.class.getName()));
    }
 
    @Override
-   public Image decorateImage(final Image image, final Object element) {
+   public @Nullable Image decorateImage(final @Nullable Image image, final @Nullable Object element) {
+      if (element == null)
+         return null;
       final var res = (IResource) element;
-      final var project = res.getProject();
+      var project = res.getProject();
 
       if (HaxeProjectNature.hasNature(project) != Boolean.TRUE)
          return image;
+      project = asNonNullUnsafe(project);
 
       if (res.isVirtual()) {
          if (res instanceof IFolder && res.getName().equals(HaxeDependenciesUpdater.DEPS_MAGIC_FOLDER_NAME))
@@ -49,8 +55,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
          return image;
       }
 
-      if (res instanceof IFile) {
-         final var file = (IFile) res;
+      if (res instanceof final IFile file) {
          final var prefs = HaxeProjectPreference.get(project);
          if (prefs.getBuildSystem().getBuildFileExtension().equals(file.getFileExtension())) {
             final var buildFile = prefs.getBuildFile();
@@ -59,8 +64,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
             if (buildFile.location.equals(file))
                return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_BUILD_FILE_ACTIVE);
          }
-      } else if (res instanceof IFolder) {
-         final var folder = (IFolder) res;
+      } else if (res instanceof final IFolder folder) {
          final var prefs = HaxeProjectPreference.get(project);
          final var buildFile = prefs.getBuildFile();
          if (buildFile == null)
@@ -85,16 +89,15 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
    }
 
    @Override
-   public String decorateText(final String text, final Object element) {
-      if (element instanceof IFolder) {
-         final var folder = (IFolder) element;
+   public @Nullable String decorateText(final @Nullable String text, final @Nullable Object element) {
+      if (element instanceof final IFolder folder) {
          final var project = folder.getProject();
 
          if (HaxeProjectNature.hasNature(project) == Boolean.TRUE) {
             if (folder.isLinked() //
                && folder.getName().equals(HaxeDependenciesUpdater.STDLIB_MAGIC_FOLDER_NAME) //
             ) {
-               final var prefs = HaxeProjectPreference.get(project);
+               final var prefs = HaxeProjectPreference.get(asNonNullUnsafe(project));
                final var haxeSDK = prefs.getEffectiveHaxeSDK();
                return "Haxe Standard Library" + (haxeSDK == null ? "" : " [" + haxeSDK.getVersion() + "]");
             }
@@ -108,7 +111,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
       return text;
    }
 
-   public void refreshElements(final IResource... res) {
+   public void refreshElements(final IResource @Nullable... res) {
       if (res == null || res.length == 0)
          return;
 

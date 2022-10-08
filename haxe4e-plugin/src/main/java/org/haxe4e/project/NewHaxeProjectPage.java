@@ -4,6 +4,9 @@
  */
 package org.haxe4e.project;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.widgets.Composite;
@@ -22,7 +25,7 @@ import net.sf.jstuff.core.ref.ObservableRef;
  */
 public final class NewHaxeProjectPage extends WizardNewProjectCreationPage {
 
-   public ObservableRef<HaxeSDK> selectedAltSDK;
+   public ObservableRef<@Nullable HaxeSDK> selectedAltSDK = eventuallyNonNull();
 
    public NewHaxeProjectPage(final String pageName) {
       super(pageName);
@@ -33,7 +36,7 @@ public final class NewHaxeProjectPage extends WizardNewProjectCreationPage {
    public void createControl(final Composite parent) {
       super.createControl(parent);
 
-      final var control = (Composite) getControl();
+      final var control = asNonNull((Composite) getControl());
       final var grpHaxeSDKSelection = new HaxeSDKSelectionGroup(control, GridDataFactory.fillDefaults().create());
       selectedAltSDK = grpHaxeSDKSelection.selectedAltSDK;
    }
