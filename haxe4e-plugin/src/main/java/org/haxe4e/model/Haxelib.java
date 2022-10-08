@@ -27,7 +27,7 @@ public final class Haxelib implements Comparable<Haxelib> {
 
    public static Haxelib from(final HaxeSDK sdk, final String name, String version, final IProgressMonitor monitor) throws IOException {
       Args.notNull("sdk", sdk);
-      Args.exists("sdk.getLibsDir()", sdk.getHaxelibsDir());
+      Args.isDirectoryReadable("sdk.getLibsDir()", sdk.getHaxelibsDir());
 
       /*
        * determine expected location on file system
