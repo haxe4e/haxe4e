@@ -4,11 +4,13 @@
  */
 package org.haxe4e.tests.model.buildsystem;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.haxe4e.model.buildsystem.HaxeBuildFile;
 import org.haxe4e.model.buildsystem.LimeBuildFile;
 import org.junit.Test;
@@ -23,7 +25,7 @@ public class BuildFileTest {
 
    @Test
    public void testHaxeBuildFile() {
-      final var buildFile = new HaxeBuildFile(null) {
+      final var buildFile = new HaxeBuildFile(asNonNullUnsafe((IFile) null)) {
          @Override
          public List<String> parseArgs() throws RuntimeIOException {
             return parseArgs(Paths.get("src/test/resources/test.hxml"));
@@ -53,7 +55,7 @@ public class BuildFileTest {
 
    @Test
    public void testLimeBuildFile() {
-      final var buildFile = new LimeBuildFile(null) {
+      final var buildFile = new LimeBuildFile(asNonNullUnsafe((IFile) null)) {
          @Override
          public DOMFile parseFile() throws RuntimeIOException {
             return parseFile(Paths.get("src/test/resources/lime.xml").toFile());
