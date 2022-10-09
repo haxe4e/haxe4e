@@ -9,6 +9,7 @@ import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -104,8 +105,15 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
 
             if (folder.isVirtual() //
                && folder.getName().equals(HaxeDependenciesUpdater.DEPS_MAGIC_FOLDER_NAME) //
-            )
-               return "Haxe Dependencies";
+            ) {
+               int depCount = 0;
+               try {
+                  depCount = folder.members().length;
+               } catch (final CoreException ex) {
+                  Haxe4EPlugin.log().error(ex);
+               }
+               return "Haxe Dependencies" + (depCount == 0 ? "" : " (" + depCount + ")");
+            }
          }
       }
       return text;
