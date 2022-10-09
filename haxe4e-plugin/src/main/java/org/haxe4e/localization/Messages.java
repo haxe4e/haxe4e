@@ -39,7 +39,7 @@ public final class Messages extends NLS {
    public static String Label_Default = "Default";
    public static String Label_Alternative = "Alternative";
 
-   public static String Error_ValueMustBeSpecified = "{0} must be specified.";
+   public static String Error_ValueMustBeSpecified = "\"{0}\" must be specified.";
 
    public static String SDKPathInvalid = "Haxe SDK Path invalid.";
    public static String SDKPathInvalid_Descr = "\"{0}\" does not point to a valid Haxe SDK";
