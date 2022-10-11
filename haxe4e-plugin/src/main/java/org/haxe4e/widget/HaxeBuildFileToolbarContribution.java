@@ -18,12 +18,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.prefs.HaxeProjectPreference;
 
 import de.sebthom.eclipse.commons.ui.Editors;
+import de.sebthom.eclipse.commons.ui.UI;
 
 /**
  * @author Ian Harrigan
@@ -60,8 +60,7 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
       buildFileDropDown.addSelectionListener(this);
 
       // even read-only drop-down shows I-beam cursor - lets fix that
-      final var shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-      final var cursor = new Cursor(shell.getDisplay(), SWT.CURSOR_ARROW);
+      final var cursor = new Cursor(UI.getDisplay(), SWT.CURSOR_ARROW);
       buildFileDropDown.setCursor(cursor);
 
       return container;

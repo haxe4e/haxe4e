@@ -41,7 +41,7 @@ public class HaxeProjectSelectionDialog {
       dialog.setTitle("Select a Haxe project");
       dialog.setMessage("Enter a string to filter the project list:");
       dialog.setEmptyListMessage("No Haxe projects found in workspace.");
-      setProjects(Projects.getOpenProjectsWithNature(HaxeProjectNature.NATURE_ID));
+      setProjects(Projects.findOpenProjectsWithNature(HaxeProjectNature.NATURE_ID));
    }
 
    public @Nullable IProject getSelectedProject() {

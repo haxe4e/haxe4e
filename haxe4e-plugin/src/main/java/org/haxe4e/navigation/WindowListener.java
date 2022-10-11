@@ -6,7 +6,6 @@ package org.haxe4e.navigation;
 
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.haxe4e.project.HaxeProjectNature;
 import org.haxe4e.widget.HaxeBuildFileToolbarContribution;
 
@@ -38,10 +37,10 @@ public class WindowListener implements IWindowListener {
    }
 
    public void attach() {
-      PlatformUI.getWorkbench().addWindowListener(this);
+      UI.getWorkbench().addWindowListener(this);
    }
 
    public void detatch() {
-      PlatformUI.getWorkbench().removeWindowListener(this);
+      UI.getWorkbench().removeWindowListener(this);
    }
 }

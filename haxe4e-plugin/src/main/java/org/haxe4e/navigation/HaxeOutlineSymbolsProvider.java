@@ -36,9 +36,11 @@ public final class HaxeOutlineSymbolsProvider extends SymbolsLabelProvider {
       } else if (item instanceof final WorkspaceSymbol symbol) {
          kind = symbol.getKind();
       }
+
       if (kind != null) {
          switch (kind) {
             case EnumMember:
+               // TODO until https://github.com/eclipse/lsp4e/pull/257
                return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_OUTLINE_SYMBOL_ENUM_MEMBER);
             case Struct:
                return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_OUTLINE_SYMBOL_TYPEDEF);

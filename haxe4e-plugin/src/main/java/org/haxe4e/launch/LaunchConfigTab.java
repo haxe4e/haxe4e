@@ -51,7 +51,7 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
    public void initializeFrom(final ILaunchConfiguration config) {
       try {
          final var projectName = config.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "");
-         final var project = Projects.getOpenProjectWithNature(projectName, HaxeProjectNature.NATURE_ID);
+         final var project = Projects.findOpenProjectWithNature(projectName, HaxeProjectNature.NATURE_ID);
          form.selectedProject.set(project);
          form.selectedProject.subscribe(this::updateLaunchConfigurationDialog);
 

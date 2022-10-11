@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.PlatformUI;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.prefs.HaxeProjectPreference;
@@ -29,7 +28,7 @@ import de.sebthom.eclipse.commons.ui.UI;
 public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelDecorator {
 
    public static HaxeResourcesDecorator getInstance() {
-      return (HaxeResourcesDecorator) asNonNullUnsafe(PlatformUI.getWorkbench().getDecoratorManager() //
+      return (HaxeResourcesDecorator) asNonNullUnsafe(UI.getWorkbench().getDecoratorManager() //
          .getLabelDecorator(HaxeResourcesDecorator.class.getName()));
    }
 
@@ -40,8 +39,9 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
       final var res = (IResource) element;
       var project = res.getProject();
 
-      if (HaxeProjectNature.hasNature(project) != Boolean.TRUE)
+      if (!HaxeProjectNature.hasNature(project))
          return image;
+
       project = asNonNullUnsafe(project);
 
       if (res.isVirtual()) {
@@ -94,7 +94,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
       if (element instanceof final IFolder folder) {
          final var project = folder.getProject();
 
-         if (HaxeProjectNature.hasNature(project) == Boolean.TRUE) {
+         if (HaxeProjectNature.hasNature(project)) {
             if (folder.isLinked() //
                && folder.getName().equals(HaxeDependenciesUpdater.STDLIB_MAGIC_FOLDER_NAME) //
             ) {

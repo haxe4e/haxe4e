@@ -12,8 +12,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
@@ -34,6 +34,7 @@ import org.haxe4e.model.buildsystem.BuildSystem;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.util.TreeBuilder;
 
+import de.sebthom.eclipse.commons.resources.Projects;
 import de.sebthom.eclipse.commons.ui.Dialogs;
 import de.sebthom.eclipse.commons.ui.UI;
 import net.sf.jstuff.core.Strings;
@@ -49,7 +50,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
       throws CoreException {
 
       final var projectName = config.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "");
-      final var project = Strings.isBlank(projectName) ? null : ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+      final @Nullable IProject project = Strings.isBlank(projectName) ? null : Projects.getProject(projectName);
       if (project == null || !project.exists()) {
          Dialogs.showError(Messages.Launch_NoProjectSelected, Messages.Launch_NoProjectSelected_Descr);
          return;

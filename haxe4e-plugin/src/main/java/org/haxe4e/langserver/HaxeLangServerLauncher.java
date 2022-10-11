@@ -14,8 +14,6 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.annotation.Nullable;
@@ -29,6 +27,7 @@ import org.haxe4e.util.TreeBuilder;
 import org.haxe4e.util.io.LinePrefixingTeeInputStream;
 import org.haxe4e.util.io.LinePrefixingTeeOutputStream;
 
+import de.sebthom.eclipse.commons.resources.Projects;
 import net.sf.jstuff.core.Strings;
 
 /**
@@ -70,16 +69,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
 
    @Override
    public Map<String, Object> getInitializationOptions(final @Nullable URI projectRootUri) {
-      IProject project = null;
-      if (projectRootUri != null) {
-         for (final var container : ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(projectRootUri)) {
-            if (container instanceof final IProject p) {
-               project = p;
-               break;
-            }
-         }
-      }
-
+      final var project = Projects.findProjectOfResource(projectRootUri);
       final @Nullable HaxeSDK haxeSDK;
       final var displayServerArgs = new ArrayList<String>();
 

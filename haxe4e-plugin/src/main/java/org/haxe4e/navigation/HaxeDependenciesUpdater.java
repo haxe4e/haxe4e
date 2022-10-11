@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.project.HaxeProjectNature;
@@ -40,7 +41,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
    }
 
    public void onProjectConfigChanged(final IProject project) {
-      if (HaxeProjectNature.hasNature(project) != Boolean.TRUE)
+      if (!HaxeProjectNature.hasNature(project))
          return; // ignore
 
       final var job = new Job("Updating 'Haxe Dependencies' list of project '" + project.getName() + "'...") {
@@ -60,7 +61,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
       }
    }
 
-   public void removeDependenciesFolder(final IProject project, final IProgressMonitor monitor) throws CoreException {
+   public void removeDependenciesFolder(final IProject project, final @Nullable IProgressMonitor monitor) throws CoreException {
       final var stdLibFolder = project.getFolder(STDLIB_MAGIC_FOLDER_NAME);
       if (stdLibFolder.exists() && (stdLibFolder.isVirtual() || stdLibFolder.isLinked())) {
          stdLibFolder.delete(false, monitor);

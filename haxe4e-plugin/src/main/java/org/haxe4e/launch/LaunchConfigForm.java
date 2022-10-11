@@ -48,7 +48,7 @@ public class LaunchConfigForm extends Composite {
       txtSelectedProject.setEditable(false);
       txtSelectedProject.setLayoutData(GridDatas.fillHorizontalExcessive());
       Texts.bind(txtSelectedProject, selectedProject, //
-         projectName -> Projects.getOpenProjectWithNature(projectName, HaxeProjectNature.NATURE_ID), //
+         projectName -> Projects.findOpenProjectWithNature(projectName, HaxeProjectNature.NATURE_ID), //
          project -> project == null ? "" : project.getName() //
       );
 
