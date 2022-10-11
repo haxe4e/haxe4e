@@ -4,8 +4,6 @@
  */
 package org.haxe4e.widget;
 
-import java.util.function.Consumer;
-
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -20,6 +18,7 @@ import org.haxe4e.prefs.HaxeWorkspacePreference;
 import org.haxe4e.util.ui.GridDatas;
 
 import de.sebthom.eclipse.commons.ui.Buttons;
+import de.sebthom.eclipse.commons.ui.UI;
 import de.sebthom.eclipse.commons.ui.widgets.ComboWrapper;
 import net.sf.jstuff.core.ref.MutableObservableRef;
 
@@ -29,7 +28,6 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
 public class HaxeSDKSelectionGroup extends Composite {
 
    public final MutableObservableRef<@Nullable HaxeSDK> selectedAltSDK = MutableObservableRef.of(null);
-   private @Nullable HaxeSDK selectedAltSDK_internal;
 
    public HaxeSDKSelectionGroup(final Composite parent, final Object layoutData) {
       this(parent, SWT.NONE, layoutData);
@@ -41,25 +39,29 @@ public class HaxeSDKSelectionGroup extends Composite {
       setLayoutData(layoutData);
       setLayout(GridLayoutFactory.fillDefaults().create());
 
-      final var grpHaxeSdk = new Group(this, SWT.NONE);
-      grpHaxeSdk.setLayoutData(GridDatas.fillHorizontalExcessive());
-      grpHaxeSdk.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
-      grpHaxeSdk.setText(Messages.Label_Haxe_SDK);
+      final var grpSdk = new Group(this, SWT.NONE);
+      grpSdk.setLayoutData(GridDatas.fillHorizontalExcessive());
+      grpSdk.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
+      grpSdk.setText(Messages.Label_Haxe_SDK);
 
-      final var radioDefaultSDK = new Button(grpHaxeSdk, SWT.RADIO);
+      final var radioDefaultSDK = new Button(grpSdk, SWT.RADIO);
       radioDefaultSDK.setText(Messages.Label_Default);
       radioDefaultSDK.setSelection(true);
       Buttons.onSelected(radioDefaultSDK, () -> selectedAltSDK.set(null));
 
-      final var txtDefaultSdk = new Text(grpHaxeSdk, SWT.BORDER);
+      final var txtDefaultSdk = new Text(grpSdk, SWT.BORDER);
       txtDefaultSdk.setEditable(false);
       txtDefaultSdk.setLayoutData(GridDatas.fillHorizontalExcessive());
 
-      final var radioAltSDK = new Button(grpHaxeSdk, SWT.RADIO);
-      radioAltSDK.setText(Messages.Label_Alternative);
-      Buttons.onSelected(radioAltSDK, () -> selectedAltSDK.set(selectedAltSDK_internal));
+      final var defaultSDK = HaxeWorkspacePreference.getDefaultHaxeSDK(false, true);
+      if (defaultSDK != null) {
+         txtDefaultSdk.setText(defaultSDK.toShortString());
+      }
 
-      final var cmbAltSDK = new ComboWrapper<HaxeSDK>(grpHaxeSdk, SWT.READ_ONLY, GridDataFactory.fillDefaults().create()) //
+      final var radioAltSDK = new Button(grpSdk, SWT.RADIO);
+      radioAltSDK.setText(Messages.Label_Alternative);
+
+      final var cmbAltSDK = new ComboWrapper<HaxeSDK>(grpSdk, SWT.READ_ONLY, GridDataFactory.fillDefaults().create()) //
          .setLabelProvider(HaxeSDK::toShortString) //
          .onItemsChanged((widget, oldItems, newItems) -> {
             if (newItems.isEmpty()) {
@@ -70,24 +72,24 @@ public class HaxeSDKSelectionGroup extends Composite {
                radioAltSDK.setEnabled(true);
                widget.setEnabled(true);
             }
-         }) //
-         .onSelectionChanged(sdk -> {
-            Buttons.selectRadio(sdk == null ? radioDefaultSDK : radioAltSDK);
-            selectedAltSDK_internal = sdk;
-            if (radioAltSDK.getSelection()) {
-               selectedAltSDK.set(sdk);
-            }
          });
-      selectedAltSDK.subscribe((Consumer<@Nullable HaxeSDK>) cmbAltSDK::setSelection);
 
-      final var defaultSDK = HaxeWorkspacePreference.getDefaultHaxeSDK(false, true);
-      final var sdks = HaxeWorkspacePreference.getHaxeSDKs();
-
-      txtDefaultSdk.setText(defaultSDK == null ? "" : defaultSDK.toShortString());
-
-      cmbAltSDK.setItems(sdks);
-      if (!sdks.isEmpty()) {
-         cmbAltSDK.setSelection(sdks.first(), true);
+      final var registeredSDKs = HaxeWorkspacePreference.getHaxeSDKs();
+      cmbAltSDK.setItems(registeredSDKs);
+      if (!registeredSDKs.isEmpty()) {
+         cmbAltSDK.setSelection(registeredSDKs.first(), true);
       }
+
+      Buttons.onSelected(radioAltSDK, () -> selectedAltSDK.set(cmbAltSDK.getSelection()));
+      cmbAltSDK.onSelectionChanged(selectedAltSDK::set);
+
+      selectedAltSDK.subscribe(sdk -> UI.run(() -> {
+         if (sdk == null) {
+            Buttons.selectRadio(radioDefaultSDK);
+         } else {
+            Buttons.selectRadio(radioAltSDK);
+            cmbAltSDK.setSelection(sdk);
+         }
+      }));
    }
 }

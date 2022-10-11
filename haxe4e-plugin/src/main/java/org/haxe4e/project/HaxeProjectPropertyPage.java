@@ -43,6 +43,7 @@ public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.Proper
       final var project = asNonNullUnsafe(Projects.adapt(getElement()));
       prefs = HaxeProjectPreference.get(project);
       final var grpHaxeSDKSelection = new HaxeSDKSelectionGroup(container, GridDataFactory.fillDefaults().create());
+      grpHaxeSDKSelection.selectedAltSDK.set(prefs.getAlternateHaxeSDK());
       grpHaxeSDKSelection.selectedAltSDK.subscribe(prefs::setAlternateHaxeSDK);
 
       /*

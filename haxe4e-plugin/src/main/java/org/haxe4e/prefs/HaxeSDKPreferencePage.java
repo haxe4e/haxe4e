@@ -118,7 +118,6 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
             return isDefaultHaxeSDK(sdk) //
                ? new StyledString(sdk.getName(), Fonts.DEFAULT_FONT_BOLD_STYLER)
                : new StyledString(sdk.getName());
-
          }
       });
       colName.getColumn().setWidth(100);
