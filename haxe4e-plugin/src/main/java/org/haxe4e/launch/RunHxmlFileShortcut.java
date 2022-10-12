@@ -22,7 +22,6 @@ import org.haxe4e.prefs.HaxeProjectPreference;
 
 import de.sebthom.eclipse.commons.ui.Dialogs;
 import de.sebthom.eclipse.commons.ui.UI;
-import net.sf.jstuff.core.validation.Args;
 
 /**
  * @author Sebastian Thomschke
@@ -48,8 +47,6 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
    }
 
    private void launchHxmlFile(final IFile hxmlFile, final String mode) {
-      Args.notNull("hxmlFile", hxmlFile);
-
       final var launchMgr = DebugPlugin.getDefault().getLaunchManager();
       final var launchConfigType = launchMgr.getLaunchConfigurationType(Constants.LAUNCH_HAXE_CONFIGURATION_ID);
 

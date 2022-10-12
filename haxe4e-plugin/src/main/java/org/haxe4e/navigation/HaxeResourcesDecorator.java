@@ -119,8 +119,8 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
       return text;
    }
 
-   public void refreshElements(final IResource @Nullable... res) {
-      if (res == null || res.length == 0)
+   public void refreshElements(final IResource... res) {
+      if (res.length == 0)
          return;
 
       UI.run(() -> fireLabelProviderChanged(new LabelProviderChangedEvent(this, res)));

@@ -110,8 +110,6 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    }
 
    public HaxeSDK(final Path installRoot) {
-      Args.notNull("installRoot", installRoot);
-
       this.installRoot = installRoot.normalize().toAbsolutePath();
       name = "haxe-" + getVersion();
    }
@@ -123,7 +121,6 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
 
    public HaxeSDK(final String name, final Path installRoot) {
       Args.notBlank("name", name);
-      Args.notNull("installRoot", installRoot);
 
       this.name = name;
       this.installRoot = installRoot.normalize().toAbsolutePath();

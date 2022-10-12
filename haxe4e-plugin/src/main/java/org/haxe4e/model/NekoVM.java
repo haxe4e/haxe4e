@@ -103,15 +103,12 @@ public final class NekoVM implements Comparable<NekoVM> {
    }
 
    public NekoVM(final Path installRoot) {
-      Args.notNull("installRoot", installRoot);
-
       this.installRoot = installRoot.normalize().toAbsolutePath();
       name = "neko-" + getVersion();
    }
 
    public NekoVM(final String name, final Path installRoot) {
       Args.notBlank("name", name);
-      Args.notNull("installRoot", installRoot);
 
       this.name = name;
       this.installRoot = installRoot.normalize().toAbsolutePath();

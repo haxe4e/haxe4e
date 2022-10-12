@@ -29,7 +29,6 @@ import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.exception.Exceptions;
 import net.sf.jstuff.core.io.RuntimeIOException;
 import net.sf.jstuff.core.ref.MutableRef;
-import net.sf.jstuff.core.validation.Args;
 
 /**
  * @author Sebastian Thomschke
@@ -120,9 +119,6 @@ public class HaxeBuildFile extends BuildFile {
 
    @Override
    public Set<Haxelib> getDirectDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) throws RuntimeIOException {
-      Args.notNull("haxeSDK", haxeSDK);
-      Args.notNull("monitor", monitor);
-
       final var deps = new LinkedHashSet<Haxelib>();
       final var args = parseArgs();
       final var libs = getOptionValues(args, arg -> switch (arg) {

@@ -23,7 +23,6 @@ import de.sebthom.eclipse.commons.ui.UI;
 import de.sebthom.eclipse.commons.ui.widgets.NotificationPopup;
 import net.sf.jstuff.core.exception.Exceptions;
 import net.sf.jstuff.core.io.RuntimeIOException;
-import net.sf.jstuff.core.validation.Args;
 import net.sf.jstuff.xml.DOMFile;
 import net.sf.jstuff.xml.XMLException;
 
@@ -39,9 +38,6 @@ public class LimeBuildFile extends BuildFile {
    @Override
    public Set<Haxelib> getDirectDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) throws RuntimeIOException,
       XMLException {
-      Args.notNull("haxeSDK", haxeSDK);
-      Args.notNull("monitor", monitor);
-
       final var deps = new LinkedHashSet<Haxelib>();
       final var domFile = parseFile();
       for (final var srcNode : domFile.findNodes("/project/haxelib")) {

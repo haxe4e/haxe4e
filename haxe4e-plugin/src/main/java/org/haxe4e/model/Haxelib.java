@@ -28,7 +28,6 @@ public final class Haxelib implements Comparable<Haxelib> {
 
    public static Haxelib from(final HaxeSDK sdk, final String name, @Nullable String version, final IProgressMonitor monitor)
       throws IOException {
-      Args.notNull("sdk", sdk);
       Args.isDirectoryReadable("sdk.getLibsDir()", sdk.getHaxelibsDir());
 
       /*
@@ -98,8 +97,6 @@ public final class Haxelib implements Comparable<Haxelib> {
    public final HaxelibJSON meta;
 
    public Haxelib(final Path directory, final boolean isDevVersion) throws IOException {
-      Args.notNull("directory", directory);
-
       this.isDevVersion = isDevVersion;
       location = directory;
       meta = HaxelibJSON.from(location.resolve("haxelib.json"));

@@ -27,7 +27,6 @@ import org.haxe4e.navigation.HaxeResourcesDecorator;
 
 import de.sebthom.eclipse.commons.ui.Dialogs;
 import net.sf.jstuff.core.Strings;
-import net.sf.jstuff.core.validation.Args;
 
 /**
  * @author Sebastian Thomschke
@@ -42,8 +41,6 @@ public final class HaxeProjectPreference {
    private static final String PROPERTY_BUILD_SYSTEM = "haxe.project.build_system";
 
    public static HaxeProjectPreference get(final IProject project) {
-      Args.notNull("project", project);
-
       synchronized (PREFS_BY_PROJECT) {
          return PREFS_BY_PROJECT.computeIfAbsent(project, HaxeProjectPreference::new);
       }
@@ -55,8 +52,6 @@ public final class HaxeProjectPreference {
    private final List<PropertyChangeEvent> changeEvents = new ArrayList<>();
 
    private HaxeProjectPreference(final IProject project) {
-      Args.notNull("project", project);
-
       this.project = project;
       prefs = new ScopedPreferenceStore(new ProjectScope(project), Haxe4EPlugin.PLUGIN_ID);
       prefs.setDefault(PROPERTY_ALTERNATE_AUTO_BUILD, true);

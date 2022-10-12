@@ -24,7 +24,6 @@ import de.sebthom.eclipse.commons.ui.widgets.NotificationPopup;
 import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.SystemUtils;
 import net.sf.jstuff.core.io.RuntimeIOException;
-import net.sf.jstuff.core.validation.Args;
 
 /**
  * @author Sebastian Thomschke
@@ -59,9 +58,6 @@ public class LixBuildFile extends HaxeBuildFile {
 
    @Override
    public Set<Haxelib> getDirectDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) throws RuntimeIOException {
-      Args.notNull("haxeSDK", haxeSDK);
-      Args.notNull("monitor", monitor);
-
       final var haxeLibsFolder = location.getProject().getFolder("haxe_libraries");
       if (!haxeLibsFolder.exists())
          return Collections.emptySet();

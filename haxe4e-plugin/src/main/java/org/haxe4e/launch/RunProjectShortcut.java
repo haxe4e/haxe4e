@@ -22,7 +22,6 @@ import org.haxe4e.prefs.HaxeProjectPreference;
 
 import de.sebthom.eclipse.commons.ui.Dialogs;
 import de.sebthom.eclipse.commons.ui.UI;
-import net.sf.jstuff.core.validation.Args;
 
 /**
  * @author Sebastian Thomschke
@@ -58,8 +57,6 @@ public class RunProjectShortcut implements ILaunchShortcut {
    }
 
    private void launchProject(final IProject project, final String mode) {
-      Args.notNull("project", project);
-
       final var launchMgr = DebugPlugin.getDefault().getLaunchManager();
       final var launchConfigType = launchMgr.getLaunchConfigurationType(Constants.LAUNCH_HAXE_CONFIGURATION_ID);
 
