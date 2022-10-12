@@ -146,35 +146,33 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
 
    @Override
    public void modelTokensChanged(final ModelTokensChangedEvent event) {
-      if (!(event.model instanceof TMDocumentModel))
-         return;
+      if (event.model instanceof final TMDocumentModel docModel) {
+         final var doc = docModel.getDocument();
 
-      final var docModel = (TMDocumentModel) event.model;
-      final var doc = docModel.getDocument();
+         final var textFileBuffer = ITextFileBufferManager.DEFAULT.getTextFileBuffer(doc);
+         if (textFileBuffer == null)
+            return;
 
-      final var textFileBuffer = ITextFileBufferManager.DEFAULT.getTextFileBuffer(doc);
-      if (textFileBuffer == null)
-         return;
-
-      if (spellcheckJob != null) {
-         spellcheckJob.cancel();
-      }
-
-      final var loc = textFileBuffer.getLocation();
-      final var spellcheckJob = this.spellcheckJob = new Job("Spellchecking" + (loc == null ? "" : " [" + loc + "]") + "...") {
-         @Override
-         protected IStatus run(final IProgressMonitor monitor) {
-            final var annotationModel = textFileBuffer.getAnnotationModel();
-
-            if (annotationModel != null) {
-               final var regionsToSpellcheck = collectRegionsToSpellcheck(docModel, event.ranges);
-               spellcheck(doc, regionsToSpellcheck, annotationModel, monitor);
-            }
-            return Status.OK_STATUS;
+         if (spellcheckJob != null) {
+            spellcheckJob.cancel();
          }
-      };
-      spellcheckJob.setPriority(Job.DECORATE);
-      spellcheckJob.schedule();
+
+         final var loc = textFileBuffer.getLocation();
+         final var spellcheckJob = this.spellcheckJob = new Job("Spellchecking" + (loc == null ? "" : " [" + loc + "]") + "...") {
+            @Override
+            protected IStatus run(final IProgressMonitor monitor) {
+               final var annotationModel = textFileBuffer.getAnnotationModel();
+
+               if (annotationModel != null) {
+                  final var regionsToSpellcheck = collectRegionsToSpellcheck(docModel, event.ranges);
+                  spellcheck(doc, regionsToSpellcheck, annotationModel, monitor);
+               }
+               return Status.OK_STATUS;
+            }
+         };
+         spellcheckJob.setPriority(Job.DECORATE);
+         spellcheckJob.schedule();
+      }
    }
 
    private void spellcheck(final IDocument doc, final List<Region> regionsToCheck, final IAnnotationModel annotationModel,

@@ -79,6 +79,7 @@ public final class TreeBuilder<K> {
    private void put(final K k, final K k2, @Nullable final Object v) {
       if (v == null)
          return;
+
       final var leaf = map.get(k);
       if (leaf instanceof Map) {
          ((Map<K, Object>) leaf).put(k2, v);

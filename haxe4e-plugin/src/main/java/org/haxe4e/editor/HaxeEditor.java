@@ -8,7 +8,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
 import org.eclipse.jdt.annotation.Nullable;
@@ -124,16 +123,14 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
 
       if (viewer instanceof final ISourceViewerExtension4 viewer4) {
          final var contentAssistantFacade = viewer4.getContentAssistantFacade();
-         if (contentAssistantFacade != null) {
-            if (Fields.read(contentAssistantFacade, "fContentAssistant") instanceof final ContentAssistant contentAssistant)
-               return contentAssistant;
-         }
-      }
-
-      if (viewer instanceof SourceViewer) {
-         if (Fields.read(viewer, "fContentAssistant") instanceof final ContentAssistant contentAssistant)
+         if (contentAssistantFacade != null //
+            && Fields.read(contentAssistantFacade, "fContentAssistant") instanceof final ContentAssistant contentAssistant)
             return contentAssistant;
       }
+
+      if (viewer instanceof SourceViewer //
+         && Fields.read(viewer, "fContentAssistant") instanceof final ContentAssistant contentAssistant)
+         return contentAssistant;
 
       return null;
    }
@@ -228,11 +225,11 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
          final var resource = getEditorInput().getAdapter(IResource.class);
          if (resource == null)
             return;
-         for (final IBreakpoint breakpoint : breakpoints) {
+         for (final var breakpoint : breakpoints) {
             try {
-               if (breakpoint instanceof ILineBreakpoint //
+               if (breakpoint instanceof final ILineBreakpoint lineBreakpoint //
                   && resource.equals(breakpoint.getMarker().getResource()) //
-                  && ((ILineBreakpoint) breakpoint).getLineNumber() == lineNumber + 1) {
+                  && lineBreakpoint.getLineNumber() == lineNumber + 1) {
                   breakpoint.delete();
                }
             } catch (final CoreException ex) {
