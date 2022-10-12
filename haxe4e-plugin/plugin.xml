@@ -45,6 +45,12 @@
          file-names="hlcode.txt" />
    </extension>
 
+   <extension point="org.eclipse.core.expressions.definitions">
+      <definition id="org.haxe4e.resource.isHaxeFile">
+         <test property="org.haxe4e.util.FileTypePropertyTester.contentTypeId" value="org.haxe4e.content.haxe" />
+      </definition>
+   </extension>
+
 
    <!-- ===================================== -->
    <!-- Keywords                              -->
@@ -73,8 +79,7 @@
       <server id="org.haxe4e.langserv"
          class="org.haxe4e.langserver.HaxeLangServerLauncher"
          clientImpl="org.haxe4e.langserver.HaxeLangServerClientImpl"
-         label="%Label_Haxe_Language_Server"
-      />
+         label="%Label_Haxe_Language_Server" />
       <contentTypeMapping id="org.haxe4e.langserv" contentType="org.haxe4e.content.haxe" />
    </extension>
 
@@ -86,29 +91,28 @@
       <context
          id="org.haxe4e.editor.HaxeEditorContext"
          name="Haxe Editor Scope"
-         parentId="org.eclipse.ui.genericeditor.genericEditorContext"
-         />
+         parentId="org.eclipse.ui.genericeditor.genericEditorContext" />
     </extension>
 
    <extension point="org.eclipse.ui.editors">
       <editor
+         id="org.haxe4e.editor.HaxeEditor"
          class="org.haxe4e.editor.HaxeEditor"
          contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
          default="true"
          extensions="hx,dump"
-         id="org.haxe4e.editor.HaxeEditor"
          icon="src/main/resources/images/navigator/haxe_file.png"
          name="%Label_Haxe_Editor">
          <contentTypeBinding contentTypeId="org.haxe4e.content.haxe" />
       </editor>
-      <editorContentTypeBinding contentTypeId="org.haxe4e.content.haxe" editorId="org.haxe4e.editor.HaxeEditor" />
-      <editorContentTypeBinding contentTypeId="org.haxe4e.content.hxml" editorId="org.eclipse.ui.genericeditor.GenericEditor" />
+      <editorContentTypeBinding contentTypeId="org.haxe4e.content.haxe"   editorId="org.haxe4e.editor.HaxeEditor" />
+      <editorContentTypeBinding contentTypeId="org.haxe4e.content.hxml"   editorId="org.eclipse.ui.genericeditor.GenericEditor" />
       <editorContentTypeBinding contentTypeId="org.haxe4e.content.hlcode" editorId="org.eclipse.ui.genericeditor.GenericEditor" />
    </extension>
 
    <extension point="org.eclipse.ui.genericeditor.icons">
-      <icon contentType="org.haxe4e.content.haxe" icon="src/main/resources/images/navigator/haxe_file.png" />
-      <icon contentType="org.haxe4e.content.hxml" icon="src/main/resources/images/navigator/build_file.png" />
+      <icon contentType="org.haxe4e.content.haxe"   icon="src/main/resources/images/navigator/haxe_file.png" />
+      <icon contentType="org.haxe4e.content.hxml"   icon="src/main/resources/images/navigator/build_file.png" />
       <icon contentType="org.haxe4e.content.hlcode" icon="platform:/plugin/org.eclipse.ui.editors/icons/full/obj16/file_obj.png" />
    </extension>
 
@@ -117,6 +121,7 @@
          class="org.haxe4e.editor.HaxeFileLoadingListener"
          contentTypeId="org.haxe4e.content.haxe" />
    </extension>
+
    <extension point="org.eclipse.ui.genericeditor.presentationReconcilers">
       <presentationReconciler
          class="org.haxe4e.editor.HaxeFileSpellCheckingReconciler"
@@ -132,6 +137,7 @@
       <contentTypeBinding contentViewerId="org.eclipse.ui.genericeditor.compareViewer" contentTypeId="org.haxe4e.content.hxml" />
       <contentTypeBinding contentViewerId="org.eclipse.ui.genericeditor.compareViewer" contentTypeId="org.haxe4e.content.hlcode" />
    </extension>
+
    <extension point="org.eclipse.compare.contentMergeViewers">
       <contentTypeBinding contentMergeViewerId="org.eclipse.ui.genericeditor.compareViewer" contentTypeId="org.haxe4e.content.haxe" />
       <contentTypeBinding contentMergeViewerId="org.eclipse.ui.genericeditor.compareViewer" contentTypeId="org.haxe4e.content.hxml" />
@@ -154,10 +160,11 @@
          name="Haxe Symbols">
          <triggerPoints>
             <!-- activates this outline provider only for haxe files -->
-            <test property="org.haxe4e.fileinfo.contentTypeId" value="org.haxe4e.content.haxe" />
+            <reference definitionId="org.haxe4e.resource.isHaxeFile" />
          </triggerPoints>
       </navigatorContent>
    </extension>
+
    <extension point="org.eclipse.ui.navigator.viewer">
       <viewer viewerId="org.eclipse.lsp4e.outline" />
       <viewerContentBinding viewerId="org.eclipse.lsp4e.outline">
@@ -179,14 +186,17 @@
       <scopeNameContentTypeBinding contentTypeId="org.haxe4e.content.hxml" scopeName="source.hxml" />
       <scopeNameContentTypeBinding contentTypeId="org.haxe4e.content.hlcode" scopeName="source.hlcode" />
    </extension>
+
    <extension point="org.eclipse.tm4e.languageconfiguration.languageConfigurations">
       <languageConfiguration contentTypeId="org.haxe4e.content.haxe" path="src/main/resources/langcfg/haxe.language-configuration.json" />
       <languageConfiguration contentTypeId="org.haxe4e.content.hxml" path="src/main/resources/langcfg/hxml.language-configuration.json" />
    </extension>
+
    <extension point="org.eclipse.tm4e.ui.themes">
       <themeAssociation scopeName="source.hx" themeId="org.eclipse.tm4e.ui.themes.EclipseLight" />
       <themeAssociation scopeName="source.hxml" themeId="org.eclipse.tm4e.ui.themes.EclipseLight" />
    </extension>
+
    <extension point="org.eclipse.tm4e.ui.snippets">
       <snippet name="Haxe Example" path="src/main/resources/langcfg/haxe.sample.hx" scopeName="source.hx" />
    </extension>
@@ -198,9 +208,9 @@
    <extension point="org.eclipse.core.expressions.propertyTesters">
       <!-- https://wiki.eclipse.org/Platform_Expression_Framework -->
       <propertyTester
-         class="org.haxe4e.util.FileTypePropertyTester"
          id="org.haxe4e.util.FileTypePropertyTester"
-         namespace="org.haxe4e.fileinfo"
+         class="org.haxe4e.util.FileTypePropertyTester"
+         namespace="org.haxe4e.util.FileTypePropertyTester"
          properties="contentTypeId,fileExtension"
          type="java.lang.Object" />
    </extension>
@@ -214,10 +224,10 @@
    <extension point="org.eclipse.ui.newWizards">
       <category id="org.haxe4e.wizards" name="Haxe" />
       <wizard
+         id="org.haxe4e.project.NewHaxeFileWizard"
          category="org.haxe4e.wizards"
          class="org.haxe4e.project.NewHaxeFileWizard"
          icon="src/main/resources/images/navigator/haxe_file.png"
-         id="org.haxe4e.wizards.newHaxeFile"
          name="%Label_Haxe_File"
          project="false">
          <description>%NewHaxeFile_Descr</description>
@@ -225,31 +235,33 @@
          <keywordReference id="org.haxe4e.prefs.keyword.haxe" />
       </wizard>
       <wizard
+         id="org.haxe4e.project.NewHaxeProjectWizard"
          category="org.haxe4e.wizards"
          class="org.haxe4e.project.NewHaxeProjectWizard"
          icon="src/main/resources/images/navigator/haxe_project.png"
-         id="org.haxe4e.wizards.newHaxeProject"
          name="%Label_Haxe_Project"
          project="true">
          <description>%NewHaxeProject_Descr</description>
          <selection class="org.eclipse.core.resources.IResource" />
          <keywordReference id="org.haxe4e.prefs.keyword.haxe" />
       </wizard>
-      <!--<primaryWizard id="org.haxe4e.wizards.newHaxeFile" />-->
+      <!--<primaryWizard id="org.haxe4e.project.NewHaxeFileWizard" />-->
    </extension>
+
    <extension point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="*">
          <!-- register Wizard directly under main menu "File -> New" -->
-         <newWizardShortcut id="org.haxe4e.wizards.newHaxeFile" />
-         <newWizardShortcut id="org.haxe4e.wizards.newHaxeProject" />
+         <newWizardShortcut id="org.haxe4e.project.NewHaxeFileWizard" />
+         <newWizardShortcut id="org.haxe4e.project.NewHaxeProjectWizard" />
       </perspectiveExtension>
    </extension>
+
    <extension point="org.eclipse.ui.navigator.navigatorContent">
       <!-- register Wizard in Project Explorer's popup menu under "New -> Haxe File" -->
       <commonWizard
          menuGroupId="org.haxe4e"
          type="new"
-         wizardId="org.haxe4e.wizards.newHaxeFile">
+         wizardId="org.haxe4e.project.NewHaxeFileWizard">
          <enablement>
             <reference definitionId="org.haxe4e.project.nature.isConfigured" />
          </enablement>
@@ -267,26 +279,31 @@
          <run class="org.haxe4e.builder.HaxeBuilder" />
       </builder>
    </extension>
+
    <extension point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
          class="org.haxe4e.builder.HaxeBuilderConsole$Factory"
          icon="src/main/resources/images/logo/haxe_icon.png"
          label="Haxe Builder" />
-    </extension>
+   </extension>
+
    <extension point="org.eclipse.ui.console.consolePatternMatchListeners">
       <consolePatternMatchListener
+         id="org.haxe4e.builder.HaxeBuilderConsoleLinkifier"
          class="org.haxe4e.builder.HaxeBuilderConsoleLinkifier"
-         id="org.haxe4e.builder.HaxeBuilderConsolePatternMatchListener"
          regex="(\w+\/)*\w+\.hx:\d+:">
          <enablement>
-            <test property="org.eclipse.ui.console.consoleTypeTest" value="org.haxe4e.builder.HaxeBuilderConsole" />
+            <test property="org.eclipse.ui.console.consoleTypeTest" value="org.haxe4e.builder.HaxeBuilderConsole">
+               <!-- see org.haxe4e.builder.HaxeBuilderConsole.CONSOLE_TYPE -->
+            </test>
          </enablement>
       </consolePatternMatchListener>
    </extension>
+
    <extension point="org.eclipse.ui.console.consolePageParticipants">
       <consolePageParticipant
-         class="org.haxe4e.builder.HaxeBuilderConsoleActions"
-         id="com.plugin.console.PageParticipant">
+         id="org.haxe4e.builder.HaxeBuilderConsoleActions"
+         class="org.haxe4e.builder.HaxeBuilderConsoleActions">
          <enablement>
             <instanceof value="org.haxe4e.builder.HaxeBuilderConsole" />
          </enablement>
@@ -307,10 +324,12 @@
       </runtime>
       <builder id="org.haxe4e.builder" />
    </extension>
+
    <extension point="org.eclipse.ui.commands">
-      <command id="org.haxe4e.commands.project_nature_add" name="Convert to Haxe Project" />
+      <command id="org.haxe4e.commands.project_nature_add"    name="Convert to Haxe Project" />
       <command id="org.haxe4e.commands.project_nature_remove" name="Remove Haxe Project Nature" />
    </extension>
+
    <extension point="org.eclipse.ui.handlers">
       <handler
          class="org.haxe4e.project.HaxeProjectNature$AddNatureHandler"
@@ -319,32 +338,23 @@
          class="org.haxe4e.project.HaxeProjectNature$RemoveNatureHandler"
          commandId="org.haxe4e.commands.project_nature_remove" />
    </extension>
+
    <extension point="org.eclipse.ui.ide.projectNatureImages">
       <image
-         icon="src/main/resources/images/navigator/haxe_project_overlay.png"
          id="org.haxe4e.project.nature.icon"
+         icon="src/main/resources/images/navigator/haxe_project_overlay.png"
          natureId="org.haxe4e.project.nature" />
    </extension>
+
    <extension point="org.eclipse.core.expressions.definitions">
       <definition id="org.haxe4e.project.nature.isConfigured">
          <!-- expression to check if a project or project resource has the Haxe project nature -->
          <adapt type="org.eclipse.core.resources.IResource">
-            <test
-               property="org.eclipse.core.resources.projectNature"
-               value="org.haxe4e.project.nature" />
-         </adapt>
-      </definition>
-      <definition id="org.haxe4e.perspective.isActive">
-         <with variable="activeWorkbenchWindow.activePerspective">
-            <equals value="org.haxe4e.perspective" />
-         </with>
-      </definition>
-      <definition id="org.haxe4e.resource.isHaxeFile">
-         <adapt type="org.eclipse.core.resources.IFile">
-            <test args="kindOf" property="org.eclipse.core.resources.contentTypeId" value="org.haxe4e.content.haxe" />
+            <test property="org.eclipse.core.resources.projectNature" value="org.haxe4e.project.nature" />
          </adapt>
       </definition>
    </extension>
+
    <extension point="org.eclipse.ui.menus">
       <menuContribution locationURI="popup:org.eclipse.ui.projectConfigure">
          <!-- add entries to project popup menu "Configure -> ... -->
@@ -416,8 +426,8 @@
    <!-- ===================================== -->
    <extension point="org.eclipse.ui.propertyPages">
       <page
+         id="org.haxe4e.project.HaxeProjectPropertyPage"
          class="org.haxe4e.project.HaxeProjectPropertyPage"
-         id="org.haxe4e.project.settings"
          name="Haxe">
          <filter name="open" value="true" />
          <enabledWhen>
@@ -429,17 +439,19 @@
          <keywordReference id="org.haxe4e.prefs.keyword.haxe" />
       </page>
    </extension>
+
    <extension point="org.eclipse.ui.ide.projectConfigurators">
       <projectConfigurator
          class="org.haxe4e.project.HaxeProjectImportConfigurator"
          label="%Label_Haxe_Project" />
    </extension>
+
    <extension point="org.eclipse.ui.importWizards">
       <wizard
+         id="org.haxe4e.wizards.importProject"
          category="org.haxe4e.wizards"
          class="org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard"
          icon="src/main/resources/images/logo/haxe_icon.png"
-         id="org.haxe4e.wizards.importProject"
          name="%Label_Haxe_Project" />
       <category id="org.haxe4e.wizards" name="Haxe" />
    </extension>
@@ -454,6 +466,7 @@
          <actionSet id="org.eclipse.debug.ui.launchActionSet" />
       </perspectiveExtension>
    </extension>
+
    <extension point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
          id="org.haxe4e.launch.haxe"
@@ -463,6 +476,7 @@
          sourceLocatorId="org.eclipse.lsp4e.debug.sourceLocator"
          sourcePathComputerId="org.eclipse.lsp4e.debug.sourcePathComputer" />
    </extension>
+
    <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
          id="org.haxe4e.launch.haxe.tabGroup"
@@ -470,6 +484,7 @@
          type="org.haxe4e.launch.haxe"
          description="%HaxeLaunchGroup_Description" />
    </extension>
+
    <extension point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
          id="org.haxe4e.launch.haxe.shortcut.run_as"
@@ -479,6 +494,7 @@
          modes="run,debug">
          <contextualLaunch>
             <enablement>
+               <!-- see https://github.com/eclipse-platform/eclipse.platform.ui/blob/632e59d1bbec83dd81994befe4bfbf6a3db0de28/bundles/org.eclipse.ui.workbench/Eclipse%20UI/org/eclipse/ui/ISources.java#L297 -->
                <with variable="selection">
                   <count value="1" />
                   <iterate>
@@ -499,6 +515,7 @@
          modes="run,debug">
          <contextualLaunch>
             <enablement>
+               <!-- see https://github.com/eclipse-platform/eclipse.platform.ui/blob/632e59d1bbec83dd81994befe4bfbf6a3db0de28/bundles/org.eclipse.ui.workbench/Eclipse%20UI/org/eclipse/ui/ISources.java#L297 -->
                <with variable="selection">
                   <count value="1" />
                   <iterate>
@@ -513,12 +530,14 @@
          </contextualLaunch>
       </shortcut>
    </extension>
+
    <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
          id="org.haxe4e.launch.haxe.image"
          configTypeID="org.haxe4e.launch.haxe"
          icon="src/main/resources/images/logo/haxe_icon.png" />
    </extension>
+
    <extension point="org.eclipse.debug.ui.launchGroups">
       <launchGroup
          id="org.haxe4e.launch.haxe.group"
@@ -527,6 +546,7 @@
          image="src/main/resources/images/logo/haxe_icon.png"
          mode="run" />
    </extension>
+
    <extension point="org.eclipse.core.runtime.adapters">
       <factory
          class="org.eclipse.core.runtime.IAdaptable"
@@ -549,4 +569,12 @@
       </perspective>
    </extension>
 
+   <extension point="org.eclipse.core.expressions.definitions">
+      <definition id="org.haxe4e.perspective.isActive">
+         <!-- https://github.com/eclipse-platform/eclipse.platform.ui/blob/632e59d1bbec83dd81994befe4bfbf6a3db0de28/bundles/org.eclipse.ui.workbench/Eclipse%20UI/org/eclipse/ui/ISources.java#L192 -->
+         <with variable="activeWorkbenchWindow.activePerspective">
+            <equals value="org.haxe4e.perspective" />
+         </with>
+      </definition>
+   </extension>
 </plugin>

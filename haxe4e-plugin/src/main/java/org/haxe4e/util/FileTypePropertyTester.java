@@ -6,6 +6,7 @@ package org.haxe4e.util;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.lsp4e.outline.SymbolsModel.DocumentSymbolWithFile;
@@ -65,14 +66,14 @@ public final class FileTypePropertyTester extends PropertyTester {
       } else if (candidate instanceof final DocumentSymbolWithFile d) {
          file = d.file;
       } else if (candidate instanceof DocumentSymbol) {
-         final var editor = Editors.getActiveTextEditor();
-         if (editor == null)
-            return false;
-         file = editor.getEditorInput().getAdapter(IFile.class);
+         file = Editors.getActiveFile();
          if (file == null)
             return false;
-      } else
-         return false;
+      } else {
+         file = Adapters.adapt(candidate, IFile.class);
+         if (file == null)
+            return false;
+      }
 
       return matchesPropertyValue(property, file.getName(), expectedPropertyValue);
    }

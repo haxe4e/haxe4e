@@ -32,10 +32,6 @@ public final class HaxeBuilderConsoleLinkifier implements IPatternMatchListenerD
       console = null;
    }
 
-   protected @Nullable HaxeBuilderConsole getConsole() {
-      return console;
-   }
-
    @Override
    public void matchFound(final PatternMatchEvent event) {
       final var console = this.console;
@@ -44,13 +40,13 @@ public final class HaxeBuilderConsoleLinkifier implements IPatternMatchListenerD
 
       final var offset = event.getOffset();
       final var length = event.getLength();
+      final var doc = console.getDocument();
       try {
-         final var doc = console.getDocument();
          final var sourceLoc = doc.get(offset, length); // e.g. src/mypackage/Game.hx:123:
          final var chunks = Strings.split(sourceLoc, ':');
          final var file = console.buildContext.project.getFile(chunks[0]);
          if (file.exists()) {
-            final var link = new FileLink(file, HaxeEditor.class.getName(), -1, -1, Integer.parseInt(chunks[1]));
+            final var link = new FileLink(file, HaxeEditor.ID, -1, -1, Integer.parseInt(chunks[1]));
             console.addHyperlink(link, offset, length - 1);
          }
       } catch (final BadLocationException ex) {

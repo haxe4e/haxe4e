@@ -44,6 +44,8 @@ import net.sf.jstuff.core.reflection.Fields;
 @SuppressWarnings("restriction")
 public final class HaxeEditor extends ExtensionBasedTextEditor {
 
+   public static final String ID = HaxeEditor.class.getName();
+
    private volatile @Nullable Position caretPosition;
 
    private final CaretListener caretListener = event -> {
@@ -123,16 +125,14 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
       if (viewer instanceof final ISourceViewerExtension4 viewer4) {
          final var contentAssistantFacade = viewer4.getContentAssistantFacade();
          if (contentAssistantFacade != null) {
-            final var contentAssistant = Fields.read(contentAssistantFacade, "fContentAssistant");
-            if (contentAssistant instanceof ContentAssistant)
-               return (ContentAssistant) contentAssistant;
+            if (Fields.read(contentAssistantFacade, "fContentAssistant") instanceof final ContentAssistant contentAssistant)
+               return contentAssistant;
          }
       }
 
       if (viewer instanceof SourceViewer) {
-         final var contentAssistant = Fields.read(viewer, "fContentAssistant");
-         if (contentAssistant instanceof ContentAssistant)
-            return (ContentAssistant) contentAssistant;
+         if (Fields.read(viewer, "fContentAssistant") instanceof final ContentAssistant contentAssistant)
+            return contentAssistant;
       }
 
       return null;

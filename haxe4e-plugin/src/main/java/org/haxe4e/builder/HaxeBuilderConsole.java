@@ -18,17 +18,15 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleFactory;
 import org.eclipse.ui.console.MessageConsole;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.builder.HaxeBuilder.Context;
 
+import de.sebthom.eclipse.commons.ui.Consoles;
 import de.sebthom.eclipse.commons.ui.UI;
 import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.concurrent.Threads;
@@ -40,32 +38,25 @@ import net.sf.jstuff.core.io.Processes;
 @SuppressWarnings("restriction")
 public final class HaxeBuilderConsole extends MessageConsole {
 
+   public static final String CONSOLE_TYPE = HaxeBuilderConsole.class.getName();
+
+   /**
+    * Adds an entry to the console view's "Display Selected Console" entry drop down button.
+    */
    public static class Factory implements IConsoleFactory {
       @Override
       public void openConsole() {
-         final var consoleManager = ConsolePlugin.getDefault().getConsoleManager();
-
-         for (final var console : consoleManager.getConsoles()) {
-            if (HaxeBuilderConsole.class.getName().equals(console.getType())) {
-               consoleManager.showConsoleView(console);
-               return;
-            }
-         }
+         Consoles.showConsole(c -> CONSOLE_TYPE.equals(c.getType()));
       }
    }
 
    public static HaxeBuilderConsole openConsole(final HaxeBuilder.Context buildContext) {
-      final var consoleManager = ConsolePlugin.getDefault().getConsoleManager();
-
-      for (final var console : consoleManager.getConsoles()) {
-         if (Factory.class.getName().equals(console.getType())) {
-            consoleManager.removeConsoles(new IConsole[] {console});
-         }
-      }
+      Consoles.closeConsoles(c -> CONSOLE_TYPE.equals(c.getType()) //
+         && ((HaxeBuilderConsole) c).buildContext.project.equals(buildContext.project) //
+         && ((HaxeBuilderConsole) c).buildContext.onTerminated.toCompletableFuture().isDone());
 
       final var console = new HaxeBuilderConsole(buildContext);
-      consoleManager.addConsoles(new IConsole[] {console});
-      consoleManager.showConsoleView(console);
+      Consoles.showConsole(console);
       return console;
    }
 
@@ -95,7 +86,7 @@ public final class HaxeBuilderConsole extends MessageConsole {
          final var proc = processBuilder //
             .withWorkingDirectory(asNonNull(project.getLocation()).toFile()) //
             .withEnvironment(env -> {
-               if (Platform.getBundle("net.mihai-nita.ansicon.plugin") != null) {
+               if (Consoles.isAnsiColorsSupported()) {
                   env.put("ANSICON", "1");
                }
             }) //
@@ -171,7 +162,7 @@ public final class HaxeBuilderConsole extends MessageConsole {
    public final HaxeBuilder.Context buildContext;
 
    private HaxeBuilderConsole(final HaxeBuilder.Context buildContext) {
-      super("Haxe Builder", HaxeBuilderConsole.class.getName(), null, true);
+      super("Haxe Builder", CONSOLE_TYPE, null, true);
       this.buildContext = buildContext;
    }
 
@@ -184,5 +175,4 @@ public final class HaxeBuilderConsole extends MessageConsole {
          }
       });
    }
-
 }
