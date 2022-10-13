@@ -89,7 +89,6 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
          }
          hxmlFile = buildSystem.toBuildFile(project.getFile(hxmlFileRelativePath));
       }
-      final var hxmlFileLoc = asNonNull(hxmlFile.location.getLocation());
 
       final var workdir = Paths.get(config.getAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, projectLoc.toOSString()));
       final var envVars = config.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, Collections.emptyMap());
@@ -115,7 +114,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
             // EvalLaunchRequestArguments https://github.com/vshaxe/eval-debugger/blob/master/src/Main.hx#L14
             final var evalDebuggerOpts = new TreeBuilder<String>() //
                .put("cwd", workdir.toString()) //
-               .put("args", Arrays.asList(hxmlFileLoc.toOSString())) //
+               .put("args", Arrays.asList(asNonNull(hxmlFile.location.getLocation()).toOSString())) //
                .put("haxeExecutable", new TreeBuilder<String>() //
                   .put("executable", haxeSDK.getCompilerExecutable().toString()) //
                   .put("env", debuggerEnvVars) //
@@ -143,7 +142,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
             HaxeRunner.launchHxmlFile( //
                launch, //
                haxeSDK, //
-               hxmlFileLoc.toFile().toPath(), //
+               hxmlFile.location, //
                workdir, //
                envVars, //
                appendEnvVars, //

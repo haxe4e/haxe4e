@@ -4,12 +4,15 @@
  */
 package org.haxe4e.launch;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -29,6 +32,23 @@ import net.sf.jstuff.core.io.Processes.ProcessWrapper;
  */
 public final class HaxeRunner {
 
+   public static void launchHxmlFile(final HaxeSDK haxeSDK, final IFile hxmlFile, final Path workDir) {
+      final var run = new Launch(null, ILaunchManager.RUN_MODE, null);
+      DebugPlugin.getDefault().getLaunchManager().addLaunch(run);
+      launchHxmlFile(run, haxeSDK, hxmlFile, workDir, Collections.emptyMap(), true, null);
+   }
+
+   public static void launchHxmlFile(final HaxeSDK haxeSDK, final Path hxmlFile, final Path workDir) {
+      final var run = new Launch(null, ILaunchManager.RUN_MODE, null);
+      DebugPlugin.getDefault().getLaunchManager().addLaunch(run);
+      launchHxmlFile(run, haxeSDK, hxmlFile, workDir, Collections.emptyMap(), true, null);
+   }
+
+   public static void launchHxmlFile(final ILaunch launch, final HaxeSDK haxeSDK, final IFile hxmlFile, final Path workDir,
+      final Map<String, String> envVars, final boolean appendEnvVars, final @Nullable Consumer<ProcessWrapper> action) {
+      launchHxmlFile(launch, haxeSDK, asNonNull(hxmlFile.getLocation()).toFile().toPath(), workDir, envVars, appendEnvVars, action);
+   }
+
    public static void launchHxmlFile(final ILaunch launch, final HaxeSDK haxeSDK, final Path hxmlFile, final Path workDir,
       final Map<String, String> envVars, final boolean appendEnvVars, final @Nullable Consumer<ProcessWrapper> action) {
       final var job = Job.create(NLS.bind(Messages.Launch_RunningFile, hxmlFile), monitor -> {
@@ -45,17 +65,6 @@ public final class HaxeRunner {
          }
       });
       job.schedule();
-   }
-
-   public static void launchHxmlFile(final ILaunch launch, final HaxeSDK haxeSDK, final Path hxmlFile, final Path workDir,
-      final Map<String, String> envVars, final boolean appendEnvVars) {
-      launchHxmlFile(launch, haxeSDK, hxmlFile, workDir, envVars, appendEnvVars, null);
-   }
-
-   public static void launchHxmlFile(final HaxeSDK haxeSDK, final Path hxmlFile, final Path workDir) {
-      final var run = new Launch(null, ILaunchManager.RUN_MODE, null);
-      DebugPlugin.getDefault().getLaunchManager().addLaunch(run);
-      launchHxmlFile(run, haxeSDK, hxmlFile, workDir, Collections.emptyMap(), true);
    }
 
    private HaxeRunner() {
