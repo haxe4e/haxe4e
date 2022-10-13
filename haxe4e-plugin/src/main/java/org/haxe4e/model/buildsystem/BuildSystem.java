@@ -111,10 +111,10 @@ public enum BuildSystem {
          if (res.isVirtual() || res.isLinked())
             return false;
 
-         if (res instanceof final IFile file && buildFileExtension.equals(file.getFileExtension())) {
-            if (!excludeIgnorableBuildFiles || !ignorableBuildFileNames.contains(file.getName())) {
-               buildFiles.add(file);
-            }
+         if (res instanceof final IFile file //
+            && buildFileExtension.equals(file.getFileExtension()) //
+            && (!excludeIgnorableBuildFiles || !ignorableBuildFileNames.contains(file.getName()))) {
+            buildFiles.add(file);
          }
          return true;
       });
@@ -123,15 +123,11 @@ public enum BuildSystem {
    }
 
    public BuildFile toBuildFile(final IFile buildFilePath) {
-      switch (this) {
-         case HAXE:
-            return new HaxeBuildFile(buildFilePath);
-         case LIME:
-            return new LimeBuildFile(buildFilePath);
-         case LIX:
-            return new LixBuildFile(buildFilePath);
-         default:
-            throw new UnsupportedOperationException("Unsupported build-system: " + this);
-      }
+      return switch (this) {
+         case HAXE -> new HaxeBuildFile(buildFilePath);
+         case LIME -> new LimeBuildFile(buildFilePath);
+         case LIX -> new LixBuildFile(buildFilePath);
+         default -> throw new UnsupportedOperationException("Unsupported build-system: " + this);
+      };
    }
 }
