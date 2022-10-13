@@ -4,6 +4,8 @@
  */
 package org.haxe4e.langserver;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,7 +84,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
          if (buildFile != null) {
             switch (projectPrefs.getBuildSystem()) {
                case HAXE:
-                  displayServerArgs.add(buildFile.location.getLocation().toOSString());
+                  displayServerArgs.add(asNonNull(buildFile.location.getLocation()).toOSString());
                   break;
                case LIME:
                   for (final var source : buildFile.getSourcePaths()) {

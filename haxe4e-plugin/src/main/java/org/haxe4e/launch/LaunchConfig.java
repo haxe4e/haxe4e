@@ -4,6 +4,8 @@
  */
 package org.haxe4e.launch;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -55,6 +57,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
          Dialogs.showError(Messages.Launch_NoProjectSelected, Messages.Launch_NoProjectSelected_Descr);
          return;
       }
+      final var projectLoc = asNonNull(project.getLocation());
 
       final var prefs = HaxeProjectPreference.get(project);
       final var haxeSDK = prefs.getEffectiveHaxeSDK();
@@ -79,15 +82,16 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
             return;
          }
       } else {
-         final var hxmlFilePath = Paths.get(project.getLocation().toPortableString(), hxmlFileRelativePath);
+         final var hxmlFilePath = Paths.get(projectLoc.toPortableString(), hxmlFileRelativePath);
          if (!Files.exists(hxmlFilePath)) {
             Dialogs.showError("Build file does not exist", "The configured build file '" + hxmlFileRelativePath + "' does not exist.");
             return;
          }
          hxmlFile = buildSystem.toBuildFile(project.getFile(hxmlFileRelativePath));
       }
+      final var hxmlFileLoc = asNonNull(hxmlFile.location.getLocation());
 
-      final var workdir = Paths.get(config.getAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, project.getLocation().toOSString()));
+      final var workdir = Paths.get(config.getAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, projectLoc.toOSString()));
       final var envVars = config.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, Collections.emptyMap());
       final var appendEnvVars = config.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 
@@ -111,7 +115,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
             // EvalLaunchRequestArguments https://github.com/vshaxe/eval-debugger/blob/master/src/Main.hx#L14
             final var evalDebuggerOpts = new TreeBuilder<String>() //
                .put("cwd", workdir.toString()) //
-               .put("args", Arrays.asList(hxmlFile.location.getLocation().toOSString())) //
+               .put("args", Arrays.asList(hxmlFileLoc.toOSString())) //
                .put("haxeExecutable", new TreeBuilder<String>() //
                   .put("executable", haxeSDK.getCompilerExecutable().toString()) //
                   .put("env", debuggerEnvVars) //
@@ -139,7 +143,7 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
             HaxeRunner.launchHxmlFile( //
                launch, //
                haxeSDK, //
-               hxmlFile.location.getLocation().toFile().toPath(), //
+               hxmlFileLoc.toFile().toPath(), //
                workdir, //
                envVars, //
                appendEnvVars, //

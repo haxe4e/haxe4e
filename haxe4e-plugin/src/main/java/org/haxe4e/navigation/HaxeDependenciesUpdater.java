@@ -92,7 +92,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
          }
 
          final var resource = delta.getResource();
-         final var project = resource.getProject();
+         final var project = asNonNullUnsafe(resource.getProject());
          if (!project.hasNature(HaxeProjectNature.NATURE_ID))
             return true; // ignore
 
@@ -131,7 +131,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
             if (!stdLibFolder.isLinked())
                return Haxe4EPlugin.status().createError("Cannot update Haxe standard library folder. Physical folder with name '"
                   + STDLIB_MAGIC_FOLDER_NAME + "' exists!");
-            if (!stdLibFolder.getLocation().toFile().toPath().equals(sdk.getStandardLibDir())) {
+            if (!asNonNull(stdLibFolder.getLocation()).toFile().toPath().equals(sdk.getStandardLibDir())) {
                stdLibFolder.createLink(sdk.getStandardLibDir().toUri(), IResource.REPLACE, monitor);
             }
          } else {
@@ -168,7 +168,8 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
          for (final var folder : depsFolder.members()) {
             if (depsToCheck.containsKey(folder.getName())) {
                final var dep = asNonNullUnsafe(depsToCheck.get(folder.getName()));
-               if (folder.getRawLocation() != null && dep.location.equals(folder.getRawLocation().toFile().toPath())) {
+               final var rawLoc = folder.getRawLocation();
+               if (rawLoc != null && dep.location.equals(rawLoc.toFile().toPath())) {
                   depsToCheck.remove(folder.getName());
                } else {
                   folder.delete(true, monitor); // delete broken folder link

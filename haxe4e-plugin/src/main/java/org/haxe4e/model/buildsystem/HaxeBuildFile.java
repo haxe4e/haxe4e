@@ -4,6 +4,8 @@
  */
 package org.haxe4e.model.buildsystem;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +38,7 @@ import net.sf.jstuff.core.ref.MutableRef;
 public class HaxeBuildFile extends BuildFile {
 
    public static List<String> parseArgs(final IFile buildFile) throws RuntimeIOException {
-      return parseArgs(buildFile.getLocation().toFile().toPath());
+      return parseArgs(asNonNull(buildFile.getLocation()).toFile().toPath());
    }
 
    public static List<String> parseArgs(final Path buildFile) throws RuntimeIOException {

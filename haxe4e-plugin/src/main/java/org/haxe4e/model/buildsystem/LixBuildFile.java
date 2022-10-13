@@ -58,7 +58,7 @@ public class LixBuildFile extends HaxeBuildFile {
 
    @Override
    public Set<Haxelib> getDirectDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) throws RuntimeIOException {
-      final var haxeLibsFolder = location.getProject().getFolder("haxe_libraries");
+      final var haxeLibsFolder = getProject().getFolder("haxe_libraries");
       if (!haxeLibsFolder.exists())
          return Collections.emptySet();
 

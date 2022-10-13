@@ -4,6 +4,8 @@
  */
 package org.haxe4e.launch;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -50,7 +52,7 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
       final var launchMgr = DebugPlugin.getDefault().getLaunchManager();
       final var launchConfigType = launchMgr.getLaunchConfigurationType(Constants.LAUNCH_HAXE_CONFIGURATION_ID);
 
-      final var project = hxmlFile.getProject();
+      final var project = asNonNullUnsafe(hxmlFile.getProject());
       final var hxmlFilePath = hxmlFile.getFullPath().makeRelativeTo(project.getFullPath()).toPortableString();
       try {
          // use an existing launch config if available

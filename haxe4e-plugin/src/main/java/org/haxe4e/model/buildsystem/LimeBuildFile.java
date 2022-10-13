@@ -4,6 +4,8 @@
  */
 package org.haxe4e.model.buildsystem;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
@@ -74,7 +76,7 @@ public class LimeBuildFile extends BuildFile {
    }
 
    protected DOMFile parseFile() throws RuntimeIOException, XMLException {
-      return parseFile(location.getLocation().toFile());
+      return parseFile(asNonNull(location.getLocation()).toFile());
    }
 
    protected DOMFile parseFile(final File buildFile) throws RuntimeIOException, XMLException {

@@ -34,14 +34,14 @@ public final class LixVirtualBuildFile extends LixBuildFile {
 
       // guess source directory
       args.add("-cp");
-      args.add(location.getProject().getFolder("src").exists() ? "src" : ".");
+      args.add(getProject().getFolder("src").exists() ? "src" : ".");
 
       // guess libraries
-      final var libs = location.getProject().getFolder("haxe_libraries");
+      final var libs = getProject().getFolder("haxe_libraries");
       if (libs.exists()) {
          try {
             libs.accept(res -> {
-               if (res.getType() == IResource.FILE && res.getFileExtension().equals("hxml")) {
+               if (res.getType() == IResource.FILE && "hxml".equals(res.getFileExtension())) {
                   res.getName();
                   args.add("-lib");
                   args.add(Strings.substringBefore(res.getName(), ".hxml"));
