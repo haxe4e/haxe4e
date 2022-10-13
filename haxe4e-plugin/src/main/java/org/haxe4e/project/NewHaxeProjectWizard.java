@@ -10,9 +10,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -83,8 +83,8 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
                prefs.save();
 
                // may want system to create different types of projects, for now this is better than empty
-               createFile(newProject, "templates/new-project/default/build.hxml", "build.hxml", monitor);
-               createFile(newProject, "templates/new-project/default/src/Main.hx", "src/Main.hx", monitor);
+               createFileFromResource("templates/new-project/default/build.hxml", newProject, "build.hxml", monitor);
+               createFileFromResource("templates/new-project/default/src/Main.hx", newProject, "src/Main.hx", monitor);
 
                newProject.open(monitor);
             } catch (final Exception ex) {
@@ -118,41 +118,31 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
       return true;
    }
 
-   private void createFile(final IProject project, final String from, final String to, final @Nullable IProgressMonitor monitor)
-      throws CoreException, IOException {
-      createFile(project, from, to, false, monitor);
+   private void createFileFromResource(final String resourceName, final IProject project, final String to,
+      final @Nullable IProgressMonitor monitor) throws CoreException, IOException {
+      createFileFromResource(resourceName, project, to, false, monitor);
    }
 
-   private void createFile(final IProject project, final String from, final String to, final boolean isBinary,
+   private void createFileFromResource(final String resourceName, final IProject project, final String to, final boolean isBinary,
       final @Nullable IProgressMonitor monitor) throws CoreException, IOException {
       final var f = project.getFile(to);
       createParents(f, monitor);
 
       if (isBinary) {
-         try (var is = Haxe4EPlugin.resources().getAsStream(from)) {
+         try (var is = Haxe4EPlugin.resources().getAsStream(resourceName)) {
             f.create(is, true, monitor);
          }
       } else {
-         f.create(new ByteArrayInputStream(Haxe4EPlugin.resources().getAsString(from).getBytes()), true, monitor);
+         f.create(new ByteArrayInputStream(Haxe4EPlugin.resources().getAsString(resourceName).getBytes()), true, monitor);
       }
    }
 
-   private void createParents(final IFile f, final @Nullable IProgressMonitor monitor) throws CoreException {
-      final var dir = f.getParent();
-      if (!dir.exists()) {
-         if (dir instanceof @NonNull final IFolder folder) {
+   private void createParents(final IResource res, final @Nullable IProgressMonitor monitor) throws CoreException {
+      if (!res.exists()) {
+         if (res.getParent() instanceof @NonNull final IFolder folder) {
             createParents(folder, monitor);
+            folder.create(true, true, monitor);
          }
-      }
-   }
-
-   private void createParents(final IFolder f, final @Nullable IProgressMonitor monitor) throws CoreException {
-      if (!f.exists()) {
-         final var parent = f.getParent();
-         if (parent instanceof @NonNull final IFolder folder) {
-            createParents(folder, monitor);
-         }
-         f.create(true, true, monitor);
       }
    }
 }
