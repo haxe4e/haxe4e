@@ -9,12 +9,11 @@ import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.model.HaxeSDK;
@@ -58,14 +57,14 @@ public class LimeBuildFile extends BuildFile {
    }
 
    @Override
-   public Set<Path> getSourcePaths() throws RuntimeIOException, XMLException {
-      final var paths = new LinkedHashSet<Path>();
+   public Set<IPath> getSourcePaths() throws RuntimeIOException, XMLException {
+      final var paths = new LinkedHashSet<IPath>();
       final var domFile = parseFile();
       for (final var srcNode : domFile.findNodes("/project/source")) {
          final var path = ((Element) srcNode).getAttribute("path");
          if (path != null && !path.isBlank()) {
             try {
-               paths.add(Paths.get(path));
+               paths.add(org.eclipse.core.runtime.Path.fromOSString(path));
             } catch (final InvalidPathException ex) {
                Haxe4EPlugin.log().error(ex);
                UI.run(() -> new NotificationPopup(ex.getMessage()).open());

@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Path;
 import org.haxe4e.model.buildsystem.HaxeBuildFile;
 import org.haxe4e.model.buildsystem.LimeBuildFile;
 import org.junit.Test;
@@ -47,9 +48,9 @@ public class BuildFileTest {
       );
 
       assertThat(buildFile.getSourcePaths()).containsExactly( //
-         Paths.get("src"), //
-         Paths.get("dir/another src"), //
-         Paths.get("dir/yet another src") //
+         Path.fromOSString("src"), //
+         Path.fromOSString("dir/another src"), //
+         Path.fromOSString("dir/yet another src") //
       );
    }
 
@@ -63,9 +64,9 @@ public class BuildFileTest {
       };
 
       assertThat(buildFile.getSourcePaths()).containsExactly( //
-         Paths.get("src"), //
-         Paths.get("dir/another src"), //
-         Paths.get("dir/yet another src") //
+         Path.fromOSString("src"), //
+         Path.fromOSString("dir/another src"), //
+         Path.fromOSString("dir/yet another src") //
       );
    }
 }

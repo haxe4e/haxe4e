@@ -4,8 +4,6 @@
  */
 package org.haxe4e.model.buildsystem;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +11,8 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.io.RuntimeIOException;
@@ -58,7 +58,8 @@ public final class LixVirtualBuildFile extends LixBuildFile {
    }
 
    @Override
-   public Set<Path> getSourcePaths() throws RuntimeIOException {
-      return Set.of(Paths.get(location.getProject().getFolder("src").exists() ? "src" : "."));
+   public Set<IPath> getSourcePaths() throws RuntimeIOException {
+      final var src = getProject().getFolder("src");
+      return Set.of(Path.fromOSString(src.exists() ? "src" : "."));
    }
 }

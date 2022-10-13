@@ -9,7 +9,6 @@ import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -19,6 +18,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Haxe4EPlugin;
@@ -155,12 +155,12 @@ public class HaxeBuildFile extends BuildFile {
    }
 
    @Override
-   public Set<Path> getSourcePaths() throws RuntimeIOException {
+   public Set<IPath> getSourcePaths() throws RuntimeIOException {
       final var args = parseArgs();
       return getOptionValues(args, arg -> switch (arg) {
          case "-p", "-cp", "--class-path" -> true;
          default -> false;
-      }).stream().map(Paths::get).collect(Collectors.toCollection(LinkedHashSet::new));
+      }).stream().map(org.eclipse.core.runtime.Path::fromOSString).collect(Collectors.toCollection(LinkedHashSet::new));
    }
 
    public List<String> parseArgs() throws RuntimeIOException {

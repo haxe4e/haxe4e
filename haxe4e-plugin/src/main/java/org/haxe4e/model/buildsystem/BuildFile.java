@@ -6,11 +6,11 @@ package org.haxe4e.model.buildsystem;
 
 import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
 
-import java.nio.file.Path;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.model.Haxelib;
@@ -41,15 +41,15 @@ public abstract class BuildFile {
    }
 
    public String getProjectRelativePath() {
-      return location.getProjectRelativePath().toPortableString();
+      return location.getProjectRelativePath().toString();
    }
 
-   public abstract Set<Path> getSourcePaths();
+   public abstract Set<IPath> getSourcePaths();
 
    @Override
    public String toString() {
       return Strings.toString(this, //
-         "project", location.getProject().getName(), //
+         "project", getProject().getName(), //
          "path", getProjectRelativePath() //
       );
    }

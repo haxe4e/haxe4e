@@ -71,14 +71,14 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
          if (buildFile == null)
             return image;
 
-         final var folderPath = folder.getLocation().toFile().toPath();
-         final var projectPath = project.getLocation().toFile().toPath();
+         final var folderPath = asNonNullUnsafe(folder.getLocation());
+         final var projectPath = asNonNullUnsafe(project.getLocation());
          try {
-            for (final var p : buildFile.getSourcePaths()) {
-               final var sourceFolder = projectPath.resolve(p).normalize();
+            for (final var sourcePath : buildFile.getSourcePaths()) {
+               final var sourceFolder = projectPath.append(sourcePath);
                if (folderPath.equals(sourceFolder))
                   return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_SOURCE_FOLDER);
-               if (folderPath.startsWith(sourceFolder))
+               if (sourceFolder.isPrefixOf(folderPath))
                   return Haxe4EPlugin.get().getSharedImage(Constants.IMAGE_HAXE_SOURCE_PACKAGE);
             }
          } catch (final Exception ex) {
