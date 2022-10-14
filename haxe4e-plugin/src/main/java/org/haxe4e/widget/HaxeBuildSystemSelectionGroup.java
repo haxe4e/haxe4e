@@ -44,14 +44,11 @@ public class HaxeBuildSystemSelectionGroup extends Composite {
       cmbBuildSystem = new ComboWrapper<BuildSystem>(grpBuildSystem, SWT.READ_ONLY, GridDataFactory.fillDefaults().create()) //
          .setEnabled(false) //
          .setItems(BuildSystem.values()).setLabelProvider(bs -> {
-            switch (bs) {
-               case HAXE:
-                  return "Haxe (HXML)";
-               case LIME:
-                  return "Lime (OpenFL)";
-               default:
-                  return bs.toString();
-            }
+            return switch (bs) {
+               case HAXE -> "Haxe (HXML)";
+               case LIME -> "Lime (OpenFL)";
+               default -> bs.toString();
+            };
          }) //
          .bind(selectedBuildSystem);
 

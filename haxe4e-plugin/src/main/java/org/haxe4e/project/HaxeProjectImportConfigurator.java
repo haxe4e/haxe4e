@@ -6,13 +6,12 @@ package org.haxe4e.project;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.EnumSet;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,13 +38,11 @@ public final class HaxeProjectImportConfigurator implements ProjectConfigurator 
       final var haxeProjects = new HashSet<File>();
 
       try {
-         Files.walkFileTree(root.toPath(), EnumSet.noneOf(FileVisitOption.class), 2, new SimpleFileVisitor<Path>() {
+         Files.walkFileTree(root.toPath(), Collections.emptySet(), 2, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
                // ignore hidden folders
-               final var parts = dir.iterator();
-               while (parts.hasNext()) {
-                  final var part = parts.next();
+               for (final Path part : dir) {
                   if (part.toString().startsWith("."))
                      return FileVisitResult.SKIP_SUBTREE;
                }

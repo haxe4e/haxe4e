@@ -129,10 +129,7 @@ public final class HaxeWorkspacePreference {
       final var defaultSDK = getHaxeSDK(PREFS.getString(PROPERTY_DEFAULT_HAXE_SDK));
 
       if (defaultSDK != null) {
-         if (verify) {
-            if (defaultSDK.isValid())
-               return defaultSDK;
-         } else
+         if (!verify || defaultSDK.isValid())
             return defaultSDK;
       }
 
@@ -140,13 +137,12 @@ public final class HaxeWorkspacePreference {
 
       synchronized (haxeSDKs) {
          if (!haxeSDKs.isEmpty()) {
-            if (verify) {
-               for (final var sdk : haxeSDKs) {
-                  if (sdk.isValid())
-                     return sdk;
-               }
-            } else
+            if (!verify)
                return haxeSDKs.first();
+            for (final var sdk : haxeSDKs) {
+               if (sdk.isValid())
+                  return sdk;
+            }
          }
       }
 

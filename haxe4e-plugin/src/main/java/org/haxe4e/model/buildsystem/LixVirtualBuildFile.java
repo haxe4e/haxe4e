@@ -45,7 +45,6 @@ public final class LixVirtualBuildFile extends LixBuildFile {
                   res.getName();
                   args.add("-lib");
                   args.add(Strings.substringBefore(res.getName(), ".hxml"));
-                  return true;
                }
                return true;
             }, IResource.DEPTH_ONE, false);
