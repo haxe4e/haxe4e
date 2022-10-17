@@ -119,6 +119,8 @@ Haxe4E would not have been possible without the following technologies and learn
     - [Developing an Eclipse language server integration](https://www.vogella.com/tutorials/EclipseLanguageServer/article.html)
     - [Defining custom launcher for the Eclipse IDE](https://www.vogella.com/tutorials/EclipseLauncherFramework/article.html)
     - [Testing Eclipse application with the RedDeer framework](https://www.vogella.com/tutorials/EclipseRedDeer/article.html)
+- http://blog.eclipse-tips.com
+    - [Selection Dialogs in Eclipse](http://blog.eclipse-tips.com/2008/07/selection-dialogs-in-eclipse.html)
 
 
 ## <a name="license"></a>License
