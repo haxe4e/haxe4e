@@ -38,6 +38,11 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
    }
 
    @Override
+   public String getId() {
+      return LaunchConfigTab.class.getName();
+   }
+
+   @Override
    public @Nullable Image getImage() {
       return Haxe4EPlugin.get().getImageRegistry().get(Constants.IMAGE_ICON);
    }

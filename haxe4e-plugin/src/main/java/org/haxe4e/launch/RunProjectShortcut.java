@@ -18,7 +18,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
-import org.haxe4e.prefs.HaxeProjectPreference;
 
 import de.sebthom.eclipse.commons.ui.Dialogs;
 import de.sebthom.eclipse.commons.ui.UI;
@@ -81,18 +80,7 @@ public class RunProjectShortcut implements ILaunchShortcut {
          }
 
          // create a new launch config
-         final var prefs = HaxeProjectPreference.get(project);
-         final var newLaunchConfig = launchConfigType.newInstance(null, launchMgr.generateLaunchConfigurationName(project.getName()));
-         newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_PROJECT, project.getName());
-         final var buildFileToLaunch = prefs.getBuildFile();
-         if (buildFileToLaunch != null) {
-            newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, buildFileToLaunch.getProjectRelativePath());
-         }
-
-         final var altSDK = prefs.getAlternateHaxeSDK();
-         if (altSDK != null) {
-            newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_SDK, altSDK.getName());
-         }
+         final var newLaunchConfig = LaunchConfigurations.create(project);
 
          if (Window.OK == DebugUITools.openLaunchConfigurationDialog(UI.getShell(), newLaunchConfig, Constants.LAUNCH_HAXE_GROUP, null)) {
             newLaunchConfig.doSave();

@@ -45,19 +45,19 @@ public final class HaxeRunner {
    }
 
    public static void launchHxmlFile(final ILaunch launch, final HaxeSDK haxeSDK, final IFile hxmlFile, final Path workDir,
-      final Map<String, String> envVars, final boolean appendEnvVars, final @Nullable Consumer<ProcessWrapper> action) {
-      launchHxmlFile(launch, haxeSDK, asNonNull(hxmlFile.getLocation()).toFile().toPath(), workDir, envVars, appendEnvVars, action);
+      final Map<String, String> envVars, final boolean appendEnvVars, final @Nullable Consumer<ProcessWrapper> onExit) {
+      launchHxmlFile(launch, haxeSDK, asNonNull(hxmlFile.getLocation()).toFile().toPath(), workDir, envVars, appendEnvVars, onExit);
    }
 
    public static void launchHxmlFile(final ILaunch launch, final HaxeSDK haxeSDK, final Path hxmlFile, final Path workDir,
-      final Map<String, String> envVars, final boolean appendEnvVars, final @Nullable Consumer<ProcessWrapper> action) {
+      final Map<String, String> envVars, final boolean appendEnvVars, final @Nullable Consumer<ProcessWrapper> onExit) {
       final var job = Job.create(NLS.bind(Messages.Launch_RunningFile, hxmlFile), monitor -> {
          try {
             final var proc = haxeSDK.getCompilerProcessBuilder(!appendEnvVars) //
                .withArg(hxmlFile.normalize().toAbsolutePath()) //
                .withEnvironment(env -> env.putAll(envVars)) //
                .withWorkingDirectory(workDir) //
-               .onExit(action) //
+               .onExit(onExit) //
                .start();
             launch.addProcess(DebugPlugin.newProcess(launch, proc.getProcess(), Messages.Label_Haxe_Terminal));
          } catch (final IOException ex) {

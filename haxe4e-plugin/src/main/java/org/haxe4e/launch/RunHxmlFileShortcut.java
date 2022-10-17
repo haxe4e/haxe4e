@@ -4,8 +4,6 @@
  */
 package org.haxe4e.launch;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -20,7 +18,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.localization.Messages;
-import org.haxe4e.prefs.HaxeProjectPreference;
+import org.haxe4e.model.buildsystem.HaxeBuildFile;
 
 import de.sebthom.eclipse.commons.ui.Dialogs;
 import de.sebthom.eclipse.commons.ui.UI;
@@ -34,7 +32,7 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
    public void launch(final IEditorPart editor, final String mode) {
       final var editorInput = editor.getEditorInput();
       if (editorInput instanceof final FileEditorInput fileInput) {
-         launchHxmlFile(fileInput.getFile(), mode);
+         launchHxmlFile(new HaxeBuildFile(fileInput.getFile()), mode);
       }
    }
 
@@ -43,22 +41,21 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
       if (selection instanceof final IStructuredSelection structuredSelection) {
          final var firstElement = structuredSelection.getFirstElement();
          if (firstElement instanceof @NonNull final IFile file) {
-            launchHxmlFile(file, mode);
+            launchHxmlFile(new HaxeBuildFile(file), mode);
          }
       }
    }
 
-   private void launchHxmlFile(final IFile hxmlFile, final String mode) {
+   private void launchHxmlFile(final HaxeBuildFile hxmlFile, final String mode) {
       final var launchMgr = DebugPlugin.getDefault().getLaunchManager();
       final var launchConfigType = launchMgr.getLaunchConfigurationType(Constants.LAUNCH_HAXE_CONFIGURATION_ID);
 
-      final var project = asNonNullUnsafe(hxmlFile.getProject());
-      final var hxmlFilePath = hxmlFile.getFullPath().makeRelativeTo(project.getFullPath()).toPortableString();
+      final var project = hxmlFile.getProject();
       try {
          // use an existing launch config if available
          for (final var cfg : launchMgr.getLaunchConfigurations(launchConfigType)) {
             if (cfg.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "").equalsIgnoreCase(project.getName()) //
-               && cfg.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, "").equalsIgnoreCase(hxmlFilePath) //
+               && cfg.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, "").equalsIgnoreCase(hxmlFile.getProjectRelativePath()) //
             ) {
                DebugUITools.launch(cfg, mode);
                return;
@@ -66,15 +63,7 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
          }
 
          // create a new launch config
-         final var newLaunchConfig = launchConfigType.newInstance(null, launchMgr.generateLaunchConfigurationName(project.getName() + " ("
-            + hxmlFile.getName() + ")"));
-         newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_PROJECT, project.getName());
-         newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, hxmlFilePath);
-         final var prefs = HaxeProjectPreference.get(project);
-         final var altSDK = prefs.getAlternateHaxeSDK();
-         if (altSDK != null) {
-            newLaunchConfig.setAttribute(Constants.LAUNCH_ATTR_HAXE_SDK, altSDK.getName());
-         }
+         final var newLaunchConfig = LaunchConfigurations.create(hxmlFile);
 
          if (Window.OK == DebugUITools.openLaunchConfigurationDialog(UI.getShell(), newLaunchConfig, Constants.LAUNCH_HAXE_GROUP, null)) {
             newLaunchConfig.doSave();

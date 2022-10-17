@@ -15,13 +15,13 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.RefreshUtil;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -42,10 +42,12 @@ import de.sebthom.eclipse.commons.ui.UI;
 import net.sf.jstuff.core.Strings;
 
 /**
+ * This class is registered via the plugin.xml
+ *
  * @author Sebastian Thomschke
  */
 @SuppressWarnings("restriction")
-public class LaunchConfig extends LaunchConfigurationDelegate {
+public class LaunchConfigLauncher extends LaunchConfigurationDelegate {
 
    @Override
    public void launch(final ILaunchConfiguration config, final String mode, final ILaunch launch, final @Nullable IProgressMonitor monitor)
@@ -146,9 +148,9 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
                workdir, //
                envVars, //
                appendEnvVars, //
-               action -> { //
+               process -> {
                   try {
-                     project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+                     RefreshUtil.refreshResources(config, monitor);
                   } catch (final CoreException e) {
                      Haxe4EPlugin.log().error(e);
                   }
@@ -159,5 +161,4 @@ public class LaunchConfig extends LaunchConfigurationDelegate {
             UI.run(() -> MessageDialog.openError(null, "Unsupported launch mode", "Launch mode [" + mode + "] is not supported."));
       }
    }
-
 }

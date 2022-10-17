@@ -470,7 +470,7 @@
    <extension point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
          id="org.haxe4e.launch.haxe"
-         delegate="org.haxe4e.launch.LaunchConfig"
+         delegate="org.haxe4e.launch.LaunchConfigLauncher"
          modes="run,debug"
          name="%Label_Haxe_Program"
          sourceLocatorId="org.eclipse.lsp4e.debug.sourceLocator"
@@ -479,7 +479,7 @@
 
    <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-         id="org.haxe4e.launch.haxe.tabGroup"
+         id="org.haxe4e.launch.LaunchTabGroup"
          class="org.haxe4e.launch.LaunchTabGroup"
          type="org.haxe4e.launch.haxe"
          description="%HaxeLaunchGroup_Description" />
