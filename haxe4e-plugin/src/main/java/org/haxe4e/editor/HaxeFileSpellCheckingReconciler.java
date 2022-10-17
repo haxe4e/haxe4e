@@ -51,69 +51,73 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
    ITextInputListener {
 
    private static final boolean TRACE_SPELLCHECK_REGIONS = Platform.getDebugBoolean("org.haxe4e/trace/spellcheck/regions");
+   private static final boolean TRACE_SPELLCHECK_TOKENS = Platform.getDebugBoolean("org.haxe4e/trace/spellcheck/tokens");
 
    private static final SpellingService SPELLING_SERVICE = EditorsUI.getSpellingService();
 
+   private @Nullable Job spellcheckJob;
    private @Nullable ITextViewer viewer;
 
-   private @Nullable Job spellcheckJob;
+   private void addSpellcheckRegion(final List<Region> regionsToSpellcheck, final IDocument doc, final int offset, final int length)
+      throws BadLocationException {
+      if (TRACE_SPELLCHECK_REGIONS) {
+         System.out.println("Region offset " + offset + " text: " + doc.get(offset, length));
+      }
+      regionsToSpellcheck.add(new Region(offset, length));
+   }
 
    private List<Region> collectRegionsToSpellcheck(final TMDocumentModel docModel, final List<Range> changedRanges) {
-      if (TRACE_SPELLCHECK_REGIONS) {
+      if (TRACE_SPELLCHECK_REGIONS || TRACE_SPELLCHECK_TOKENS) {
          System.out.println("----------collectRegionsToSpellcheck----------");
       }
       final var doc = docModel.getDocument();
       final var regionsToSpellcheck = new ArrayList<Region>();
+
+      int blockCommentStartOffset = -1;
       for (final var range : changedRanges) {
          try {
-            var blockCommentStart = -1;
-            for (var lineIndex = range.fromLineNumber - 1; lineIndex < range.toLineNumber; lineIndex++) {
+            var lineIndex = -1;
+            for (lineIndex = range.fromLineNumber - 1; lineIndex < range.toLineNumber; lineIndex++) {
                final var lineTokens = docModel.getLineTokens(lineIndex);
                if (lineTokens == null) {
                   continue;
                }
                for (final var token : lineTokens) {
-                  if (TRACE_SPELLCHECK_REGIONS) {
-                     System.out.println(lineIndex + ":" + doc.getLineOffset(lineIndex) + " " + token.startIndex + " " + token.type);
-                  }
-                  switch (token.type) {
-                     // single line comment
-                     case "hx.meta.class.block.comment.line.double-slash.method":
-                     case "hx.meta.class.block.method.comment.line.double-slash":
-                        regionsToSpellcheck.add(new Region(doc.getLineOffset(lineIndex) + token.startIndex, doc.getLineLength(lineIndex)
-                           - token.startIndex));
-                        break;
-
-                     // beginning or end marker of a block comment
-                     case "hx.punctuation.definition.block.comment":
-                     case "hx.punctuation.meta.class.definition.block.comment":
-                     case "hx.punctuation.meta.class.definition.block.comment.method":
-                        if (blockCommentStart > -1) {
-                           regionsToSpellcheck.add(new Region(blockCommentStart, doc.getLineOffset(lineIndex) + token.startIndex
-                              - blockCommentStart));
-                           blockCommentStart = -1;
-                        }
-                        break;
-
-                     // content of block comment
-                     case "hx.block.comment":
-                     case "hx.meta.class.block.comment":
-                     case "hx.meta.class.block.comment.method":
-                        if (blockCommentStart == -1) {
-                           blockCommentStart = doc.getLineOffset(lineIndex) + token.startIndex;
-                        }
-                        break;
+                  if (TRACE_SPELLCHECK_TOKENS) {
+                     System.out.println("Line " + lineIndex + " char " + token.startIndex + " " + token.type);
                   }
 
+                  if (token.type.startsWith("hx.") && !token.type.startsWith("hx.punctuation")) {
+                     if (token.type.contains(".comment.line.double-slash")) { // content of // single line comment
+                        addSpellcheckRegion(regionsToSpellcheck, doc, doc.getLineOffset(lineIndex) + token.startIndex, doc.getLineLength(
+                           lineIndex) - token.startIndex);
+                        continue;
+                     }
+                     if (token.type.contains(".block.comment")) { // one line of a /* block comment
+                        if (blockCommentStartOffset == -1) {
+                           blockCommentStartOffset = doc.getLineOffset(lineIndex) + token.startIndex;
+                        }
+                        continue;
+                     }
+                  }
+                  if (blockCommentStartOffset != -1) {
+                     final var blockCommentLen = doc.getLineOffset(lineIndex) + token.startIndex - blockCommentStartOffset;
+                     addSpellcheckRegion(regionsToSpellcheck, doc, blockCommentStartOffset, blockCommentLen);
+                     blockCommentStartOffset = -1;
+                  }
                }
-               if (blockCommentStart > -1) {
-                  regionsToSpellcheck.add(new Region(blockCommentStart, doc.getLineLength(lineIndex)));
-               }
+            }
+            if (blockCommentStartOffset != -1) {
+               lineIndex--;
+               final var blockCommentLen = doc.getLineOffset(lineIndex) + doc.getLineLength(lineIndex) - blockCommentStartOffset;
+               addSpellcheckRegion(regionsToSpellcheck, doc, blockCommentStartOffset, blockCommentLen);
+               blockCommentStartOffset = -1;
             }
          } catch (final BadLocationException ex) {
             Haxe4EPlugin.log().error(ex);
          }
       }
+
       return regionsToSpellcheck;
    }
 
