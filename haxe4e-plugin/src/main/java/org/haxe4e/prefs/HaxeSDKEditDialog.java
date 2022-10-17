@@ -126,7 +126,7 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       txtHaxePath = new Text(container, SWT.BORDER);
       txtHaxePath.setEditable(false);
       txtHaxePath.setLayoutData(GridDatas.fillHorizontalExcessive());
-      Texts.bind(txtHaxePath, haxeSDKPath, Paths::get, p -> p == null ? "" : p.toString());
+      Texts.bind(txtHaxePath, haxeSDKPath, Paths::get, Strings::emptyIfNull);
       Texts.onModified(txtHaxePath, () -> setErrorMessage(null));
 
       final var btnBrowse = new Button(container, SWT.NONE);
@@ -142,7 +142,7 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
       txtNekoPath = new Text(container, SWT.BORDER);
       txtNekoPath.setEditable(false);
       txtNekoPath.setLayoutData(GridDatas.fillHorizontalExcessive());
-      Texts.bind(txtNekoPath, nekoVMPath, Paths::get, p -> p == null ? "" : p.toString());
+      Texts.bind(txtNekoPath, nekoVMPath, Paths::get, Strings::emptyIfNull);
       Texts.onModified(txtNekoPath, () -> setErrorMessage(null));
 
       final var btnNekoBrowse = new Button(container, SWT.NONE);
