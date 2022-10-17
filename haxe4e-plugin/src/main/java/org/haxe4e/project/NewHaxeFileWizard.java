@@ -56,7 +56,7 @@ public final class NewHaxeFileWizard extends Wizard implements INewWizard {
    @Override
    public boolean performFinish() {
       final var folderName = haxeFilePage.getContainerFullPath().toOSString();
-      final var fileName = haxeFilePage.getFileName();
+      final var fileName = asNonNull(haxeFilePage.getFileName());
 
       try {
          getContainer().run(true, false, progress -> {

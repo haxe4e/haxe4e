@@ -122,6 +122,10 @@ public class HaxeBuildFileSelectionGroup extends Composite {
    }
 
    public void setProject(final @Nullable IProject project) {
+      if (projectPrefs != null && projectPrefs.getProject().equals(project))
+         // nothing to do
+         return;
+
       if (project == null) {
          projectPrefs = null;
          btnBrowseForBuildFile.setEnabled(false);
