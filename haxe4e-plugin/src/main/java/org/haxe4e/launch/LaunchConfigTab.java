@@ -76,7 +76,7 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
 
    @Override
    public boolean isValid(final ILaunchConfiguration launchConfig) {
-      if (form.selectedProject.get() == null)
+      if (form.selectedProject.get() == null || form.selectedBuildFile.get() == null)
          return false;
 
       return super.isValid(launchConfig);
@@ -87,7 +87,7 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
       config.setAttribute(Constants.LAUNCH_ATTR_PROJECT, form.selectedProject.get() == null ? null
          : asNonNull(form.selectedProject.get()).getName());
       config.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, form.selectedBuildFile.get() == null ? null
-         : asNonNull(form.selectedBuildFile.get()).getProjectRelativePath());
+         : asNonNull(form.selectedBuildFile.get()).getProjectRelativePath().toString());
       final var altSDK = form.selectedAltSDK.get();
       config.setAttribute(Constants.LAUNCH_ATTR_HAXE_SDK, altSDK == null ? "" : altSDK.getName());
    }

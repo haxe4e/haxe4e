@@ -53,7 +53,7 @@ public abstract class LaunchConfigurations {
 
    public static void initialize(final ILaunchConfigurationWorkingCopy config, final BuildFile buildFile) {
       initialize(config, buildFile.getProject());
-      config.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, buildFile.getProjectRelativePath());
+      config.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, buildFile.getProjectRelativePath().toString());
    }
 
    public static void initialize(final ILaunchConfigurationWorkingCopy config, final IProject project) {
