@@ -61,7 +61,7 @@ public class HaxeSDKSelectionGroup extends Composite {
       final var radioAltSDK = new Button(grpSdk, SWT.RADIO);
       radioAltSDK.setText(Messages.Label_Alternative);
 
-      final var cmbAltSDK = new ComboWrapper<HaxeSDK>(grpSdk, SWT.READ_ONLY, GridDataFactory.fillDefaults().create()) //
+      final var cmbAltSDK = new ComboWrapper<HaxeSDK>(grpSdk, GridDataFactory.fillDefaults().create()) //
          .setLabelProvider(HaxeSDK::toShortString) //
          .onItemsChanged((widget, oldItems, newItems) -> {
             if (newItems.isEmpty()) {
