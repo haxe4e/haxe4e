@@ -12,11 +12,13 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -27,6 +29,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.lsp4e.debug.DSPPlugin;
 import org.eclipse.lsp4e.debug.launcher.DSPLaunchDelegate.DSPLaunchDelegateLaunchBuilder;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
@@ -92,6 +95,8 @@ public class LaunchConfigLauncher extends LaunchConfigurationDelegate {
          hxmlFile = buildSystem.toBuildFile(project.getFile(hxmlFileRelativePath));
       }
 
+      final var hxmlFilePath = asNonNull(hxmlFile.location.getLocation()).toFile().toPath().normalize().toAbsolutePath();
+
       final var workdir = Paths.get(config.getAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, projectLoc.toOSString()));
       final var envVars = config.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, Collections.emptyMap());
       final var appendEnvVars = config.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
@@ -116,11 +121,10 @@ public class LaunchConfigLauncher extends LaunchConfigurationDelegate {
             // EvalLaunchRequestArguments https://github.com/vshaxe/eval-debugger/blob/master/src/Main.hx#L14
             final var evalDebuggerOpts = new TreeBuilder<String>() //
                .put("cwd", workdir.toString()) //
-               .put("args", Arrays.asList(asNonNull(hxmlFile.location.getLocation()).toOSString())) //
+               .put("args", Arrays.asList(hxmlFilePath.toString())) //
                .put("haxeExecutable", new TreeBuilder<String>() //
                   .put("executable", haxeSDK.getCompilerExecutable().toString()) //
-                  .put("env", debuggerEnvVars) //
-               ) //
+                  .put("env", debuggerEnvVars)) //
                .put("noDebug", false) //
                .put("showGeneratedVariables", true) //
                .put("stopOnEntry", false) //
@@ -129,32 +133,39 @@ public class LaunchConfigLauncher extends LaunchConfigurationDelegate {
 
             try {
                final var evalDebuggerJS = Haxe4EPlugin.resources().extract("langsrv/haxe-eval-debugger.min.js");
-               final var debugCmdArgs = Collections.singletonList(evalDebuggerJS.getAbsolutePath());
                final var builder = new DSPLaunchDelegateLaunchBuilder(config, ILaunchManager.DEBUG_MODE, launch, monitor);
-               builder.setLaunchDebugAdapter(NodeJSManager.getNodeJsLocation().getAbsolutePath(), debugCmdArgs);
+               builder.setLaunchDebugAdapter( //
+                  NodeJSManager.getNodeJsLocation().getAbsolutePath(), //
+                  List.of(evalDebuggerJS.getAbsolutePath()));
                builder.setMonitorDebugAdapter(config.getAttribute(DSPPlugin.ATTR_DSP_MONITOR_DEBUG_ADAPTER, true));
                builder.setDspParameters(evalDebuggerOpts);
                new LaunchDebugConfig().launch(builder);
-            } catch (final IOException ex) {
+            } catch (final IOException | CoreException ex) {
                Dialogs.showStatus("Failed to start debug session", Haxe4EPlugin.status().createError(ex), true);
             }
             return;
 
          case ILaunchManager.RUN_MODE:
-            HaxeRunner.launchHxmlFile( //
-               launch, //
-               haxeSDK, //
-               hxmlFile.location, //
-               workdir, //
-               envVars, //
-               appendEnvVars, //
-               process -> {
-                  try {
-                     RefreshUtil.refreshResources(config, monitor);
-                  } catch (final CoreException e) {
-                     Haxe4EPlugin.log().error(e);
-                  }
-               });
+            final var job = Job.create(NLS.bind(Messages.Launch_RunningFile, hxmlFile.location.getProjectRelativePath()), jobMonitor -> {
+               try {
+                  final var proc = haxeSDK.getCompilerProcessBuilder(!appendEnvVars) //
+                     .withArg(hxmlFilePath) //
+                     .withEnvironment(env -> env.putAll(envVars)) //
+                     .withWorkingDirectory(workdir) //
+                     .onExit(process -> {
+                        try {
+                           RefreshUtil.refreshResources(config, jobMonitor);
+                        } catch (final CoreException e) {
+                           Haxe4EPlugin.log().error(e);
+                        }
+                     }) //
+                     .start();
+                  launch.addProcess(DebugPlugin.newProcess(launch, proc.getProcess(), Messages.Label_Haxe_Terminal));
+               } catch (final IOException ex) {
+                  Dialogs.showStatus(Messages.Launch_CouldNotRunHaxe, Haxe4EPlugin.status().createError(ex), true);
+               }
+            });
+            job.schedule();
             return;
 
          default:
