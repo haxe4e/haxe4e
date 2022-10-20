@@ -47,9 +47,9 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
 
    private boolean isEditSDK;
 
-   private Text txtName = eventuallyNonNull();
-   private Text txtHaxePath = eventuallyNonNull();
-   private Text txtNekoPath = eventuallyNonNull();
+   private Text txtName = lazyNonNull();
+   private Text txtHaxePath = lazyNonNull();
+   private Text txtNekoPath = lazyNonNull();
 
    /**
     * @wbp.parser.constructor

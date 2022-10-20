@@ -33,7 +33,7 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
    public static @Nullable HaxeBuildFileToolbarContribution instance;
    private static @Nullable IProject currentProject;
 
-   private CCombo buildFileDropDown = eventuallyNonNull();
+   private CCombo buildFileDropDown = lazyNonNull();
 
    public HaxeBuildFileToolbarContribution() {
       instance = this;

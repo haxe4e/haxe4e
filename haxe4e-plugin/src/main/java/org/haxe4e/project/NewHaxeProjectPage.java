@@ -25,7 +25,7 @@ import net.sf.jstuff.core.ref.ObservableRef;
  */
 public final class NewHaxeProjectPage extends WizardNewProjectCreationPage {
 
-   public ObservableRef<@Nullable HaxeSDK> selectedAltSDK = eventuallyNonNull();
+   public ObservableRef<@Nullable HaxeSDK> selectedAltSDK = lazyNonNull();
 
    public NewHaxeProjectPage(final String pageName) {
       super(pageName);

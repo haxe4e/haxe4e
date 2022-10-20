@@ -31,7 +31,7 @@ public class HaxelibJSON {
       return asNonNull(JSON.readValue(path.normalize().toAbsolutePath().toFile(), HaxelibJSON.class));
    }
 
-   public String name = eventuallyNonNull();
+   public String name = lazyNonNull();
    public @Nullable String version;
    public @Nullable String description;
    public @Nullable String license;

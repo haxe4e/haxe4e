@@ -79,7 +79,7 @@ public final class HaxeProjectNature implements IProjectNature {
       Projects.removeNature(project, NATURE_ID, null);
    }
 
-   private IProject project = eventuallyNonNull();
+   private IProject project = lazyNonNull();
 
    @Override
    public void configure() throws CoreException {

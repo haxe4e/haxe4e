@@ -34,8 +34,8 @@ import net.sf.jstuff.core.concurrent.Threads;
  */
 public final class NewHaxeFileWizard extends Wizard implements INewWizard {
 
-   private NewHaxeFilePage haxeFilePage = eventuallyNonNull();
-   private IStructuredSelection selection = eventuallyNonNull();
+   private NewHaxeFilePage haxeFilePage = lazyNonNull();
+   private IStructuredSelection selection = lazyNonNull();
 
    @Override
    public void addPages() {

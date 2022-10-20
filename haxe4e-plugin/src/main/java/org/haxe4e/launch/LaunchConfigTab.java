@@ -29,7 +29,7 @@ import de.sebthom.eclipse.commons.ui.Dialogs;
  */
 public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
 
-   private LaunchConfigForm form = eventuallyNonNull();
+   private LaunchConfigForm form = lazyNonNull();
 
    @Override
    public void createControl(final Composite parent) {

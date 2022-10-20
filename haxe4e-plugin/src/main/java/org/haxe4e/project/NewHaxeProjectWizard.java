@@ -40,7 +40,7 @@ import net.sf.jstuff.core.concurrent.Threads;
  */
 public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
 
-   private NewHaxeProjectPage newHaxeProjectPage = eventuallyNonNull();
+   private NewHaxeProjectPage newHaxeProjectPage = lazyNonNull();
    private @Nullable IProject newProject;
 
    @Override
