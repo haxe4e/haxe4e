@@ -27,6 +27,8 @@ import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.project.HaxeProjectNature;
 
+import de.sebthom.eclipse.commons.resources.Projects;
+
 /**
  * @author Sebastian Thomschke
  */
@@ -81,27 +83,37 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
       final var rootDelta = event.getDelta();
       final var changedProjects = new HashSet<IProject>();
       final IResourceDeltaVisitor visitor = delta -> {
+         final var resource = delta.getResource();
+         final var project = resource.getProject();
+         if (project == null) // e.g. Workspace Root
+            return true; // check children
+
+         if (!Projects.hasNature(project, HaxeProjectNature.NATURE_ID))
+            return false; // ignore children
+
+         // if the project was just opened update dependencies
+         if (resource == project && (delta.getFlags() & IResourceDelta.OPEN) != 0) {
+            changedProjects.add(project);
+            return false; // no need to check children
+         }
+
          if ((delta.getFlags() & IResourceDelta.CONTENT) == 0)
-            return true; // ignore
+            return true; // check children
 
          switch (delta.getKind()) {
             case IResourceDelta.ADDED, IResourceDelta.CHANGED, IResourceDelta.REMOVED:
                break;
             default:
-               return true; // ignore
+               return true; // check children
          }
-
-         final var resource = delta.getResource();
-         final var project = asNonNullUnsafe(resource.getProject());
-         if (!project.hasNature(HaxeProjectNature.NATURE_ID))
-            return true; // ignore
 
          final var prefs = HaxeProjectPreference.get(project);
          if (prefs.getBuildSystem().getBuildFileExtension().equals(resource.getFileExtension()) //
             || "haxelib.json".equals(resource.getName())) {
             changedProjects.add(project);
+            return false; // no need to check children
          }
-         return true;
+         return true; // check children
       };
 
       try {
