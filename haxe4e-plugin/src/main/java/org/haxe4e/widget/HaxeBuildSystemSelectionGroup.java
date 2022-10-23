@@ -24,7 +24,7 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
 public class HaxeBuildSystemSelectionGroup extends Composite {
 
    private final ComboWrapper<BuildSystem> cmbBuildSystem;
-   public final MutableObservableRef<@Nullable BuildSystem> selectedBuildSystem = MutableObservableRef.of(null);
+   public final MutableObservableRef<BuildSystem> selectedBuildSystem = MutableObservableRef.of(BuildSystem.HAXE);
 
    public HaxeBuildSystemSelectionGroup(final Composite parent, final Object layoutData) {
       this(parent, SWT.NONE, layoutData);

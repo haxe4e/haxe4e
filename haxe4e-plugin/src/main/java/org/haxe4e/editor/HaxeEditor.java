@@ -199,6 +199,7 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
       var lineSupportsAddingBreakpoint = false;
       loop: for (final var token : tokens) {
          switch (token.type) {
+            case "":
             case "block.hx.meta.class":
             case "block.hx.meta.class.method":
             case "meta.class.hx.block.method":

@@ -63,7 +63,7 @@ public class RunProjectShortcut implements ILaunchShortcut {
          // search most recently launched configs for a matching one
          for (final var launch : launchMgr.getLaunches()) {
             final var cfg = launch.getLaunchConfiguration();
-            if (cfg.getType().equals(launchConfigType) //
+            if (cfg != null && cfg.getType().equals(launchConfigType) //
                && cfg.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "").equalsIgnoreCase(project.getName()) //
             ) {
                DebugUITools.launch(cfg, mode);
