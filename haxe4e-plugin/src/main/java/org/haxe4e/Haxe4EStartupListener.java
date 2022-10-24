@@ -24,7 +24,7 @@ public class Haxe4EStartupListener implements IStartup {
       ResourcesPlugin.getWorkspace().addResourceChangeListener(HaxeDependenciesUpdater.INSTANCE, IResourceChangeEvent.POST_CHANGE);
 
       // refresh dependencies when workbench first starts
-      HaxeDependenciesUpdater.INSTANCE.onProjectsConfigChanged(Projects.findOpenProjectsWithNature(HaxeProjectNature.NATURE_ID));
+      HaxeDependenciesUpdater.INSTANCE.onProjectsConfigChanged(Projects.getOpenProjectsWithNature(HaxeProjectNature.NATURE_ID).toList());
 
       ActiveEditorChangeListener.INSTANCE.attach();
    }
