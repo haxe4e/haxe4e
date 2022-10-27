@@ -33,7 +33,7 @@ public class HaxeProjectSelectionDialog {
          }
 
          @Override
-         public String getText(final @Nullable Object item) {
+         public @Nullable String getText(final @Nullable Object item) {
             return item == null ? "" : " " + ((IProject) item).getName();
          }
       });

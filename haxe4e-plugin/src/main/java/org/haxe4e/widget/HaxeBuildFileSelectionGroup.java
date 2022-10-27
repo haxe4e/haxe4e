@@ -4,7 +4,7 @@
  */
 package org.haxe4e.widget;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNull;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -85,7 +85,7 @@ public class HaxeBuildFileSelectionGroup extends Composite {
          }
 
          @Override
-         public String getText(final @Nullable Object element) {
+         public @Nullable String getText(final @Nullable Object element) {
             if (element == null)
                return "";
             return ((IFile) element).getProjectRelativePath().toPortableString();
