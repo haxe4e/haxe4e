@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jface.viewers.ISelection;
@@ -64,8 +65,8 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
 
          // create a new launch config
          final var newLaunchConfig = LaunchConfigurations.create(hxmlFile);
-
-         if (Window.OK == DebugUITools.openLaunchConfigurationDialog(UI.getShell(), newLaunchConfig, Constants.LAUNCH_HAXE_GROUP, null)) {
+         final String groupId = "debug".equals(mode) ? IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP : Constants.LAUNCH_HAXE_GROUP;
+         if (Window.OK == DebugUITools.openLaunchConfigurationDialog(UI.getShell(), newLaunchConfig, groupId, null)) {
             newLaunchConfig.doSave();
          }
       } catch (final CoreException ex) {
