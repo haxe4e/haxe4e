@@ -4,7 +4,7 @@
  */
 package org.haxe4e.localization;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.lazyNonNull;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -70,7 +70,6 @@ public final class Messages extends NLS {
    public static String Launch_NoProjectSelected_Descr = "Please select a project to launch";
    public static String Launch_SDKPath_Descr = "The path where the Haxe SDK is installed";
    public static String Launch_HaxeBuildFile_Descr = "Haxe build file";
-   public static String Launch_RunningFile = "Running {0}";
    public static String Launch_CouldNotRunHaxe = "Could not run Haxe";
    public static String Launch_InitializingLaunchConfigTabFailed = "Initializing LaunchConfigTab failed";
    public static String Launch_CreatingLaunchConfigFailed = "Creating new launch configuration failed";

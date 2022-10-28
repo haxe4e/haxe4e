@@ -4,7 +4,7 @@
  */
 package org.haxe4e.launch;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,7 +18,6 @@ import java.util.Objects;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -29,7 +28,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.lsp4e.debug.DSPPlugin;
 import org.eclipse.lsp4e.debug.launcher.DSPLaunchDelegate.DSPLaunchDelegateLaunchBuilder;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
 import org.haxe4e.Constants;
 import org.haxe4e.Haxe4EPlugin;
@@ -146,26 +144,23 @@ public class LaunchConfigLauncher extends LaunchConfigurationDelegate {
             return;
 
          case ILaunchManager.RUN_MODE:
-            final var job = Job.create(NLS.bind(Messages.Launch_RunningFile, hxmlFile.location.getProjectRelativePath()), jobMonitor -> {
-               try {
-                  final var proc = haxeSDK.getCompilerProcessBuilder(!appendEnvVars) //
-                     .withArg(hxmlFilePath) //
-                     .withEnvironment(env -> env.putAll(envVars)) //
-                     .withWorkingDirectory(workdir) //
-                     .onExit(process -> {
-                        try {
-                           RefreshUtil.refreshResources(config, jobMonitor);
-                        } catch (final CoreException e) {
-                           Haxe4EPlugin.log().error(e);
-                        }
-                     }) //
-                     .start();
-                  launch.addProcess(DebugPlugin.newProcess(launch, proc.getProcess(), Messages.Label_Haxe_Terminal));
-               } catch (final IOException ex) {
-                  Dialogs.showStatus(Messages.Launch_CouldNotRunHaxe, Haxe4EPlugin.status().createError(ex), true);
-               }
-            });
-            job.schedule();
+            try {
+               final var proc = haxeSDK.getCompilerProcessBuilder(!appendEnvVars) //
+                  .withArg(hxmlFilePath) //
+                  .withEnvironment(env -> env.putAll(envVars)) //
+                  .withWorkingDirectory(workdir) //
+                  .onExit(process -> {
+                     try {
+                        RefreshUtil.refreshResources(config, monitor);
+                     } catch (final CoreException e) {
+                        Haxe4EPlugin.log().error(e);
+                     }
+                  }) //
+                  .start();
+               launch.addProcess(DebugPlugin.newProcess(launch, proc.getProcess(), Messages.Label_Haxe_Terminal));
+            } catch (final IOException ex) {
+               Dialogs.showStatus(Messages.Launch_CouldNotRunHaxe, Haxe4EPlugin.status().createError(ex), true);
+            }
             return;
 
          default:
