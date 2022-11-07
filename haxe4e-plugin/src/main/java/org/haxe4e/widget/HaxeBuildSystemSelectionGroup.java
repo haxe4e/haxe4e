@@ -49,7 +49,7 @@ public class HaxeBuildSystemSelectionGroup extends Composite {
             case LIME -> "Lime (OpenFL)";
             default -> bs.toString();
          }) //
-         .bind(selectedBuildSystem);
+         .bind(selectedBuildSystem, selectedBuildSystem.get());
 
    }
 

@@ -56,7 +56,7 @@ public class LaunchConfigLauncher extends LaunchConfigurationDelegate {
 
       final var projectName = config.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "");
       final @Nullable IProject project = Strings.isBlank(projectName) ? null : Projects.getProject(projectName);
-      if (project == null || !project.exists()) {
+      if (project == null) {
          Dialogs.showError(Messages.Launch_NoProjectSelected, Messages.Launch_NoProjectSelected_Descr);
          return;
       }

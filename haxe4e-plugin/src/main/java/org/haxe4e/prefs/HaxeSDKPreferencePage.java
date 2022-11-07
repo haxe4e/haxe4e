@@ -194,8 +194,8 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       final var dialog = new HaxeSDKEditDialog(getShell());
       if (dialog.open() == Window.OK) {
          sdks.add(new HaxeSDK( //
-            asNonNullUnsafe(dialog.haxeSDKName.get()), //
-            asNonNullUnsafe(dialog.haxeSDKPath.get()), //
+            asNonNullUnsafe(dialog.sdkName.get()), //
+            asNonNullUnsafe(dialog.sdkPath.get()), //
             new NekoVM(asNonNullUnsafe(dialog.nekoVMPath.get())) //
          ));
       }
@@ -211,8 +211,8 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       if (dialog.open() == Window.OK) {
          sdks.remove(sdk);
          sdks.add(new HaxeSDK( //
-            asNonNullUnsafe(dialog.haxeSDKName.get()), //
-            asNonNullUnsafe(dialog.haxeSDKPath.get()), //
+            asNonNullUnsafe(dialog.sdkName.get()), //
+            asNonNullUnsafe(dialog.sdkPath.get()), //
             new NekoVM(asNonNullUnsafe(dialog.nekoVMPath.get())) //
          ));
       }
