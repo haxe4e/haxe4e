@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -127,6 +128,11 @@ public final class TreeBuilder<K> {
          return this;
 
       map.put(k, v);
+      return this;
+   }
+
+   public TreeBuilder<K> putAll(final Map<K, @NonNull ?> map) {
+      this.map.putAll(map);
       return this;
    }
 

@@ -16,7 +16,7 @@ import org.eclipse.debug.ui.RefreshTab;
  *
  * @author Sebastian Thomschke
  */
-public class LaunchTabGroup extends AbstractLaunchConfigurationTabGroup {
+public class LaunchConfigTabGroup extends AbstractLaunchConfigurationTabGroup {
 
    @Override
    public void createTabs(final ILaunchConfigurationDialog dialog, final String mode) {

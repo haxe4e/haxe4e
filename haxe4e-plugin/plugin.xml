@@ -480,7 +480,7 @@
    <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
          id="org.haxe4e.launch.LaunchTabGroup"
-         class="org.haxe4e.launch.LaunchTabGroup"
+         class="org.haxe4e.launch.LaunchConfigTabGroup"
          type="org.haxe4e.launch.haxe"
          description="%HaxeLaunchGroup_Description" />
    </extension>

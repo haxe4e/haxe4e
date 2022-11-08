@@ -6,7 +6,6 @@ package org.haxe4e.project;
 
 import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
 
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -42,20 +41,20 @@ public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.Proper
        */
       final var project = asNonNullUnsafe(Projects.adapt(getElement()));
       prefs = HaxeProjectPreference.get(project);
-      final var grpHaxeSDKSelection = new HaxeSDKSelectionGroup(container, GridDataFactory.fillDefaults().create());
+      final var grpHaxeSDKSelection = new HaxeSDKSelectionGroup(container);
       grpHaxeSDKSelection.selectedAltSDK.set(prefs.getAlternateHaxeSDK());
       grpHaxeSDKSelection.selectedAltSDK.subscribe(prefs::setAlternateHaxeSDK);
 
       /*
        * build system selection
        */
-      final var grpBuildSystem = new HaxeBuildSystemSelectionGroup(container, GridDatas.fillHorizontalExcessive());
+      final var grpBuildSystem = new HaxeBuildSystemSelectionGroup(container);
       grpBuildSystem.setProject(project);
 
       /*
        * build file selection
        */
-      final var grpBuildFile = new HaxeBuildFileSelectionGroup(container, GridDatas.fillHorizontalExcessive());
+      final var grpBuildFile = new HaxeBuildFileSelectionGroup(container);
       grpBuildFile.setProject(project);
       grpBuildFile.selectedBuildFile.subscribe(buildFile -> prefs.setBuildFilePath(buildFile == null ? null
          : buildFile.getProjectRelativePath()));

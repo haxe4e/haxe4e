@@ -43,10 +43,16 @@ public class HaxeBuildFileSelectionGroup extends Composite {
    private Button btnBrowseForBuildFile;
    public final MutableObservableRef<@Nullable BuildFile> selectedBuildFile = MutableObservableRef.of(null);
 
-   public HaxeBuildFileSelectionGroup(final Composite parent, final int style, final Object layoutData) {
+   public HaxeBuildFileSelectionGroup(final Composite parent) {
+      this(parent, SWT.NONE);
+   }
+
+   public HaxeBuildFileSelectionGroup(final Composite parent, final int style) {
       super(parent, style);
 
-      setLayoutData(layoutData);
+      if (parent.getLayout() instanceof GridLayout) {
+         setLayoutData(GridDatas.fillHorizontalExcessive());
+      }
       setLayout(GridLayoutFactory.fillDefaults().create());
 
       final var grpBuildFile = new Group(this, SWT.NONE);
@@ -63,10 +69,6 @@ public class HaxeBuildFileSelectionGroup extends Composite {
       btnBrowseForBuildFile.setText(Messages.Label_Browse);
       btnBrowseForBuildFile.setEnabled(false);
       Buttons.onSelected(btnBrowseForBuildFile, this::onBrowseForBuildFile);
-   }
-
-   public HaxeBuildFileSelectionGroup(final Composite parent, final Object layoutData) {
-      this(parent, SWT.NONE, layoutData);
    }
 
    private @Nullable BuildFile getBuildFile(final String path) {

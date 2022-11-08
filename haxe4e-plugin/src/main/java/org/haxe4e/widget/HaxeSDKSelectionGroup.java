@@ -8,6 +8,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -29,14 +30,16 @@ public class HaxeSDKSelectionGroup extends Composite {
 
    public final MutableObservableRef<@Nullable HaxeSDK> selectedAltSDK = MutableObservableRef.of(null);
 
-   public HaxeSDKSelectionGroup(final Composite parent, final Object layoutData) {
-      this(parent, SWT.NONE, layoutData);
+   public HaxeSDKSelectionGroup(final Composite parent) {
+      this(parent, SWT.NONE);
    }
 
-   public HaxeSDKSelectionGroup(final Composite parent, final int style, final Object layoutData) {
+   public HaxeSDKSelectionGroup(final Composite parent, final int style) {
       super(parent, style);
 
-      setLayoutData(layoutData);
+      if (parent.getLayout() instanceof GridLayout) {
+         setLayoutData(GridDatas.fillHorizontalExcessive());
+      }
       setLayout(GridLayoutFactory.fillDefaults().create());
 
       final var grpSdk = new Group(this, SWT.NONE);

@@ -9,6 +9,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.haxe4e.model.buildsystem.BuildSystem;
@@ -26,14 +27,16 @@ public class HaxeBuildSystemSelectionGroup extends Composite {
    private final ComboWrapper<BuildSystem> cmbBuildSystem;
    public final MutableObservableRef<BuildSystem> selectedBuildSystem = MutableObservableRef.of(BuildSystem.HAXE);
 
-   public HaxeBuildSystemSelectionGroup(final Composite parent, final Object layoutData) {
-      this(parent, SWT.NONE, layoutData);
+   public HaxeBuildSystemSelectionGroup(final Composite parent) {
+      this(parent, SWT.NONE);
    }
 
-   public HaxeBuildSystemSelectionGroup(final Composite parent, final int style, final Object layoutData) {
+   public HaxeBuildSystemSelectionGroup(final Composite parent, final int style) {
       super(parent, style);
 
-      setLayoutData(layoutData);
+      if (parent.getLayout() instanceof GridLayout) {
+         setLayoutData(GridDatas.fillHorizontalExcessive());
+      }
       setLayout(GridLayoutFactory.fillDefaults().create());
 
       final var grpBuildSystem = new Group(this, SWT.NONE);

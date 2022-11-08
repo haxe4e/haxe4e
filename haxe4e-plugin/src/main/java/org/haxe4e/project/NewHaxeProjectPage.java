@@ -8,7 +8,6 @@ import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.haxe4e.Constants;
@@ -37,7 +36,7 @@ public final class NewHaxeProjectPage extends WizardNewProjectCreationPage {
       super.createControl(parent);
 
       final var control = asNonNull((Composite) getControl());
-      final var grpHaxeSDKSelection = new HaxeSDKSelectionGroup(control, GridDataFactory.fillDefaults().create());
+      final var grpHaxeSDKSelection = new HaxeSDKSelectionGroup(control);
       selectedAltSDK = grpHaxeSDKSelection.selectedAltSDK;
    }
 
