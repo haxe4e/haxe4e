@@ -38,9 +38,8 @@ Require-Bundle: org.eclipse.platform;bundle-version="4.22.0",
  com.fasterxml.jackson.core.jackson-annotations;bundle-version="[2.14.0,3.0.0)",
  com.fasterxml.jackson.core.jackson-core;bundle-version="[2.14.0,3.0.0)",
  com.fasterxml.jackson.core.jackson-databind;bundle-version="[2.14.0,3.0.0)",
- org.apache.commons.commons-io;bundle-version="2.11.0",
- org.apache.commons.lang3;bundle-version="3.12.0",
- jakarta.xml.bind-api,
+ org.apache.commons.commons-io;bundle-version="[2.11.0,3.0.0)",
+ org.apache.commons.lang3;bundle-version="[3.12.0,4.0.0)",
  net.sf.jstuff.core;bundle-version="[7.4.0,8.0.0)",
  net.sf.jstuff.xml;bundle-version="[7.4.0,8.0.0)",
- de.sebthom.eclipse.commons
+ de.sebthom.eclipse.commons;bundle-version="[1.0.0,2.0.0)"
