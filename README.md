@@ -1,4 +1,4 @@
-# Haxe4E - Haxe programming language support for Eclipse IDE
+# Haxe4E - Haxe programming language support for the Eclipse IDE
 
 [![Build Status](https://github.com/haxe4e/haxe4e/actions/workflows/build.yml/badge.svg)](https://github.com/haxe4e/haxe4e/actions/workflows/build.yml)
 [![License](https://img.shields.io/github/license/haxe4e/haxe4e.svg?color=blue)](LICENSE.txt)
@@ -9,7 +9,6 @@
 
 1. [About](#about)
 1. [Installation](#installation)
-1. [Usage](#usage)
 1. [Building from Sources](#building)
 1. [Acknowledgement](#acknowledgement)
 1. [License](#license)
@@ -19,6 +18,16 @@
 
 Haxe4E is an extension for the [Eclipse IDE](https://eclipse.org) to support development using the [Haxe](https://haxe.org) general purpose
 programming language.
+
+### Features
+- Syntax Highlighting
+- Source Code Formatting
+- Auto Completion
+- Code Refactoring
+- Running and debugging of Haxe Eval programs
+- Display project dependencies in project outline
+
+![](https://github.com/haxe4e/haxe-studio/raw/main/product/src/haxe_studio_screenshot.png)
 
 
 ## <a name="installation"></a>Installation
@@ -35,11 +44,6 @@ To install Haxe4E into an existing Eclipse installation do:
 1. Eclipse will now download the necessary files in the background.
 1. When the download has finished, Eclipse will ask about installing unsigned content. You need to accept if you want to
 1. After installation you will be prompted for a restart of Eclipse, which is recommended.
-
-
-## <a name="usage"></a>Usage
-
-TODO
 
 
 ## <a id="building"></a>Building from Sources
