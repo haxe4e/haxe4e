@@ -4,10 +4,11 @@
  */
 package org.haxe4e.widget;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.lazyNonNull;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -87,7 +88,7 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
                prefs.setBuildFilePath(currentBuildFile.getProjectRelativePath());
                prefs.save();
             }
-            buildFileDropDown.setItems(buildFiles.stream().map(IFile::getProjectRelativePath).toArray(String[]::new));
+            buildFileDropDown.setItems(buildFiles.stream().map(IFile::getProjectRelativePath).map(IPath::toString).toArray(String[]::new));
             buildFileDropDown.setText(currentBuildFile.getProjectRelativePath());
          }
 
