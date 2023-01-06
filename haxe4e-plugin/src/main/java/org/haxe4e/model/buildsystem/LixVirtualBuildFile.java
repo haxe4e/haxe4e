@@ -57,7 +57,7 @@ public final class LixVirtualBuildFile extends LixBuildFile {
    }
 
    @Override
-   public Set<IPath> getSourcePaths() throws RuntimeIOException {
+   public Set<IPath> getSourcePaths() {
       final var src = getProject().getFolder("src");
       return Set.of(Path.fromOSString(src.exists() ? "src" : "."));
    }

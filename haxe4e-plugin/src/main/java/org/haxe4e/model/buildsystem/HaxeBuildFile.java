@@ -4,7 +4,7 @@
  */
 package org.haxe4e.model.buildsystem;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +28,6 @@ import org.haxe4e.model.Haxelib;
 import de.sebthom.eclipse.commons.ui.UI;
 import de.sebthom.eclipse.commons.ui.widgets.NotificationPopup;
 import net.sf.jstuff.core.Strings;
-import net.sf.jstuff.core.exception.Exceptions;
 import net.sf.jstuff.core.io.RuntimeIOException;
 import net.sf.jstuff.core.ref.MutableRef;
 
@@ -106,7 +105,7 @@ public class HaxeBuildFile extends BuildFile {
             }
          });
       } catch (final IOException ex) {
-         throw Exceptions.wrapAsRuntimeException(ex);
+         throw new RuntimeIOException(ex);
       }
       return args;
    }
