@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Constants;
 import org.haxe4e.model.buildsystem.LixVirtualBuildFile;
+import org.haxe4e.navigation.HaxeDependenciesUpdater;
 import org.haxe4e.prefs.HaxeProjectPreference;
 
 /**
@@ -82,6 +83,12 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
 
                   final var resource = subDelta.getResource();
                   switch (resource.getProjectRelativePath().segment(0)) {
+                     case HaxeDependenciesUpdater.STDLIB_MAGIC_FOLDER_NAME:
+                        // don't auto build if changes in stdlib occur
+                     case HaxeDependenciesUpdater.DEPS_MAGIC_FOLDER_NAME:
+                        // don't auto build if changes in other projects occur, this could result in endless circular builds
+                     case ".github":
+                     case "hxformat.json":
                      case "bin":
                      case "build":
                      case "dump":
