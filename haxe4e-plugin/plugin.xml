@@ -5,6 +5,11 @@
       <startup class="org.haxe4e.Haxe4EStartupListener" />
    </extension>
 
+   <!-- useful references
+      common menu ids: https://blogs.itemis.com/auf-einen-blick-eclipse-actions-für-project-und-package-explorer
+      availabe variables: https://wiki.eclipse.org/Command_Core_Expressions
+   -->
+
    <!-- ===================================== -->
    <!-- Content Type                          -->
    <!-- ===================================== -->
