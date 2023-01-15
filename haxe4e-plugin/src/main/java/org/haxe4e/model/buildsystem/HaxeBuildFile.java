@@ -107,6 +107,7 @@ public class HaxeBuildFile extends BuildFile {
       } catch (final IOException ex) {
          throw new RuntimeIOException(ex);
       }
+
       return args;
    }
 
@@ -120,20 +121,31 @@ public class HaxeBuildFile extends BuildFile {
 
    @Override
    public Set<Haxelib> getDirectDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) throws RuntimeIOException {
+      return getDirectDependencies(asNonNull(location.getLocation()).toFile().toPath(), haxeSDK, monitor);
+   }
+
+   protected Set<Haxelib> getDirectDependencies(final Path hxmlFile, final HaxeSDK haxeSDK, final IProgressMonitor monitor)
+      throws RuntimeIOException {
       final var deps = new LinkedHashSet<Haxelib>();
-      final var args = parseArgs();
-      final var libs = getOptionValues(args, arg -> switch (arg) {
-         case "-L", "-lib", "--library" -> true;
-         default -> false;
-      });
-      for (final var lib : libs) {
-         final var libName = Strings.substringBefore(lib, ":");
-         final var libVer = Strings.substringAfter(lib, ":");
-         try {
-            deps.add(Haxelib.from(haxeSDK, libName, libVer, monitor));
-         } catch (final Exception ex) {
-            Haxe4EPlugin.log().error(ex);
-            UI.run(() -> new NotificationPopup(ex.getMessage()).open());
+      final var args = parseArgs(hxmlFile);
+
+      boolean nextIsLibName = false;
+      for (final String arg : args) {
+         if (nextIsLibName) {
+            nextIsLibName = false;
+            final var libName = Strings.substringBefore(arg, ":");
+            final var libVer = Strings.substringAfter(arg, ":");
+            try {
+               deps.add(Haxelib.from(haxeSDK, libName, libVer, monitor));
+            } catch (final Exception ex) {
+               Haxe4EPlugin.log().error(ex);
+               UI.run(() -> new NotificationPopup(ex.getMessage()).open());
+            }
+         } else if (arg.endsWith(".hxml")) {
+            // recursively resolve dependencies
+            deps.addAll(getDirectDependencies(hxmlFile.getParent().resolve(arg), haxeSDK, monitor));
+         } else if ("-L".equals(arg) || "-lib".equals(arg) || "--library".equals(arg)) {
+            nextIsLibName = true;
          }
       }
       return deps;
