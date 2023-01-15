@@ -19,7 +19,7 @@ import org.haxe4e.util.TreeBuilder;
 @SuppressWarnings("restriction") // https://bugs.eclipse.org/bugs/show_bug.cgi?id=536215
 public final class HaxeLangServerClientImpl extends LanguageClientImpl implements HaxeLangServerClient {
 
-   private boolean isInitTriggered = false;
+   private volatile boolean isInitTriggered = false;
 
    @Override
    public void onHaxeCacheBuildFailed(final Object value) {
