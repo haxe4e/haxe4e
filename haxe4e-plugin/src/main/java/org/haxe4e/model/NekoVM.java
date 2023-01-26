@@ -4,7 +4,7 @@
  */
 package org.haxe4e.model;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNullUnsafe;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -59,7 +59,7 @@ public final class NekoVM implements Comparable<NekoVM> {
             return sdk;
       }
       return null;
-   }, nekoVM -> nekoVM == null ? 15_000 : 60_000);
+   }, (nekoVM, ageMS) -> ageMS > (nekoVM == null ? 15_000 : 60_000));
 
    /**
     * Tries to locate the Neko VM via NEKOPATH and PATH environment variables
@@ -91,7 +91,7 @@ public final class NekoVM implements Comparable<NekoVM> {
          Threads.handleInterruptedException(ex);
       }
       return Strings.contains(out, "NekoVM");
-   }, valid -> valid ? 60_000 : 15_000);
+   }, (exeIsValid, ageMS) -> ageMS > (exeIsValid ? 60_000 : 15_000));
 
    @SuppressWarnings("unused")
    private NekoVM() {

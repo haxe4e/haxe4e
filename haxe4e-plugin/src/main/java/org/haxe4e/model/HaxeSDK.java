@@ -4,7 +4,7 @@
  */
 package org.haxe4e.model;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNullUnsafe;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -66,7 +66,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
 
       sdk = new HaxeSDK(asNonNullUnsafe(haxeCompiler.getParent()), NekoVM.fromPath());
       return sdk.isValid() ? sdk : null;
-   }, haxeSDK -> haxeSDK == null ? 15_000 : 60_000);
+   }, (haxeSDK, ageMS) -> ageMS > (haxeSDK == null ? 15_000 : 60_000));
 
    /**
     * Tries to locate the Haxe SDK via HAXEPATH and PATH environment variables
@@ -98,7 +98,7 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
          // ignore
       }
       return false;
-   }, valid -> valid ? 60_000 : 15_000);
+   }, (exeIsValid, ageMS) -> ageMS > (exeIsValid ? 60_000 : 15_000));
 
    @SuppressWarnings("unused")
    private HaxeSDK() {
