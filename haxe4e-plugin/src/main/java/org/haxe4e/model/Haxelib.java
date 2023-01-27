@@ -99,7 +99,7 @@ public final class Haxelib implements Comparable<Haxelib> {
    public Haxelib(final Path directory, final boolean isDevVersion) throws IOException {
       this.isDevVersion = isDevVersion;
       location = directory;
-      meta = HaxelibJSON.from(location.resolve("haxelib.json"));
+      meta = HaxelibJSON.from(location.resolve(HaxelibJSON.FILENAME));
    }
 
    @Override

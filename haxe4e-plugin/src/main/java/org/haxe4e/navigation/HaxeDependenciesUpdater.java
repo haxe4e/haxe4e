@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Haxe4EPlugin;
+import org.haxe4e.model.HaxelibJSON;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.project.HaxeProjectNature;
 
@@ -106,7 +107,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
 
          final var prefs = HaxeProjectPreference.get(project);
          if (prefs.getBuildSystem().getBuildFileExtension().equals(resource.getFileExtension()) //
-            || "haxelib.json".equals(resource.getName())) {
+            || HaxelibJSON.FILENAME.equals(resource.getName())) {
             changedProjects.add(project);
             return false; // no need to check children
          }

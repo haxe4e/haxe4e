@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HaxelibJSON {
 
+   public static final String FILENAME = "haxelib.json";
+
    private static final ObjectMapper JSON = new ObjectMapper();
 
    public static HaxelibJSON from(final Path path) throws IOException {

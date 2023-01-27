@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.model.Haxelib;
+import org.haxe4e.model.HaxelibJSON;
 
 import de.sebthom.eclipse.commons.ui.UI;
 import de.sebthom.eclipse.commons.ui.widgets.NotificationPopup;
@@ -80,7 +81,7 @@ public class LixBuildFile extends HaxeBuildFile {
 
             for (@Nullable
             Path folder = Paths.get(cp); folder != null && Files.exists(folder); folder = folder.getParent()) {
-               if (Files.exists(folder.resolve("haxelib.json"))) {
+               if (Files.exists(folder.resolve(HaxelibJSON.FILENAME))) {
                   deps.add(new Haxelib(folder, false));
                   break;
                }

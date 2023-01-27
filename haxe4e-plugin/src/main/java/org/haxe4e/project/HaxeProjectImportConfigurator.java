@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
 import org.haxe4e.Haxe4EPlugin;
+import org.haxe4e.model.HaxelibJSON;
 
 import net.sf.jstuff.core.collection.Sets;
 
@@ -52,7 +53,7 @@ public final class HaxeProjectImportConfigurator implements ProjectConfigurator 
             @Override
             public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
                final var fileName = file.getFileName().toString();
-               if (fileName.endsWith(".hxml") || "haxelib.json".equals(fileName)) {
+               if (fileName.endsWith(".hxml") || HaxelibJSON.FILENAME.equals(fileName)) {
                   haxeProjects.add(file.getParent().toFile());
                }
                return FileVisitResult.CONTINUE;
