@@ -8,16 +8,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.annotation.Nullable;
+import org.haxe4e.Haxe4EPlugin;
 
 import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.collection.EvictingDeque;
+import net.sf.jstuff.core.collection.tuple.Tuple2;
 import net.sf.jstuff.core.io.Processes.ProcessState;
 import net.sf.jstuff.core.validation.Args;
 
@@ -115,6 +120,43 @@ public final class Haxelib implements Comparable<Haxelib> {
          return false;
       final var other = (Haxelib) obj;
       return location.equals(other.location);
+   }
+
+   protected void collectDependencies(final int level, final Map<String, Tuple2<Integer, Haxelib>> collected, final HaxeSDK haxeSDK,
+      final IProgressMonitor monitor) {
+      for (final var dep : getDirectDependencies(haxeSDK, monitor)) {
+         final var alreadyCollected = collected.get(dep.meta.name);
+         if (alreadyCollected == null || alreadyCollected.get1() > level) {
+            collected.put(dep.meta.name, Tuple2.create(level, dep));
+
+            // transitive dependencies
+            dep.collectDependencies(level + 1, collected, haxeSDK, monitor);
+         }
+      }
+   }
+
+   public Collection<Haxelib> getDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) {
+      final var deps = new HashMap<String, Tuple2<Integer, Haxelib>>();
+      collectDependencies(0, deps, haxeSDK, monitor);
+      deps.remove(meta.name); // prevent circular dependencies via nested transitive dependencies
+      return deps.values().stream().map(Tuple2::get2).toList();
+   }
+
+   public Collection<Haxelib> getDirectDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) {
+      final var deps = new HashMap<String, Haxelib>();
+      final var depsJSON = meta.dependencies;
+      if (depsJSON != null) {
+         for (final var dep : depsJSON.entrySet()) {
+            if (!deps.containsKey(dep.getKey())) {
+               try {
+                  deps.put(dep.getKey(), Haxelib.from(haxeSDK, dep.getKey(), dep.getValue(), monitor));
+               } catch (final IOException ex) {
+                  Haxe4EPlugin.log().error(ex);
+               }
+            }
+         }
+      }
+      return deps.values();
    }
 
    @Override

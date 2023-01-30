@@ -4,18 +4,22 @@
  */
 package org.haxe4e.model.buildsystem;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNull;
 
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.function.Supplier;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+import de.sebthom.eclipse.commons.resources.Resources;
 import net.sf.jstuff.core.Strings;
-import net.sf.jstuff.core.io.RuntimeIOException;
+import net.sf.jstuff.core.functional.Suppliers;
 
 /**
  * Virtual build file computed based on conventions in case no physical one exists.
@@ -24,12 +28,7 @@ import net.sf.jstuff.core.io.RuntimeIOException;
  */
 public final class LixVirtualBuildFile extends LixBuildFile {
 
-   public LixVirtualBuildFile(final IProject project) {
-      super(project.getFile("<virtual>"));
-   }
-
-   @Override
-   public List<String> parseArgs() throws RuntimeIOException {
+   private final Supplier<BuildFileContent> content = Suppliers.memoize(() -> {
       final var args = new ArrayList<String>();
 
       // guess source directory
@@ -53,7 +52,25 @@ public final class LixVirtualBuildFile extends LixBuildFile {
          }
       }
 
-      return args;
+      final var content = new BuildFileContent(args);
+      for (final var arg : content.args) {
+         if (arg.endsWith(".hxml")) {
+            final var member = asNonNull(location.getParent()).findMember(arg);
+            if (member instanceof final IFile file && file.exists()) {
+               content.includedBuildFiles.add(new HaxeBuildFile(file));
+            }
+         }
+      }
+      return content;
+   }, (args, ageMS) -> System.currentTimeMillis() - Resources.lastModified(location) > ageMS);
+
+   public LixVirtualBuildFile(final IProject project) {
+      super(project.getFile("<virtual>"));
+   }
+
+   @Override
+   protected BuildFileContent getBuildFileContent() {
+      return content.get();
    }
 
    @Override

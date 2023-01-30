@@ -8,13 +8,12 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.model.Haxelib;
@@ -58,40 +57,46 @@ public class LixBuildFile extends HaxeBuildFile {
    }
 
    @Override
-   public Set<Haxelib> getDirectDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) throws RuntimeIOException {
-      final var haxeLibsFolder = getProject().getFolder("haxe_libraries");
-      if (!haxeLibsFolder.exists())
+   public Collection<Haxelib> getDirectDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) throws RuntimeIOException {
+      final var haxeLibsLockFolder = getProject().getFolder("haxe_libraries");
+      if (!haxeLibsLockFolder.exists())
          return Collections.emptySet();
 
-      final var haxeLibCachePath = getHaxeLibCachePath();
-      final var deps = new LinkedHashSet<Haxelib>();
-      final var args = parseArgs();
-      final var libs = getOptionValues(args, arg -> switch (arg) {
+      final var deps = new HashMap<String, Haxelib>();
+      final var content = getBuildFileContent();
+      final var libs = getOptionValues(content.args, arg -> switch (arg) {
          case "-L", "-lib", "--library" -> true;
          default -> false;
       });
+
+      final var haxeLibCachePath = getHaxeLibCachePath();
+
       for (final var lib : libs) {
          final var libName = Strings.substringBefore(lib, ":");
          try {
-            final var libArgs = parseArgs(haxeLibsFolder.getFile(libName + ".hxml"));
-            final var cp = Strings.replace(getOptionValues(libArgs, arg -> switch (arg) {
+            final var libArgs = parseArgs(haxeLibsLockFolder.getFile(libName + ".hxml"));
+            final var libCP = Strings.replace(getOptionValues(libArgs, arg -> switch (arg) {
                case "-p", "-cp", "--class-path" -> true;
                default -> false;
             }).get(0), "${HAXE_LIBCACHE}", haxeLibCachePath);
 
-            for (@Nullable
-            Path folder = Paths.get(cp); folder != null && Files.exists(folder); folder = folder.getParent()) {
+            Path folder = null;
+            for (folder = Paths.get(libCP); folder != null && Files.exists(folder); folder = folder.getParent()) {
                if (Files.exists(folder.resolve(HaxelibJSON.FILENAME))) {
-                  deps.add(new Haxelib(folder, false));
+                  final var dep = new Haxelib(folder, false);
+                  deps.put(dep.meta.name, dep);
                   break;
                }
             }
-
          } catch (final Exception ex) {
             Haxe4EPlugin.log().error(ex);
             UI.run(() -> new NotificationPopup(ex.getMessage()).open());
          }
       }
-      return deps;
+
+      for (final var includedBuildFile : content.includedBuildFiles) {
+         includedBuildFile.getDirectDependencies(haxeSDK, monitor).forEach(i -> deps.putIfAbsent(i.meta.name, i));
+      }
+      return deps.values();
    }
 }

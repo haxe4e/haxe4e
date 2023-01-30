@@ -4,7 +4,7 @@
  */
 package org.haxe4e.langserver;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +92,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
                      displayServerArgs.add(source.toString());
                   }
                   if (haxeSDK != null) {
-                     for (final var haxelib : buildFile.getDirectDependencies(haxeSDK, new NullProgressMonitor())) {
+                     for (final var haxelib : buildFile.getDependencies(haxeSDK, new NullProgressMonitor())) {
                         displayServerArgs.add("--library");
                         if (Strings.isBlank(haxelib.meta.version)) {
                            displayServerArgs.add(haxelib.meta.name);
@@ -108,7 +108,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
                      displayServerArgs.add(source.toString());
                   }
                   if (haxeSDK != null) {
-                     for (final var haxelib : buildFile.getDirectDependencies(haxeSDK, new NullProgressMonitor())) {
+                     for (final var haxelib : buildFile.getDependencies(haxeSDK, new NullProgressMonitor())) {
                         displayServerArgs.add("--class-path");
                         displayServerArgs.add(haxelib.location.resolve(Strings.defaultIfNull(haxelib.meta.classPath, ".")).toString());
                      }

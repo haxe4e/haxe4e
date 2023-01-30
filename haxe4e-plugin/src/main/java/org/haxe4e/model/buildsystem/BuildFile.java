@@ -4,8 +4,10 @@
  */
 package org.haxe4e.model.buildsystem;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNullUnsafe;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -34,7 +36,18 @@ public abstract class BuildFile {
       return location.exists();
    }
 
-   public abstract Set<Haxelib> getDirectDependencies(HaxeSDK haxeSDK, IProgressMonitor monitor);
+   public Collection<Haxelib> getDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) {
+      final var deps = new HashMap<String, Haxelib>();
+      for (final var dep : getDirectDependencies(haxeSDK, monitor)) {
+         deps.put(dep.meta.name, dep);
+
+         // transitive dependencies
+         dep.getDependencies(haxeSDK, monitor).forEach(i -> deps.putIfAbsent(i.meta.name, i));
+      }
+      return deps.values();
+   }
+
+   public abstract Collection<Haxelib> getDirectDependencies(HaxeSDK haxeSDK, IProgressMonitor monitor);
 
    public IProject getProject() {
       return asNonNullUnsafe(location.getProject());

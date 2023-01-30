@@ -40,7 +40,7 @@ public class HaxelibJSON {
    public @Nullable URL url;
    public @Nullable String main;
    public @Nullable String classPath;
-   public @Nullable Map<String, String> dependencies;
+   public @Nullable Map<String /*name*/, String /*version*/> dependencies;
    public @Nullable LinkedHashSet<String> contributors;
    public @Nullable LinkedHashSet<String> tags;
    public @Nullable String releasenote;

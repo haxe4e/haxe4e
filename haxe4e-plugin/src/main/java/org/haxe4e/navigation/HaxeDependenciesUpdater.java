@@ -172,7 +172,7 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
 
          @SuppressWarnings("null")
          final var depsToCheck = buildFile //
-            .getDirectDependencies(sdk, monitor).stream() //
+            .getDependencies(sdk, monitor).stream() //
             .collect(Collectors.toMap(d -> d.meta.name + " [" + (d.isDevVersion ? "dev" : d.meta.version) + "]", Function.identity()));
 
          for (final var folder : depsFolder.members()) {
