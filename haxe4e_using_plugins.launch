@@ -199,6 +199,7 @@
         <mapEntry key="org.haxe4e/trace/langserv/io" value="false"/>
         <mapEntry key="org.haxe4e/trace/langserv/method_results" value="false"/>
         <mapEntry key="org.haxe4e/trace/spellcheck/regions" value="false"/>
+        <mapEntry key="org.haxe4e/trace/spellcheck/tokens" value="false"/>
     </mapAttribute>
     <booleanAttribute key="useCustomFeatures" value="false"/>
     <booleanAttribute key="useDefaultConfig" value="true"/>
