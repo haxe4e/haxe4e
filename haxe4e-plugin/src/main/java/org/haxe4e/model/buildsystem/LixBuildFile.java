@@ -75,10 +75,10 @@ public class LixBuildFile extends HaxeBuildFile {
          final var libName = Strings.substringBefore(lib, ":");
          try {
             final var libArgs = parseArgs(haxeLibsLockFolder.getFile(libName + ".hxml"));
-            final var libCP = Strings.replace(getOptionValues(libArgs, arg -> switch (arg) {
+            final var libCP = Strings.replaceEach(getOptionValues(libArgs, arg -> switch (arg) {
                case "-p", "-cp", "--class-path" -> true;
                default -> false;
-            }).get(0), "${HAXE_LIBCACHE}", haxeLibCachePath);
+            }).get(0), new String[] {"${HAXE_LIBCACHE}", "${HAXESHIM_LIBCACHE}"}, new String[] {haxeLibCachePath, haxeLibCachePath});
 
             Path folder = null;
             for (folder = Paths.get(libCP); folder != null && Files.exists(folder); folder = folder.getParent()) {
