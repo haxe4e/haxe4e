@@ -6,10 +6,12 @@ package org.haxe4e.tests.model.buildsystem;
 
 import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 import org.haxe4e.model.buildsystem.HaxeBuildFile;
@@ -26,14 +28,19 @@ public class BuildFileTest {
 
    @Test
    public void testHaxeBuildFile() {
-      final var buildFile = new HaxeBuildFile(asNonNullUnsafe((IFile) null)) {
+      final var parentMock = asNonNull(mock(IContainer.class));
+      final var fileMock = asNonNull(mock(IFile.class));
+      when(fileMock.getLocation()).thenReturn(Path.fromOSString("test.hxml"));
+      when(fileMock.getParent()).thenReturn(parentMock);
+      when(parentMock.getProjectRelativePath()).thenReturn(Path.fromOSString(""));
+      final var buildFile = new HaxeBuildFile(fileMock) {
          @Override
-         public List<String> parseArgs() throws RuntimeIOException {
+         public List<String> getArgs() throws RuntimeIOException {
             return parseArgs(Paths.get("src/test/resources/test.hxml"));
          }
       };
 
-      final var args = buildFile.parseArgs();
+      final var args = buildFile.getArgs();
       assertThat(args).contains( //
          "-cp", "src", //
          "-p", "dir/another src", //
@@ -56,7 +63,13 @@ public class BuildFileTest {
 
    @Test
    public void testLimeBuildFile() {
-      final var buildFile = new LimeBuildFile(asNonNullUnsafe((IFile) null)) {
+      final var parentMock = asNonNull(mock(IContainer.class));
+      final var fileMock = asNonNull(mock(IFile.class));
+      when(fileMock.getLocation()).thenReturn(Path.fromOSString("lime.xml"));
+      when(fileMock.getParent()).thenReturn(parentMock);
+      when(parentMock.getProjectRelativePath()).thenReturn(Path.fromOSString(""));
+
+      final var buildFile = new LimeBuildFile(fileMock) {
          @Override
          public DOMFile parseFile() throws RuntimeIOException {
             return parseFile(Paths.get("src/test/resources/lime.xml").toFile());

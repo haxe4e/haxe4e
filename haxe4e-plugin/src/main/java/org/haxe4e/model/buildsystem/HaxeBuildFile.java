@@ -42,6 +42,15 @@ import net.sf.jstuff.core.ref.MutableRef;
  */
 public class HaxeBuildFile extends BuildFile {
 
+   protected static final class BuildFileContent {
+      final List<String> args;
+      final List<HaxeBuildFile> includedBuildFiles = new ArrayList<>(4);
+
+      BuildFileContent(final List<String> args) {
+         this.args = args;
+      }
+   }
+
    protected static List<String> getOptionValues(final List<String> args, final Predicate<String> optionNameTester) {
       final var values = new ArrayList<String>(Math.min(args.size() / 2, 8));
       var nextArgIsCollectable = false;
@@ -129,15 +138,6 @@ public class HaxeBuildFile extends BuildFile {
       return args;
    }
 
-   protected static final class BuildFileContent {
-      final List<String> args;
-      final List<HaxeBuildFile> includedBuildFiles = new ArrayList<>(4);
-
-      BuildFileContent(final List<String> args) {
-         this.args = args;
-      }
-   }
-
    private final Supplier<BuildFileContent> content = Suppliers.memoize(() -> {
       final var content = new BuildFileContent(parseArgs(location));
       for (final var arg : content.args) {
@@ -151,6 +151,36 @@ public class HaxeBuildFile extends BuildFile {
       return content;
    }, (args, ageMS) -> System.currentTimeMillis() - Resources.lastModified(location) > ageMS);
 
+   private final Supplier<Set<IPath>> getSourcePaths = Suppliers.memoize(() -> {
+      final var args = getArgs();
+
+      final var sourcePaths = getOptionValues(args, arg -> switch (arg) {
+         case "-p", "-cp", "--class-path" -> true;
+         default -> false;
+      }).stream() //
+         .map(str -> asNonNull(location.getParent()).getProjectRelativePath().append(str)) //
+         .collect(Collectors.toCollection(LinkedHashSet::new));
+
+      if (sourcePaths.isEmpty()) {
+         final var jsonFile = getProject().getFile(HaxelibJSON.FILENAME);
+         if (jsonFile.exists()) {
+            try {
+               final var json = HaxelibJSON.from(asNonNull(jsonFile.getLocation()).toFile().toPath());
+               final var cp = json.classPath;
+               if (cp != null) {
+                  final var cpFolder = getProject().getFolder(cp);
+                  if (cpFolder.exists())
+                     return Set.of(org.eclipse.core.runtime.Path.fromOSString(cp));
+               }
+            } catch (final IOException ex) {
+               Haxe4EPlugin.log().error(ex);
+               UI.run(() -> new NotificationPopup(ex.getMessage()).open());
+            }
+         }
+      }
+      return sourcePaths;
+   }, (args, ageMS) -> System.currentTimeMillis() - Resources.lastModified(location) > ageMS);
+
    HaxeBuildFile(final BuildSystem bs, final IFile location) {
       super(bs, location);
 
@@ -158,6 +188,16 @@ public class HaxeBuildFile extends BuildFile {
 
    public HaxeBuildFile(final IFile location) {
       this(BuildSystem.HAXE, location);
+   }
+
+   public List<String> getArgs() throws RuntimeIOException {
+      final var args = new ArrayList<String>();
+      final var content = getBuildFileContent();
+      for (final var includedBuildFile : content.includedBuildFiles) {
+         args.addAll(includedBuildFile.getArgs());
+      }
+      args.addAll(content.args);
+      return args;
    }
 
    protected BuildFileContent getBuildFileContent() {
@@ -190,39 +230,8 @@ public class HaxeBuildFile extends BuildFile {
       return deps.values();
    }
 
-   private final Supplier<Set<IPath>> getSourcePaths = Suppliers.memoize(() -> {
-      final var args = parseArgs();
-      final var sourcePaths = getOptionValues(args, arg -> switch (arg) {
-         case "-p", "-cp", "--class-path" -> true;
-         default -> false;
-      }).stream().map(org.eclipse.core.runtime.Path::fromOSString).collect(Collectors.toCollection(LinkedHashSet::new));
-
-      if (sourcePaths.isEmpty()) {
-         final var jsonFile = getProject().getFile(HaxelibJSON.FILENAME);
-         if (jsonFile.exists()) {
-            try {
-               final var json = HaxelibJSON.from(asNonNull(jsonFile.getLocation()).toFile().toPath());
-               final var cp = json.classPath;
-               if (cp != null) {
-                  final var cpFolder = getProject().getFolder(cp);
-                  if (cpFolder.exists())
-                     return Set.of(org.eclipse.core.runtime.Path.fromOSString(cp));
-               }
-            } catch (final IOException ex) {
-               Haxe4EPlugin.log().error(ex);
-               UI.run(() -> new NotificationPopup(ex.getMessage()).open());
-            }
-         }
-      }
-      return sourcePaths;
-   }, (args, ageMS) -> System.currentTimeMillis() - Resources.lastModified(location) > ageMS);
-
    @Override
    public Set<IPath> getSourcePaths() throws RuntimeIOException {
       return getSourcePaths.get();
-   }
-
-   public List<String> parseArgs() throws RuntimeIOException {
-      return getBuildFileContent().args;
    }
 }

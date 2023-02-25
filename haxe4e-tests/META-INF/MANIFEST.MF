@@ -10,4 +10,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.junit,
  org.eclipse.jdt.ui,
  org.eclipse.reddeer.go,
- assertj-core
+ assertj-core,
+ org.mockito.mockito-core;bundle-version="5.1.1",
+ net.bytebuddy.byte-buddy-agent;bundle-version="1.12.22",
+ net.bytebuddy.byte-buddy;bundle-version="1.12.22"
