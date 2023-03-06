@@ -1,11 +1,13 @@
 /*
- * Copyright 2021-2022, 2022 by the Haxe4E authors.
+ * SPDX-FileCopyrightText: © The Haxe4E authors
+ * SPDX-FileContributor: Sebastian Thomschke
  * SPDX-License-Identifier: EPL-2.0
+ * SPDX-ArtifactOfProjectHomePage: https://github.com/haxe4e/haxe4e
  */
 package org.haxe4e.tests.model.buildsystem;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
-import static org.assertj.core.api.Assertions.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import java.nio.file.Paths;
