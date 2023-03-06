@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
@@ -43,9 +44,12 @@ public final class HaxeWorkspacePreference {
 
    private static final ObjectMapper JSON = new ObjectMapper();
 
-   private static final String PROPERTY_DEFAULT_HAXE_SDK = "haxe.default_sdk";
-   private static final String PROPERTY_HAXE_SDKS = "haxe.sdks";
-   private static final String PROPERTY_WARNED_NO_SDK_REGISTERED = "haxe.warned_no_sdk_registered";
+   static final String PREFKEY_DEFAULT_HAXE_SDK = "haxe.default_sdk";
+   static final String PREFKEY_HAXE_SDKS = "haxe.sdks";
+   static final String PREFKEY_WARNED_NO_SDK_REGISTERED = "haxe.warned_no_sdk_registered";
+   static final String PREFKEY_LANGSERV_TRACE_INITOPTS = "haxe.langsrv.trace.init_options";
+   static final String PREFKEY_LANGSERV_TRACE_IO = "haxe.langsrv.trace.io";
+   static final String PREFKEY_LANGSERV_TRACE_METHOD_RESULTS = "haxe.langsrv.trace.method_results";
 
    static {
       // this disables usage of com.fasterxml.jackson.databind.ext.NioPathDeserializer
@@ -66,7 +70,7 @@ public final class HaxeWorkspacePreference {
       JSON.registerModule(m);
    }
 
-   static final IPersistentPreferenceStore PREFS = new ScopedPreferenceStore(InstanceScope.INSTANCE, Haxe4EPlugin.PLUGIN_ID);
+   static final IPersistentPreferenceStore STORE = new ScopedPreferenceStore(InstanceScope.INSTANCE, Haxe4EPlugin.PLUGIN_ID);
 
    // CHECKSTYLE:IGNORE .* FOR NEXT 3 LINES
    private static final SortedSet<HaxeSDK> haxeSDKs = new TreeSet<>();
@@ -77,7 +81,7 @@ public final class HaxeWorkspacePreference {
          if (!isHaxeSDKsInitialized) {
             isHaxeSDKsInitialized = true;
 
-            final var haxeSDKsSerialized = PREFS.getString(PROPERTY_HAXE_SDKS);
+            final var haxeSDKsSerialized = STORE.getString(PREFKEY_HAXE_SDKS);
             if (Strings.isNotBlank(haxeSDKsSerialized)) {
                try {
                   haxeSDKs.addAll(JSON.readValue(haxeSDKsSerialized, new TypeReference<List<HaxeSDK>>() {}));
@@ -97,7 +101,7 @@ public final class HaxeWorkspacePreference {
             }
          }
 
-         if (haxeSDKs.isEmpty() && !PREFS.getBoolean(PROPERTY_WARNED_NO_SDK_REGISTERED)) {
+         if (haxeSDKs.isEmpty() && !STORE.getBoolean(PREFKEY_WARNED_NO_SDK_REGISTERED)) {
             for (final var ste : new Throwable().getStackTrace()) {
                final var prefPage = HaxeSDKPreferencePage.class.getName();
                // don't show warning on empty workspace if we directly go to Haxe Prefs
@@ -105,7 +109,7 @@ public final class HaxeWorkspacePreference {
                   return;
             }
 
-            PREFS.setValue(PROPERTY_WARNED_NO_SDK_REGISTERED, true);
+            STORE.setValue(PREFKEY_WARNED_NO_SDK_REGISTERED, true);
             save();
 
             UI.run(() -> {
@@ -126,7 +130,7 @@ public final class HaxeWorkspacePreference {
     * @return null if not found
     */
    public static @Nullable HaxeSDK getDefaultHaxeSDK(final boolean verify, final boolean searchPATH) {
-      final var defaultSDK = getHaxeSDK(PREFS.getString(PROPERTY_DEFAULT_HAXE_SDK));
+      final var defaultSDK = getHaxeSDK(STORE.getString(PREFKEY_DEFAULT_HAXE_SDK));
 
       if (defaultSDK != null) {
          if (!verify || defaultSDK.isValid())
@@ -177,9 +181,30 @@ public final class HaxeWorkspacePreference {
       }
    }
 
+   public static boolean isLangServTraceIO() {
+      if (STORE.contains(PREFKEY_LANGSERV_TRACE_IO))
+         return STORE.getBoolean(PREFKEY_LANGSERV_TRACE_IO);
+      return Platform.getDebugBoolean("org.haxe4e/trace/langserv/io");
+   }
+
+   public static boolean isLangServTraceInitOptions() {
+      if (STORE.contains(PREFKEY_LANGSERV_TRACE_INITOPTS))
+         return STORE.getBoolean(PREFKEY_LANGSERV_TRACE_INITOPTS);
+      return Platform.getDebugBoolean("org.haxe4e/trace/langserv/init_options");
+   }
+
+   /**
+    * https://github.com/search?q=org%3Avshaxe+sendMethodResults&type=code
+    */
+   public static boolean isLangServTraceMethodResults() {
+      if (STORE.contains(PREFKEY_LANGSERV_TRACE_METHOD_RESULTS))
+         return STORE.getBoolean(PREFKEY_LANGSERV_TRACE_METHOD_RESULTS);
+      return Platform.getDebugBoolean("org.haxe4e/trace/langserv/method_results");
+   }
+
    public static boolean save() {
       try {
-         PREFS.save();
+         STORE.save();
          return true;
       } catch (final IOException ex) {
          Dialogs.showStatus(Messages.Prefs_SavingPreferencesFailed, Haxe4EPlugin.status().createError(ex), true);
@@ -188,7 +213,7 @@ public final class HaxeWorkspacePreference {
    }
 
    public static void setDefaultHaxeSDK(final String name) {
-      PREFS.setValue(PROPERTY_DEFAULT_HAXE_SDK, name);
+      STORE.setValue(PREFKEY_DEFAULT_HAXE_SDK, name);
    }
 
    public static void setHaxeSDKs(final @Nullable Set<HaxeSDK> newSDKs) {
@@ -200,7 +225,7 @@ public final class HaxeWorkspacePreference {
             haxeSDKs.addAll(newSDKs);
          }
          try {
-            PREFS.setValue(PROPERTY_HAXE_SDKS, JSON.writeValueAsString(haxeSDKs));
+            STORE.setValue(PREFKEY_HAXE_SDKS, JSON.writeValueAsString(haxeSDKs));
          } catch (final JsonProcessingException ex) {
             throw new RuntimeIOException(ex);
          }

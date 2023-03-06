@@ -68,10 +68,19 @@
    <!-- ===================================== -->
    <!-- Preferences                           -->
    <!-- ===================================== -->
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.haxe4e.prefs.HaxeWorkspacePreferenceInitializer"/>
+   </extension>
    <extension point="org.eclipse.ui.preferencePages">
+      <page id="org.haxe4e.prefs.HaxePreferencePage"
+         class="org.haxe4e.prefs.HaxePreferencePage"
+         name="Haxe">
+         <keywordReference id="org.haxe4e.prefs.keyword.haxe" />
+      </page>
       <page id="org.haxe4e.prefs.HaxeSDKPreferencePage"
          class="org.haxe4e.prefs.HaxeSDKPreferencePage"
-         name="Haxe">
+         category="org.haxe4e.prefs.HaxePreferencePage"
+         name="SDKs">
          <keywordReference id="org.haxe4e.prefs.keyword.haxe" />
       </page>
    </extension>

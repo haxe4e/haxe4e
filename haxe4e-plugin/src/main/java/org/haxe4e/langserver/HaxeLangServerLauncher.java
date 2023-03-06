@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 import org.eclipse.wildwebdeveloper.embedder.node.NodeJSManager;
@@ -41,14 +40,6 @@ import net.sf.jstuff.core.Strings;
  */
 public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvider {
 
-   private static final boolean TRACE_IO = Platform.getDebugBoolean("org.haxe4e/trace/langserv/io");
-   private static final boolean TRACE_INIT_OPTIONS = Platform.getDebugBoolean("org.haxe4e/trace/langserv/init_options");
-
-   /**
-    * https://github.com/search?q=org%3Avshaxe+sendMethodResults&type=code
-    */
-   private static final boolean TRACE_METHOD_RESULTS = Platform.getDebugBoolean("org.haxe4e/trace/langserv/method_results");
-
    public HaxeLangServerLauncher() throws IOException {
       final var languageServerJS = Haxe4EPlugin.resources().extract("langsrv/haxe-language-server.min.js");
       setWorkingDirectory(SystemUtils.getUserDir().getAbsolutePath());
@@ -61,7 +52,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    @Override
    public @Nullable InputStream getErrorStream() {
       final var stream = super.getErrorStream();
-      if (!TRACE_IO)
+      if (!HaxeWorkspacePreference.isLangServTraceIO())
          return stream;
 
       if (stream == null)
@@ -146,10 +137,10 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
          .put("displayArguments", displayServerArgs) //
          // HaxelibConfig https://github.com/vshaxe/haxe-language-server/blob/master/src/haxeLanguageServer/Configuration.hx#L9
          .put("haxelibConfig", "executable", haxeSDK == null ? null : haxeSDK.getHaxelibExecutable().toString()) //
-         .put("sendMethodResults", TRACE_METHOD_RESULTS) //
+         .put("sendMethodResults", HaxeWorkspacePreference.isLangServTraceMethodResults()) //
          .getMap();
 
-      if (TRACE_INIT_OPTIONS) {
+      if (HaxeWorkspacePreference.isLangServTraceInitOptions()) {
          Haxe4EPlugin.log().info(opts);
       }
       return opts;
@@ -159,7 +150,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    public @Nullable InputStream getInputStream() {
       final var stream = super.getInputStream();
 
-      if (!TRACE_IO)
+      if (!HaxeWorkspacePreference.isLangServTraceIO())
          return stream;
 
       return stream == null ? null : new LinePrefixingTeeInputStream(stream, System.out, "SERVER >> ");
@@ -169,7 +160,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    public @Nullable OutputStream getOutputStream() {
       final var stream = super.getOutputStream();
 
-      if (!TRACE_IO)
+      if (!HaxeWorkspacePreference.isLangServTraceIO())
          return stream;
 
       return stream == null ? null : new LinePrefixingTeeOutputStream(stream, System.out, "CLIENT >> ");

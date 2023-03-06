@@ -46,6 +46,7 @@ public final class Messages extends NLS {
    public static String NekoPathInvalid = "Neko VM Path invalid";
    public static String NekoPathInvalid_Descr = "\"{0}\" does not point to a valid Neko VM";
 
+   public static String Prefs_GeneralDescription = "General settings for Haxe development:";
    public static String Prefs_ManageSDKsDescription = "Manage installed Haxe SDKs. By default the checked SDK will be used for newly created Haxe projects.";
    public static String Prefs_NoSDKRegistered_Title = "Haxe SDK missing";
    public static String Prefs_NoSDKRegistered_Body = "No Haxe SDK configured";

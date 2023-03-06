@@ -181,7 +181,7 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
 
    @Override
    public void init(final IWorkbench workbench) {
-      setPreferenceStore(HaxeWorkspacePreference.PREFS);
+      setPreferenceStore(HaxeWorkspacePreference.STORE);
       sdks.addAll(HaxeWorkspacePreference.getHaxeSDKs());
       defaultSDK.set(HaxeWorkspacePreference.getDefaultHaxeSDK(false, false));
    }
