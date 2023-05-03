@@ -85,7 +85,7 @@ jobs:
     - name: "Install: Maven"
       uses: stCarolas/setup-maven@v4.5 # https://github.com/stCarolas/setup-maven
       with:
-        maven-version: 3.8.6
+        maven-version: 3.9.1
 
 
     - name: Build with Maven
@@ -124,7 +124,7 @@ jobs:
 
 
     - name: "Delete previous 'latest' release"
-      if: ${{ github.ref == 'refs/heads/main' && !env.ACT }}
+      if: ${{ github.ref_name == 'main' && !env.ACT }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
@@ -148,7 +148,7 @@ jobs:
 
 
     - name: "Create 'latest' release"
-      if: ${{ github.ref == 'refs/heads/main' && !env.ACT }}
+      if: ${{ github.ref_name == 'main' && !env.ACT }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
