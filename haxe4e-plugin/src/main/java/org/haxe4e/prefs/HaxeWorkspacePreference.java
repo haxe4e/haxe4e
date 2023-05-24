@@ -114,7 +114,7 @@ public final class HaxeWorkspacePreference {
             STORE.setValue(PREFKEY_WARNED_NO_SDK_REGISTERED, true);
             save();
 
-            UI.run(() -> {
+            UI.runAsync(() -> {
                Dialogs.showError(Messages.Prefs_NoSDKRegistered_Title, Messages.Prefs_NoSDKRegistered_Body);
                final var dialog = PreferencesUtil.createPreferenceDialogOn( //
                   UI.getShell(), //
