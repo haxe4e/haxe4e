@@ -9,8 +9,8 @@
         </location>
 
         <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-            <!-- Eclipse 2022-09 aka 4.25 is the required minimum of selected LSP4E/TM4E releases -->
-            <repository location="https://download.eclipse.org/releases/2022-09/"/>
+            <!-- Eclipse 2023-03 aka 4.27 is the required minimum of latest LSP4E release -->
+            <repository location="https://download.eclipse.org/releases/2023-03/"/>
             <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
             <unit id="org.eclipse.sdk.ide" version="0.0.0"/>
             <unit id="org.eclipse.mylyn.wikitext.editors_feature.feature.group" version="0.0.0"/>
@@ -19,7 +19,7 @@
         </location>
 
         <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-            <repository location="https://download.eclipse.org/lsp4e/releases/0.21.0/"/>
+            <repository location="https://download.eclipse.org/lsp4e/releases/0.23.0/"/>
             <!--repository location="https://download.eclipse.org/lsp4e/snapshots/" />-->
             <unit id="org.eclipse.lsp4e" version="0.0.0"/>
             <unit id="org.eclipse.lsp4e.source" version="0.0.0"/>
