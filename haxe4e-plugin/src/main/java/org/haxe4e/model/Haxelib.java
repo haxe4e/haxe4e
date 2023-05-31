@@ -33,19 +33,21 @@ import net.sf.jstuff.core.validation.Args;
  */
 public final class Haxelib implements Comparable<Haxelib> {
 
+   private static final String ANY_VER = "<any>";
+
    public static Haxelib from(final HaxeSDK sdk, final String name, @Nullable String version, final IProgressMonitor monitor)
       throws IOException {
       Args.isDirectoryReadable("sdk.getLibsDir()", sdk.getHaxelibsDir());
 
+      if (version == null || version.isBlank()) {
+         version = ANY_VER;
+      }
+
       /*
        * determine expected location on file system
        */
-      monitor.setTaskName("Locating haxelib " + name + "...");
-      if (version != null && !version.isBlank()) {
-         final var libLocation = sdk.getHaxelibsDir().resolve(name).resolve(Strings.replace(version, ".", ","));
-         if (Files.exists(libLocation))
-            return new Haxelib(libLocation, false);
-      } else {
+      monitor.setTaskName("Locating haxelib " + name + ":" + version + "...");
+      if (ANY_VER.equals(version)) { // search for any version
          final var devFile = sdk.getHaxelibsDir().resolve(name).resolve(".dev");
          if (Files.exists(devFile)) {
             try (var stream = Files.lines(devFile)) {
@@ -61,7 +63,7 @@ public final class Haxelib implements Comparable<Haxelib> {
          final var currentFile = sdk.getHaxelibsDir().resolve(name).resolve(".current");
          if (Files.exists(currentFile)) {
             try (var stream = Files.lines(currentFile)) {
-               version = stream.findFirst().orElse("");
+               version = stream.findFirst().orElse(null);
                if (version != null && !version.isBlank()) {
                   final var libLocation = sdk.getHaxelibsDir().resolve(name).resolve(Strings.replace(version, ".", ","));
                   if (Files.exists(libLocation))
@@ -69,12 +71,21 @@ public final class Haxelib implements Comparable<Haxelib> {
                }
             }
          }
+
+      } else { // search for specific version
+         final var libLocation = sdk.getHaxelibsDir().resolve(name).resolve(Strings.replace(version, ".", ","));
+         if (Files.exists(libLocation))
+            return new Haxelib(libLocation, false);
+      }
+
+      if (version == null || version.isBlank()) {
+         version = ANY_VER;
       }
 
       monitor.setTaskName("Installing haxelib " + name + ":" + version);
       final var out = new EvictingDeque<String>(4);
       final var haxelibProcessBuilder = sdk.getHaxelibProcessBuilder( //
-         version == null //
+         ANY_VER.equals(version) //
             ? List.of("install", name)
             : List.of("install", name, version)) //
          .withWorkingDirectory(sdk.getInstallRoot()) //
