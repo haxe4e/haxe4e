@@ -138,23 +138,27 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
       final var doc = getDocument();
       if (doc == null)
          return;
+
       final var parsedDoc = TMUIPlugin.getTMModelManager().connect(doc);
       final var rulerInfo = getAdapter(IVerticalRulerInfo.class);
       if (rulerInfo == null)
          return;
-      final var lineNumber = rulerInfo.getLineOfLastMouseButtonActivity();
 
-      final var tokens = parsedDoc.getLineTokens(lineNumber);
+      final var lineIndex = rulerInfo.getLineOfLastMouseButtonActivity();
+      final var tokens = parsedDoc.getLineTokens(lineIndex);
       if (tokens == null || tokens.isEmpty())
          return;
 
       // check if the current line is eligible for having a breakpoint
       var lineSupportsAddingBreakpoint = false;
+
       loop: for (final var token : tokens) {
          switch (token.type) {
             case "":
             case "block.hx.meta.class":
             case "block.hx.meta.class.method":
+            case "hx.meta.class.block":
+            case "hx.meta.class.block.method":
             case "meta.class.hx.block.method":
                continue;
             default:
@@ -183,7 +187,7 @@ public final class HaxeEditor extends ExtensionBasedTextEditor {
             try {
                if (breakpoint instanceof final ILineBreakpoint lineBreakpoint //
                   && resource.equals(breakpoint.getMarker().getResource()) //
-                  && lineBreakpoint.getLineNumber() == lineNumber + 1) {
+                  && lineBreakpoint.getLineNumber() == lineIndex + 1) {
                   breakpoint.delete();
                }
             } catch (final CoreException ex) {
