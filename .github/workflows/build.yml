@@ -1,10 +1,10 @@
-# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 name: Build
 
 on:
   push:
     branches-ignore: # build all branches except:
-      - 'dependabot/**' # prevent GHA triggered twice (once for commit to the branch and once for opening/syncing the PR)
+    - 'dependabot/**' # prevent GHA triggered twice (once for commit to the branch and once for opening/syncing the PR)
     tags-ignore: # don't build tags
     - '**'
     paths-ignore:
@@ -14,6 +14,12 @@ on:
     - '.git*'
     - '.github/*.yml'
   pull_request:
+    paths-ignore:
+    - '**/*.adoc'
+    - '**/*.md'
+    - '.editorconfig'
+    - '.git*'
+    - '.github/*.yml'
   workflow_dispatch:
     # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
     inputs:
@@ -30,10 +36,6 @@ on:
         description: "Limit access to the SSH session to the GitHub user that triggered the job."
         default: true
         type: boolean
-      debug-with-ssh-only-jobs-matching:
-        description: "Only start an SSH session for jobs matching this regex pattern:"
-        default: ".*"
-        type: string
 
 defaults:
   run:
@@ -119,6 +121,7 @@ jobs:
           --no-transfer-progress \
           -s .ci/maven-settings.xml \
           -t .ci/maven-toolchains.xml \
+          -Dtycho.disableP2Mirrors=true \
           ${{ github.event.inputs.additional_maven_args }} \
           clean verify || cat /home/runner/work/haxe4e/haxe4e/haxe4e-tests/target/work/data/.metadata/.log
 
@@ -155,15 +158,17 @@ jobs:
       run: |
         set -eux
 
+        last_commit_message=$(git log --pretty=format:"%s (%h)" -1)
+
         cd /tmp
         github_repo_url="https://${{ github.actor }}:${{ github.token }}@github.com/${{ github.repository }}"
         if curl --output /dev/null --silent --head --fail "$github_repo_url/tree/updatesite"; then
           git clone $github_repo_url --single-branch --branch updatesite updatesite
-        cd updatesite
-        # https://github.community/t/github-actions-bot-email-address/17204
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git reset --hard HEAD^
+          cd updatesite
+          # https://github.community/t/github-actions-bot-email-address/17204
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git reset --hard HEAD^
         else
           git clone $github_repo_url updatesite
           cd updatesite
@@ -189,7 +194,7 @@ jobs:
 
         mv $GITHUB_WORKSPACE/haxe4e-updatesite/target/repository/* .
         git add --all
-        git commit -am "deploy p2 update site"
+        git commit -am "$last_commit_message"
         git push origin updatesite --force
 
 
@@ -226,7 +231,7 @@ jobs:
         GH_TOKEN: ${{ github.token }}
       run: |
         gh extension install actions/gh-actions-cache
-        gh actions-cache delete ${{ steps.cache-restore.outputs.cache-primary-key }} --confirm
+        gh actions-cache delete ${{ steps.cache-restore.outputs.cache-primary-key }} --confirm || true
 
     - name: "Cache: Update"
       uses: actions/cache/save@v3
@@ -247,22 +252,19 @@ jobs:
       if: always()
       run: |
         set -eu
-        job_filter_pattern="${{ inputs.debug-with-ssh-only-jobs-matching }}"
-        echo "job_filter: $job_filter_pattern"
 
-        job_info=$(echo "$GITHUB_JOB ${{ toJSON(matrix) }}" | tr -d '\n')
-        echo "job_info: $job_info"
+        when="${{ inputs.debug-with-ssh }}"
 
-        if [[ "$job_info" =~ .*$job_filter_pattern.* ]] && case "${{ job.status }}" in
-           success)   [[ "${{ inputs.debug-with-ssh }}" == always ]] ;;
-           cancelled) [[ "${{ inputs.debug-with-ssh }}" == on_failure_or_cancelled ]] ;;
-           failure)   [[ "${{ inputs.debug-with-ssh }}" =~ on_failure.* ]] ;;
+        if [[ $when == "always" ]] || case "${{ job.status }}" in
+          success)   [[ $when == "always" ]] ;;
+          cancelled) [[ $when == "on_failure_or_cancelled" ]] ;;
+          failure)   [[ $when == "on_failure"* ]] ;;
         esac; then
-           echo "start_session=true" | tee -a "$GITHUB_OUTPUT"
+          echo "start_ssh_session=true" | tee -a "$GITHUB_OUTPUT"
         fi
 
     - name: "SSH session for debugging: start"
       uses: mxschmitt/action-tmate@v3 # https://github.com/mxschmitt/action-tmate
-      if: always() && steps.DEBUG_SSH_SESSSION_CHECK.outputs.start_session
+      if: always() && steps.DEBUG_SSH_SESSSION_CHECK.outputs.start_ssh_session
       with:
         limit-access-to-actor: ${{ inputs.debug-with-ssh-only-for-actor }}
