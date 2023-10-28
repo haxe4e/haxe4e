@@ -125,7 +125,7 @@ jobs:
           ${{ github.event.inputs.additional_maven_args }} \
           clean verify || cat /home/runner/work/haxe4e/haxe4e/haxe4e-tests/target/work/data/.metadata/.log
 
-        mv haxe4e-updatesite/target/org.haxe4e.updatesite-*.zip haxe4e-updatesite/target/org.haxe4e.plugin.updatesite.zip
+        mv updatesite/target/org.haxe4e.updatesite-*.zip updatesite/target/org.haxe4e.plugin.updatesite.zip
 
 
     - name: "Delete previous 'latest' release"
@@ -150,7 +150,7 @@ jobs:
           --latest \
           --notes "${{ github.event.head_commit.message }}" \
           --target "${{ github.sha }}" \
-          haxe4e-updatesite/target/org.haxe4e.plugin.updatesite.zip
+          updatesite/target/org.haxe4e.plugin.updatesite.zip
 
 
     - name: Deploy p2 update site
@@ -192,7 +192,7 @@ jobs:
           git commit -am "Initialize Update Site"
         fi
 
-        mv $GITHUB_WORKSPACE/haxe4e-updatesite/target/repository/* .
+        mv $GITHUB_WORKSPACE/updatesite/target/repository/* .
         git add --all
         git commit -am "$last_commit_message"
         git push origin updatesite --force

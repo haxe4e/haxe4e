@@ -59,10 +59,10 @@
    </properties>
 
    <modules>
-      <module>haxe4e-plugin</module>
-      <module>haxe4e-feature</module>
-      <module>haxe4e-tests</module>
-      <module>haxe4e-updatesite</module>
+      <module>plugin</module>
+      <module>feature</module>
+      <module>tests</module>
+      <module>updatesite</module>
    </modules>
 
    <scm>
