@@ -28,11 +28,15 @@
     <stringAttribute key="pde.version" value="3.3"/>
     <stringAttribute key="product" value="org.eclipse.sdk.ide"/>
     <setAttribute key="selected_target_bundles">
-        <setEntry value="com.fasterxml.jackson.core.jackson-annotations@default:default"/>
-        <setEntry value="com.fasterxml.jackson.core.jackson-core@default:default"/>
-        <setEntry value="com.fasterxml.jackson.core.jackson-databind@default:default"/>
+        <setEntry value="bcpg@default:default"/>
+        <setEntry value="bcprov@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-annotations*2.15.3@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-core*2.15.3@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-databind*2.15.3@default:default"/>
         <setEntry value="com.google.gson@default:default"/>
-        <setEntry value="com.google.guava@default:default"/>
+        <setEntry value="com.google.guava*31.1.0.jre@default:default"/>
+        <setEntry value="com.google.guava*32.1.2.jre@default:default"/>
+        <setEntry value="com.google.guava.failureaccess@default:default"/>
         <setEntry value="com.ibm.icu@default:default"/>
         <setEntry value="com.sun.jna.platform@default:default"/>
         <setEntry value="com.sun.jna@default:default"/>
@@ -54,8 +58,6 @@
         <setEntry value="org.apache.commons.logging@default:default"/>
         <setEntry value="org.apache.felix.scr@1:true"/>
         <setEntry value="org.apache.xmlgraphics@default:default"/>
-        <setEntry value="org.bouncycastle.bcpg@default:default"/>
-        <setEntry value="org.bouncycastle.bcprov@default:default"/>
         <setEntry value="org.eclipse.compare.core@default:default"/>
         <setEntry value="org.eclipse.compare@default:default"/>
         <setEntry value="org.eclipse.core.commands@default:default"/>
@@ -170,7 +172,6 @@
         <setEntry value="org.eclipse.urischeme@default:default"/>
         <setEntry value="org.eclipse.wildwebdeveloper.embedder.node.win32.x86_64@default:false"/>
         <setEntry value="org.eclipse.wildwebdeveloper.embedder.node@default:default"/>
-        <setEntry value="org.eclipse.xtext.xbase.lib@default:default"/>
         <setEntry value="org.jcodings@default:default"/>
         <setEntry value="org.joni@default:default"/>
         <setEntry value="org.jsoup@default:default"/>
