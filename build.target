@@ -9,8 +9,8 @@
         </location>
 
         <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-            <!-- Eclipse 2023-03 aka 4.27 is the required minimum of latest LSP4E release -->
-            <repository location="https://download.eclipse.org/releases/2023-03/"/>
+            <!-- Eclipse 2023-06 aka 4.28 is the required minimum of latest LSP4E release -->
+            <repository location="https://download.eclipse.org/releases/2023-06/"/>
             <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
             <unit id="org.eclipse.sdk.ide" version="0.0.0"/>
             <unit id="org.eclipse.mylyn.wikitext.editors_feature.feature.group" version="0.0.0"/>
@@ -19,8 +19,7 @@
         </location>
 
         <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-            <repository location="https://download.eclipse.org/lsp4e/releases/0.23.0/"/>
-            <!--repository location="https://download.eclipse.org/lsp4e/snapshots/" />-->
+            <repository location="https://download.eclipse.org/lsp4e/releases/0.24.3/"/>
             <unit id="org.eclipse.lsp4e" version="0.0.0"/>
             <unit id="org.eclipse.lsp4e.source" version="0.0.0"/>
             <unit id="org.eclipse.lsp4e.debug" version="0.0.0"/>
@@ -32,8 +31,7 @@
         </location>
 
         <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-            <repository location="https://download.eclipse.org/tm4e/releases/0.8.0/"/>
-            <!--repository location="https://download.eclipse.org/tm4e/snapshots/" />-->
+            <repository location="https://download.eclipse.org/tm4e/releases/0.8.1/"/>
             <unit id="org.eclipse.tm4e.feature.feature.group" version="0.0.0"/>
         </location>
 
@@ -47,7 +45,7 @@
                 <dependency>
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-databind</artifactId>
-                    <version>2.15.2</version>
+                    <version>2.15.3</version>
                     <type>jar</type>
                 </dependency>
                 <dependency>
@@ -78,7 +76,7 @@
                 <dependency>
                     <groupId>org.mockito</groupId>
                     <artifactId>mockito-core</artifactId>
-                    <version>5.1.1</version>
+                    <version>5.6.0</version>
                     <type>jar</type>
                 </dependency>
             </dependencies>
