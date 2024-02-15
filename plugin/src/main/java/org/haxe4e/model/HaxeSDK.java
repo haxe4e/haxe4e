@@ -94,7 +94,8 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
 
       final var processBuilder = Processes.builder(compiler);
       try (var reader = new BufferedReader(new InputStreamReader(processBuilder.start().getStdOut()))) {
-         if (reader.readLine().contains("Haxe Compiler"))
+         final String line = reader.readLine();
+         if (line != null && line.contains("Haxe Compiler"))
             return true;
       } catch (final IOException ex) {
          // ignore

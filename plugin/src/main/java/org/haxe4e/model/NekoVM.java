@@ -153,6 +153,9 @@ public final class NekoVM implements Comparable<NekoVM> {
 
       final var processBuilder = Processes.builder(getExecutable());
       try (var reader = new BufferedReader(new InputStreamReader(processBuilder.start().getStdOut()))) {
+         final String line = reader.readLine();
+         if (line == null)
+            return null;
          final var version = Strings.substringBetweenNullable(reader.readLine(), "NekoVM ", " (c)");
          return Strings.isBlank(version) ? null : version;
       } catch (final IOException ex) {
