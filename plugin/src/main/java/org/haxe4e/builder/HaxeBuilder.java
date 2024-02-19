@@ -6,6 +6,8 @@
  */
 package org.haxe4e.builder;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNull;
+
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
@@ -84,7 +86,7 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
                   }
 
                   final var resource = subDelta.getResource();
-                  switch (resource.getProjectRelativePath().segment(0)) {
+                  switch (asNonNull(resource.getProjectRelativePath().segment(0))) {
                      case HaxeDependenciesUpdater.STDLIB_MAGIC_FOLDER_NAME:
                         // don't auto build if changes in stdlib occur
                      case HaxeDependenciesUpdater.DEPS_MAGIC_FOLDER_NAME:
