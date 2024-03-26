@@ -9,6 +9,7 @@ Automatic-Module-Name: org.haxe4e
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.haxe4e.Haxe4EPlugin
 Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-ClassPath: .
 Require-Bundle: org.eclipse.platform;bundle-version="4.29.0",
  org.eclipse.core.expressions,
  org.eclipse.core.resources,
@@ -42,4 +43,4 @@ Require-Bundle: org.eclipse.platform;bundle-version="4.29.0",
  org.apache.commons.lang3;bundle-version="[3.12.0,4.0.0)",
  net.sf.jstuff.core;bundle-version="[7.9.0,8.0.0)",
  net.sf.jstuff.xml;bundle-version="[7.9.0,8.0.0)",
- de.sebthom.eclipse.commons;bundle-version="[1.0.0,2.0.0)"
+ de.sebthom.eclipse.commons;bundle-version="[1.0.0.20240127-2238,2.0.0)"

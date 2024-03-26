@@ -26,9 +26,6 @@
          file-extensions="hx,dump"
          name="%Label_Haxe_File"
          priority="high" />
-      <file-association
-         content-type="org.haxe4e.content.haxe"
-         file-extensions="hx,dump" />
 
       <content-type
          id="org.haxe4e.content.hxml"
@@ -36,18 +33,13 @@
          file-extensions="hxml"
          name="%Label_Haxe_Build_File"
          priority="high" />
-      <file-association
-         content-type="org.haxe4e.content.hxml"
-         file-extensions="hxml" />
 
       <content-type
          id="org.haxe4e.content.hlcode"
          base-type="org.haxe4e.content.base"
+         file-names="hlcode.txt"
          name="%Label_HashLink_Dump_File"
          priority="high" />
-      <file-association
-         content-type="org.haxe4e.content.hlcode"
-         file-names="hlcode.txt" />
    </extension>
 
    <extension point="org.eclipse.core.expressions.definitions">
@@ -173,7 +165,7 @@
          priority="high"
          name="Haxe Symbols">
          <triggerPoints>
-            <!-- activates this outline provider only for haxe files -->
+            <!-- activates this outline provider only for Haxe files -->
             <reference definitionId="org.haxe4e.resource.isHaxeFile" />
          </triggerPoints>
       </navigatorContent>
@@ -461,13 +453,14 @@
    </extension>
 
    <extension point="org.eclipse.ui.importWizards">
+      <category id="org.haxe4e.wizards" name="Haxe" />
+
       <wizard
          id="org.haxe4e.wizards.importProject"
          category="org.haxe4e.wizards"
          class="org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard"
          icon="src/main/resources/images/logo/haxe_icon.png"
          name="%Label_Haxe_Project" />
-      <category id="org.haxe4e.wizards" name="Haxe" />
    </extension>
 
 
