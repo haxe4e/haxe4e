@@ -8,8 +8,6 @@ package org.haxe4e;
 
 import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
 
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.haxe4e.navigation.HaxeDependenciesUpdater;
@@ -81,14 +79,14 @@ public class Haxe4EPlugin extends AbstractEclipsePlugin {
       super.start(context);
       instance = this;
 
+      HaxeDependenciesUpdater.INSTANCE.install();
       WindowListener.INSTANCE.attach();
-      ResourcesPlugin.getWorkspace().addResourceChangeListener(HaxeDependenciesUpdater.INSTANCE, IResourceChangeEvent.POST_CHANGE);
    }
 
    @Override
    public void stop(final BundleContext context) throws Exception {
+      HaxeDependenciesUpdater.INSTANCE.uninstall();
       WindowListener.INSTANCE.detatch();
-      ResourcesPlugin.getWorkspace().removeResourceChangeListener(HaxeDependenciesUpdater.INSTANCE);
 
       instance = null;
       super.stop(context);

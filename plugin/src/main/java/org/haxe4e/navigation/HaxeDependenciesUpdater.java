@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
@@ -29,13 +28,14 @@ import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.model.HaxelibJSON;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.project.HaxeProjectNature;
+import org.haxe4e.util.AbstractResourcesChangedListener;
 
 import de.sebthom.eclipse.commons.resources.Projects;
 
 /**
  * @author Sebastian Thomschke
  */
-public final class HaxeDependenciesUpdater implements IResourceChangeListener {
+public final class HaxeDependenciesUpdater extends AbstractResourcesChangedListener {
 
    public static final String STDLIB_MAGIC_FOLDER_NAME = "!!!haxestdlib";
    public static final String DEPS_MAGIC_FOLDER_NAME = "!!haxedeps";
@@ -107,13 +107,15 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
                return true; // check children
          }
 
+         if (resource.getType() != IResource.FILE)
+            return true; // check children
+
          final var prefs = HaxeProjectPreference.get(project);
          if (prefs.getBuildSystem().getBuildFileExtension().equals(resource.getFileExtension()) //
             || HaxelibJSON.FILENAME.equals(resource.getName())) {
             changedProjects.add(project);
-            return false; // no need to check children
          }
-         return true; // check children
+         return false; // no need to check children
       };
 
       try {
@@ -200,5 +202,4 @@ public final class HaxeDependenciesUpdater implements IResourceChangeListener {
          return Haxe4EPlugin.status().createError(ex, "Failed to update 'Haxe Dependencies' list.");
       }
    }
-
 }
