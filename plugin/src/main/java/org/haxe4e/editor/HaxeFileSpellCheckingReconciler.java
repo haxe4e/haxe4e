@@ -50,7 +50,7 @@ import net.sf.jstuff.core.types.Disposable;
  * @author Sebastian Thomschke
  */
 public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconciler implements ModelTokensChangedEvent.Listener,
-   ITextInputListener {
+      ITextInputListener {
 
    private static final boolean TRACE_SPELLCHECK_REGIONS = Platform.getDebugBoolean("org.haxe4e/trace/spellcheck/regions");
    private static final boolean TRACE_SPELLCHECK_TOKENS = Platform.getDebugBoolean("org.haxe4e/trace/spellcheck/tokens");
@@ -63,7 +63,7 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
    private Disposable onModelTokensChangedSubscription = () -> { /* nothing to do yet */ };
 
    private void addSpellcheckRegion(final List<Region> regionsToSpellcheck, final IDocument doc, final int offset, final int length)
-      throws BadLocationException {
+         throws BadLocationException {
       if (TRACE_SPELLCHECK_REGIONS) {
          System.out.println("Region offset " + offset + " text: " + doc.get(offset, length));
       }
@@ -146,12 +146,9 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
    }
 
    @Override
-   public void install(@Nullable final ITextViewer viewer) {
+   public void install(final ITextViewer viewer) {
       super.install(viewer);
-      this.viewer = viewer;
-      if (viewer != null) {
-         viewer.addTextInputListener(this);
-      }
+      viewer.addTextInputListener(this);
    }
 
    @Override
@@ -187,7 +184,7 @@ public final class HaxeFileSpellCheckingReconciler extends TMPresentationReconci
    }
 
    private void spellcheck(final IDocument doc, final List<Region> regionsToCheck, final IAnnotationModel annotationModel,
-      final IProgressMonitor monitor) {
+         final IProgressMonitor monitor) {
       SPELLING_SERVICE.check( //
          doc, //
          regionsToCheck.toArray(new Region[regionsToCheck.size()]), //

@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -91,7 +92,7 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       sdkTable.setContentProvider((IStructuredContentProvider) input -> {
          @SuppressWarnings("unchecked")
          final var items = (List<HaxeSDK>) input;
-         return items.toArray(new HaxeSDK[items.size()]);
+         return items.toArray(new @NonNull HaxeSDK[items.size()]);
       });
 
       sdkTable.setContentProvider(new IStructuredContentProvider() {
@@ -118,8 +119,8 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
                return new StyledString("");
             final var sdk = (HaxeSDK) element;
             return isDefaultHaxeSDK(sdk) //
-               ? new StyledString(sdk.getName(), Fonts.DEFAULT_FONT_BOLD_STYLER)
-               : new StyledString(sdk.getName());
+                  ? new StyledString(sdk.getName(), Fonts.DEFAULT_FONT_BOLD_STYLER)
+                  : new StyledString(sdk.getName());
          }
       });
       colName.getColumn().setWidth(100);

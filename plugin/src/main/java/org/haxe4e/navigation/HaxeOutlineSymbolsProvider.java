@@ -27,7 +27,7 @@ import org.haxe4e.Haxe4EPlugin;
 public final class HaxeOutlineSymbolsProvider extends SymbolsLabelProvider {
 
    @Override
-   public @Nullable Image getImage(final @Nullable Object item) {
+   public @Nullable Image getImage(final Object item) {
       SymbolKind kind = null;
       if (item instanceof final SymbolInformation symbolInfo) {
          kind = symbolInfo.getKind();

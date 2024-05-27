@@ -6,6 +6,8 @@
  */
 package org.haxe4e.model;
 
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNullable;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +38,7 @@ public final class Haxelib implements Comparable<Haxelib> {
    private static final String ANY_VER = "<any>";
 
    public static Haxelib from(final HaxeSDK sdk, final String name, @Nullable String version, final IProgressMonitor monitor)
-      throws IOException {
+         throws IOException {
       Args.isDirectoryReadable("sdk.getLibsDir()", sdk.getHaxelibsDir());
 
       if (version == null || version.isBlank()) {
@@ -51,7 +53,7 @@ public final class Haxelib implements Comparable<Haxelib> {
          final var devFile = sdk.getHaxelibsDir().resolve(name).resolve(".dev");
          if (Files.exists(devFile)) {
             try (var stream = Files.lines(devFile)) {
-               final var path = stream.findFirst().orElse(null);
+               final var path = asNullable(stream.findFirst().orElse(null));
                if (path != null) {
                   final var libLocation = Paths.get(path);
                   if (Files.exists(libLocation))
@@ -63,7 +65,7 @@ public final class Haxelib implements Comparable<Haxelib> {
          final var currentFile = sdk.getHaxelibsDir().resolve(name).resolve(".current");
          if (Files.exists(currentFile)) {
             try (var stream = Files.lines(currentFile)) {
-               version = stream.findFirst().orElse(null);
+               version = asNullable(stream.findFirst().orElse(null));
                if (version != null && !version.isBlank()) {
                   final var libLocation = sdk.getHaxelibsDir().resolve(name).resolve(Strings.replace(version, ".", ","));
                   if (Files.exists(libLocation))
@@ -86,8 +88,8 @@ public final class Haxelib implements Comparable<Haxelib> {
       final var out = new EvictingDeque<String>(4);
       final var haxelibProcessBuilder = sdk.getHaxelibProcessBuilder( //
          ANY_VER.equals(version) //
-            ? List.of("install", name)
-            : List.of("install", name, version)) //
+               ? List.of("install", name)
+               : List.of("install", name, version)) //
          .withWorkingDirectory(sdk.getInstallRoot()) //
          .withRedirectErrorToOutput() //
          .withRedirectOutput(line -> {
@@ -136,7 +138,7 @@ public final class Haxelib implements Comparable<Haxelib> {
    }
 
    protected void collectDependencies(final int level, final Map<String, Tuple2<Integer, Haxelib>> collected, final HaxeSDK haxeSDK,
-      final IProgressMonitor monitor) {
+         final IProgressMonitor monitor) {
       for (final var dep : getDirectDependencies(haxeSDK, monitor)) {
          final var alreadyCollected = collected.get(dep.meta.name);
          if (alreadyCollected == null || alreadyCollected.get1() > level) {

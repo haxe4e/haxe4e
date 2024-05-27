@@ -54,7 +54,7 @@ public class LaunchConfigLauncher extends LaunchConfigurationDelegate {
 
    @Override
    public void launch(final ILaunchConfiguration config, final String mode, final ILaunch launch, final @Nullable IProgressMonitor monitor)
-      throws CoreException {
+         throws CoreException {
 
       final var projectName = config.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "");
       final @Nullable IProject project = Strings.isBlank(projectName) ? null : Projects.getProject(projectName);
@@ -83,7 +83,7 @@ public class LaunchConfigLauncher extends LaunchConfigurationDelegate {
          hxmlFile = BuildSystem.HAXE.findDefaultBuildFile(project);
          if (hxmlFile == null) {
             Dialogs.showError("Default build file not found.", "Default build file " + buildSystem.getDefaultBuildFileNames().first()
-               + " not found.");
+                  + " not found.");
             return;
          }
       } else {
@@ -105,7 +105,7 @@ public class LaunchConfigLauncher extends LaunchConfigurationDelegate {
 
          case ILaunchManager.DEBUG_MODE:
             final var debuggerEnvVars = new HashMap<String, Object>();
-            debuggerEnvVars.put("PATH", System.getenv("PATH"));
+            debuggerEnvVars.put("PATH", asNonNull(System.getenv("PATH")));
             debuggerEnvVars.putAll(envVars);
             haxeSDK.configureEnvVars(debuggerEnvVars);
 
@@ -115,7 +115,7 @@ public class LaunchConfigLauncher extends LaunchConfigurationDelegate {
             // workaround for nodejs issue: https://github.com/nodejs/node/issues/20605 in conjunction with
             // https://github.com/vshaxe/eval-debugger/blob/fd1c7844e9b13fce6f2f85c7b19d8948cd230cce/src/Main.hx#L110-L114
             // resulting in "Error: 'haxelib' is not recognized as an internal or external command"
-            debuggerEnvVars.put("Path", debuggerEnvVars.get("PATH"));
+            debuggerEnvVars.put("Path", asNonNull(debuggerEnvVars.get("PATH")));
 
             // LaunchRequestArguments https://github.com/vshaxe/vscode-debugadapter-extern/blob/master/src/vscode/debugProtocol/DebugProtocol.hx#L764
             // EvalLaunchRequestArguments https://github.com/vshaxe/eval-debugger/blob/master/src/Main.hx#L14
