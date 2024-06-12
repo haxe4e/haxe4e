@@ -86,8 +86,17 @@ jobs:
       uses: vegardit/fast-apt-mirror.sh@v1
 
 
-    - name: "Install: xvfb"
-      run: sudo apt-get install -y xvfb
+    - name: "Install: Linux packages 📦"
+      run: |
+        set -eux
+        sudo apt-get install --no-install-recommends -y xvfb
+
+        # prevents: "Failed to execute child process “dbus-launch” (No such file or directory)"
+        sudo apt-get install --no-install-recommends -y dbus-x11
+
+        # prevents: "dbind-WARNING **: 20:17:55.046: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files"
+        # see https://gist.github.com/jeffcogswell/62395900725acef1c0a5a608f7eb7a05
+        sudo apt-get install --no-install-recommends -y at-spi2-core
 
 
     - name: "Install: JDK ${{ env.JAVA_VERSION }} ☕"
