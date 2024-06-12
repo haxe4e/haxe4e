@@ -39,9 +39,9 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
  */
 public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
 
-   private MutableObservableRef<@Nullable IProject> selectedProject = lazyNonNull();
-   private MutableObservableRef<@Nullable BuildFile> selectedBuildFile = lazyNonNull();
-   private MutableObservableRef<@Nullable HaxeSDK> selectedAltSDK = lazyNonNull();
+   private MutableObservableRef<@Nullable IProject> selectedProject = lateNonNull();
+   private MutableObservableRef<@Nullable BuildFile> selectedBuildFile = lateNonNull();
+   private MutableObservableRef<@Nullable HaxeSDK> selectedAltSDK = lateNonNull();
 
    @Override
    public void createControl(final Composite parent) {

@@ -23,7 +23,7 @@ import org.haxe4e.Haxe4EPlugin;
  */
 public final class HaxeBuilderConsoleActions implements IConsolePageParticipant {
 
-   private Action terminate = lazyNonNull();
+   private Action terminate = lateNonNull();
 
    @Override
    public void activated() {

@@ -7,7 +7,7 @@
  */
 package org.haxe4e.widget;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.lazyNonNull;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.lateNonNull;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -37,7 +37,7 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
    public static @Nullable HaxeBuildFileToolbarContribution instance;
    private static @Nullable IProject currentProject;
 
-   private CCombo buildFileDropDown = lazyNonNull();
+   private CCombo buildFileDropDown = lateNonNull();
 
    public HaxeBuildFileToolbarContribution() {
       instance = this;

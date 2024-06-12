@@ -6,7 +6,7 @@
  */
 package org.haxe4e.prefs;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.lazyNonNull;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.lateNonNull;
 import static org.haxe4e.localization.Messages.*;
 
 import java.io.File;
@@ -49,9 +49,9 @@ public class HaxeSDKEditDialog extends TitleAreaDialog {
 
    private boolean isEditSDK;
 
-   private Text txtSDKName = lazyNonNull();
-   private Text txtSDKPath = lazyNonNull();
-   private Text txtNekoPath = lazyNonNull();
+   private Text txtSDKName = lateNonNull();
+   private Text txtSDKPath = lateNonNull();
+   private Text txtNekoPath = lateNonNull();
 
    /**
     * @wbp.parser.constructor

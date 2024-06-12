@@ -27,7 +27,7 @@ import de.sebthom.eclipse.commons.ui.Buttons;
  */
 public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.PropertyPage {
 
-   private HaxeProjectPreference prefs = lazyNonNull();
+   private HaxeProjectPreference prefs = lateNonNull();
 
    @Override
    protected Control createContents(final Composite parent) {

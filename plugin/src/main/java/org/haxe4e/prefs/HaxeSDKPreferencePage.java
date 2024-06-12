@@ -51,7 +51,7 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
  */
 public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-   private CheckboxTableViewer sdkTable = lazyNonNull();
+   private CheckboxTableViewer sdkTable = lateNonNull();
    private final ObservableSet<HaxeSDK> sdks = new ObservableSet<>(new HashSet<>());
    private final MutableObservableRef<@Nullable HaxeSDK> defaultSDK = MutableObservableRef.of(null);
 

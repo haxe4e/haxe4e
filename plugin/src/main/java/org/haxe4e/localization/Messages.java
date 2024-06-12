@@ -6,7 +6,7 @@
  */
 package org.haxe4e.localization;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.lazyNonNull;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.lateNonNull;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -26,10 +26,10 @@ public final class Messages extends NLS {
 
    public static String Label_Haxe_Configuration = "Haxe Configuration";
    public static String Label_Haxe_SDK = "Haxe SDK";
-   public static String Label_Haxe_File = lazyNonNull();
-   public static String Label_Haxe_Project = lazyNonNull();
+   public static String Label_Haxe_File = lateNonNull();
+   public static String Label_Haxe_Project = lateNonNull();
    public static String Label_Haxe_Terminal = "Haxe Terminal";
-   public static String Label_Haxe_Build_File = lazyNonNull();
+   public static String Label_Haxe_Build_File = lateNonNull();
    public static String Label_Name = "Name";
    public static String Label_Version = "Version";
    public static String Label_Path = "Path";
@@ -57,13 +57,13 @@ public final class Messages extends NLS {
    public static String Prefs_SavingPreferencesFailed = "Saving preferences failed.";
 
    public static String NewHaxeFile = "New Haxe File";
-   public static String NewHaxeFile_Descr = lazyNonNull();
+   public static String NewHaxeFile_Descr = lateNonNull();
    public static String NewHaxeFile_Creating = "Creating Haxe file \"{0}\"...";
    public static String NewHaxeFile_OpeningInEditor = "Opening Haxe file in editor...";
    public static String NewHaxeFile_DirectoryDoesNotExist = "Directory \"{0}\" does not exist.";
 
    public static String NewHaxeProject = "New Haxe Project";
-   public static String NewHaxeProject_Descr = lazyNonNull();
+   public static String NewHaxeProject_Descr = lateNonNull();
    public static String NewHaxeProject_SDKNotFound_Message = "No valid Haxe SDK found! Please specify a valid SDK on the Haxe preference page.";
    public static String NewHaxeProject_ErrorTitle = "Project Creation Problem";
    public static String NewHaxeProject_UnexpectedError = "Unexpected error: {0}";
