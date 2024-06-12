@@ -102,7 +102,10 @@ public class HaxeBuildFileToolbarContribution extends WorkbenchWindowControlCont
 
    @Override
    public void dispose() {
-      buildFileDropDown.getCursor().dispose(); // to prevent "java.lang.Error: SWT Resource was not properly disposed"
+      final var cursor = buildFileDropDown.getCursor();
+      if (cursor != null) {
+         cursor.dispose(); // to prevent "java.lang.Error: SWT Resource was not properly disposed"
+      }
 
       super.dispose();
    }

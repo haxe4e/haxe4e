@@ -76,7 +76,7 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       sdkTable.setCheckStateProvider(new ICheckStateProvider() {
          @Override
          public boolean isChecked(final @Nullable Object element) {
-            return element == null ? false : isDefaultHaxeSDK((HaxeSDK) element);
+            return element != null && isDefaultHaxeSDK((HaxeSDK) element);
          }
 
          @Override
@@ -92,7 +92,7 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       sdkTable.setContentProvider((IStructuredContentProvider) input -> {
          @SuppressWarnings("unchecked")
          final var items = (List<HaxeSDK>) input;
-         return items.toArray(new @NonNull HaxeSDK[items.size()]);
+         return items == null ? new HaxeSDK[0] : items.toArray(new @NonNull HaxeSDK[items.size()]);
       });
 
       sdkTable.setContentProvider(new IStructuredContentProvider() {

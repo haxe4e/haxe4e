@@ -63,7 +63,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    }
 
    @Override
-   public Map<String, Object> getInitializationOptions(final @Nullable URI projectRootUri) {
+   public @Nullable Map<String, Object> getInitializationOptions(final @Nullable URI projectRootUri) {
       final var project = Projects.findProjectOfResource(projectRootUri);
       final @Nullable HaxeSDK haxeSDK;
       final var displayServerArgs = new ArrayList<String>();
@@ -125,8 +125,8 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
 
                leaf.put("PATH", //
                   haxeSDK.getHaxelibExecutable().getParent() // add haxelib to path which is executed by Haxe Display Server
-                     + File.pathSeparator //
-                     + (nekoVM == null ? null : nekoVM.getInstallRoot()) // add neko to path which is required by haxelib
+                        + File.pathSeparator //
+                        + (nekoVM == null ? null : nekoVM.getInstallRoot()) // add neko to path which is required by haxelib
                );
 
                // required for haxelib process spawned Haxe Display Server to analyze dependencies
