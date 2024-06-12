@@ -30,3 +30,5 @@ updates:
   - pinned
   - dependencies
   - mvn
+  ignore:
+  - dependency-name: "com.vegardit.maven.no-npe:*"
