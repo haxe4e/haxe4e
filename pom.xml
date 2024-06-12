@@ -95,7 +95,7 @@
       <dependency>
          <groupId>com.vegardit.no-npe</groupId>
          <artifactId>no-npe-eea-all</artifactId>
-         <version>1.0.0-SNAPSHOT</version>
+         <version>[1.0.0,)</version>
          <scope>provided</scope>
       </dependency>
    </dependencies>
@@ -103,6 +103,8 @@
       <repository>
          <id>no-npe-snapshots</id>
          <url>https://raw.githubusercontent.com/vegardit/no-npe/mvn-snapshots-repo/</url>
+         <releases><enabled>false</enabled></releases>
+         <snapshots><enabled>true</enabled></snapshots>
       </repository>
    </repositories>
 
@@ -129,6 +131,13 @@
                <version>${tycho.version}</version>
                <configuration>
                   <optimize>true</optimize>
+                  <compilerArgs>
+                     <arg>-annotationpath</arg>
+                     <arg>CLASSPATH</arg> <!-- read Eclipse External null Annotations from JARs on the classpath -->
+                  </compilerArgs>
+
+                  <!-- respect settings in .settings/org.eclipse.jdt.core.prefs -->
+                  <useProjectSettings>true</useProjectSettings>
                </configuration>
             </plugin>
             <plugin>
@@ -194,17 +203,17 @@
                   <lifecycleMappingMetadata>
                      <pluginExecutions>
                         <pluginExecution>
-                            <pluginExecutionFilter>
-                                <groupId>org.apache.maven.plugins</groupId>
-                                <artifactId>maven-clean-plugin</artifactId>
-                                <versionRange>[1.0,)</versionRange>
-                                <goals>
-                                    <goal>clean</goal>
-                                </goals>
-                            </pluginExecutionFilter>
-                            <action>
-                                <ignore />
-                            </action>
+                           <pluginExecutionFilter>
+                              <groupId>org.apache.maven.plugins</groupId>
+                              <artifactId>maven-clean-plugin</artifactId>
+                              <versionRange>[1.0,)</versionRange>
+                              <goals>
+                                 <goal>clean</goal>
+                              </goals>
+                           </pluginExecutionFilter>
+                           <action>
+                              <ignore />
+                           </action>
                         </pluginExecution>
                         <pluginExecution>
                            <pluginExecutionFilter>
@@ -311,47 +320,6 @@
    </build>
 
    <profiles>
-      <profile>
-         <id>tycho-external-annotations-workaround</id>
-         <!-- tycho-compiler-plugin does not consider EEAs loaded via Maven POM dependencies
-             or via build.properties: jars.extra.classpath=... or additional.bundles=...
-             despite having org.eclipse.jdt.core.builder.annotationPath.allLocations=enabled set -->
-         <activation>
-            <property>
-               <name>!eclipse.application</name>
-               <!-- This profile is automatically enabled when executed outside of Eclipse, i.e. on the command line -->
-            </property>
-         </activation>
-         <build>
-            <plugins>
-               <plugin>
-                  <artifactId>maven-dependency-plugin</artifactId>
-                  <executions>
-                     <execution>
-                        <!-- see https://maven.apache.org/plugins/maven-dependency-plugin/properties-mojo.html -->
-                        <id>properties@initialize</id>
-                        <phase>initialize</phase>
-                        <goals>
-                           <goal>properties</goal>
-                        </goals>
-                     </execution>
-                  </executions>
-               </plugin>
-               <plugin>
-                  <!-- https://tycho.eclipseprojects.io/doc/latest/tycho-compiler-plugin/plugin-info.html -->
-                  <groupId>org.eclipse.tycho</groupId>
-                  <artifactId>tycho-compiler-plugin</artifactId>
-                  <configuration>
-                     <compilerArgs>
-                        <arg>-annotationpath</arg>
-                        <arg><![CDATA[${com.vegardit.no-npe:no-npe-eea-all:jar}]]></arg>
-                     </compilerArgs>
-                  </configuration>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-
       <profile>
          <id>disable-tycho-packaging-plugin-if-executed-in-eclipse</id>
          <activation>
