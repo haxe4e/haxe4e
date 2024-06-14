@@ -176,19 +176,18 @@ jobs:
 
     - name: "Determine release name"
       id: release
+      if: ${{ matrix.target-platform == 'oldest' && !env.ACT }}
       run: |
-        if [[ "${{ matrix.target-platform }}" == "oldest" && "${ACT:-}" != "true" ]]; then
-          case "$GITHUB_REF_NAME" in
-            main)
-              echo "name=preview" >>"$GITHUB_OUTPUT"
-              echo "updatesite_branch=updatesite-preview" >>"$GITHUB_OUTPUT"
-              ;;
-            release)
-              echo "name=stable" >>"$GITHUB_OUTPUT"
-              echo "updatesite_branch=updatesite" >>"$GITHUB_OUTPUT"
-              ;;
-          esac
-        fi
+        case "$GITHUB_REF_NAME" in
+          main)
+            echo "name=preview" >>"$GITHUB_OUTPUT"
+            echo "updatesite_branch=updatesite-preview" >>"$GITHUB_OUTPUT"
+            ;;
+          release)
+            echo "name=stable" >>"$GITHUB_OUTPUT"
+            echo "updatesite_branch=updatesite" >>"$GITHUB_OUTPUT"
+            ;;
+        esac
 
 
     - name: "Delete previous '${{ steps.release.outputs.name }}' release"
