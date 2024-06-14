@@ -169,7 +169,17 @@ jobs:
           -Dtycho.target-platform=${{ matrix.target-platform }} \
           -Djava.version=${{ matrix.java-version }} \
           ${{ github.event.inputs.additional_maven_args }} \
-          clean verify || (cat haxe4e-tests/target/work/data/.metadata/.log && false)
+          clean verify || (
+            rc=$?
+            if [[ ${ACT:-} != "true" ]]; then
+              find . -path "*/target/work/data/.metadata/.log" | while IFS= read -r file; do
+                echo "::group::$file"
+                  cat "$file"
+                echo "::endgroup::"
+              done
+            fi
+            exit $rc
+          )
 
         mv updatesite/target/org.haxe4e.updatesite-*.zip updatesite/target/org.haxe4e.plugin.updatesite.zip
 
