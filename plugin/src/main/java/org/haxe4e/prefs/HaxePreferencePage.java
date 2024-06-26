@@ -6,15 +6,15 @@
  */
 package org.haxe4e.prefs;
 
-import org.eclipse.jface.layout.GridLayoutFactory;
+import java.util.List;
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.haxe4e.localization.Messages;
-import org.haxe4e.util.ui.GridDatas;
+
+import de.sebthom.eclipse.commons.prefs.fieldeditor.GroupFieldEditor;
 
 /**
  * @author Sebastian Thomschke
@@ -35,29 +35,10 @@ public class HaxePreferencePage extends FieldEditorPreferencePage implements IWo
    protected void createFieldEditors() {
       final var parent = getFieldEditorParent();
 
-      final var grpLangServer = new Group(parent, SWT.NONE);
-      grpLangServer.setLayoutData(GridDatas.fillHorizontalExcessive());
-      grpLangServer.setText("Haxe Language Server - Troubleshooting");
-
-      addField(new BooleanFieldEditor( //
-         HaxeWorkspacePreference.PREFKEY_LANGSERV_TRACE_INITOPTS, //
-         "Log Init Options", //
-         grpLangServer //
-      ));
-
-      addField(new BooleanFieldEditor( //
-         HaxeWorkspacePreference.PREFKEY_LANGSERV_TRACE_IO, //
-         "Log client/server communication", //
-         grpLangServer //
-      ));
-
-      addField(new BooleanFieldEditor( //
-         HaxeWorkspacePreference.PREFKEY_LANGSERV_TRACE_METHOD_RESULTS, //
-         "Log method results", //
-         grpLangServer //
-      ));
-
-      // needs to be set after field editors were added
-      grpLangServer.setLayout(GridLayoutFactory.swtDefaults().create());
+      addField(new GroupFieldEditor("Haxe Language Server - Troubleshooting", parent, group -> List.of( //
+         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_LANGSERV_TRACE_INITOPTS, "Log Init Options", group), //
+         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_LANGSERV_TRACE_IO, "Log client/server communication", group), //
+         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_LANGSERV_TRACE_METHOD_RESULTS, "Log client/server communication", group) //
+      )));
    }
 }
