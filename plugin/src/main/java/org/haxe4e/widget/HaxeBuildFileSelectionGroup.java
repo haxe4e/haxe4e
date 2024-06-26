@@ -115,13 +115,10 @@ public class HaxeBuildFileSelectionGroup extends Composite {
    private void onBrowseForBuildFile() {
       final var dialog = createSelectBuildFileDialog();
 
-      if (dialog.open() == Window.OK) {
-         final var buildFile = (IFile) dialog.getFirstResult();
-
-         if (buildFile != null) {
-            final var buildSystem = asNonNull(projectPrefs).getBuildSystem();
-            selectedBuildFile.set(buildSystem.toBuildFile(buildFile));
-         }
+      if (dialog.open() == Window.OK //
+            && dialog.getFirstResult() instanceof final IFile buildFile) {
+         final var buildSystem = asNonNull(projectPrefs).getBuildSystem();
+         selectedBuildFile.set(buildSystem.toBuildFile(buildFile));
       }
    }
 

@@ -12,7 +12,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchShortcut;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -43,7 +42,7 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
    public void launch(final ISelection selection, final String mode) {
       if (selection instanceof final IStructuredSelection structuredSelection) {
          final var firstElement = structuredSelection.getFirstElement();
-         if (firstElement instanceof @NonNull final IFile file) {
+         if (firstElement instanceof final IFile file) {
             launchHxmlFile(new HaxeBuildFile(file), mode);
          }
       }
@@ -58,7 +57,7 @@ public class RunHxmlFileShortcut implements ILaunchShortcut {
          // use an existing launch config if available
          for (final var cfg : launchMgr.getLaunchConfigurations(launchConfigType)) {
             if (cfg.getAttribute(Constants.LAUNCH_ATTR_PROJECT, "").equalsIgnoreCase(project.getName()) //
-               && cfg.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, "").equalsIgnoreCase(hxmlFile.getProjectRelativePath()) //
+                  && cfg.getAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, "").equalsIgnoreCase(hxmlFile.getProjectRelativePath()) //
             ) {
                DebugUITools.launch(cfg, mode);
                return;

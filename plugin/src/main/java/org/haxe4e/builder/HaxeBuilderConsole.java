@@ -40,8 +40,6 @@ import net.sf.jstuff.core.io.Processes;
 @SuppressWarnings("restriction")
 public final class HaxeBuilderConsole extends MessageConsole {
 
-   public static final String CONSOLE_TYPE = HaxeBuilderConsole.class.getName();
-
    /**
     * Adds an entry to the console view's "Display Selected Console" entry drop down button.
     */
@@ -51,6 +49,11 @@ public final class HaxeBuilderConsole extends MessageConsole {
          Consoles.showConsole(c -> CONSOLE_TYPE.equals(c.getType()));
       }
    }
+
+   /**
+    * This value is configured in plugin.xml
+    */
+   public static final String CONSOLE_TYPE = HaxeBuilderConsole.class.getName();
 
    public static HaxeBuilderConsole openConsole(final HaxeBuilder.Context buildContext) {
       return openConsole(buildContext, true);
@@ -136,7 +139,7 @@ public final class HaxeBuilderConsole extends MessageConsole {
 
          final var endAt = LocalTime.now();
          final var endAtStr = endAt.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_TIME);
-         console.setTitle("<terminated> " + exe + " (" + startAtStr + " - " + endAtStr + ")");
+         console.setTitle("<terminated> " + exe + " (" + startAtStr + " - " + endAtStr + ") [" + proc.getProcess().pid() + "]");
          if (monitor.isCanceled())
             return;
 

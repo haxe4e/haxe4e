@@ -197,29 +197,24 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
    }
 
    private void onButton_Edit() {
-      final var sel = (StructuredSelection) sdkTable.getSelection();
-      if (sel.isEmpty())
-         return;
-
-      final var sdk = asNonNullUnsafe((HaxeSDK) sel.getFirstElement());
-      final var dialog = new HaxeSDKEditDialog(getShell(), sdk);
-      if (dialog.open() == Window.OK) {
-         sdks.remove(sdk);
-         sdks.add(new HaxeSDK( //
-            asNonNullUnsafe(dialog.sdkName.get()), //
-            asNonNullUnsafe(dialog.sdkPath.get()), //
-            new NekoVM(asNonNullUnsafe(dialog.nekoVMPath.get())) //
-         ));
+      if (((StructuredSelection) sdkTable.getSelection()).getFirstElement() instanceof final HaxeSDK sdk) {
+         final var dialog = new HaxeSDKEditDialog(getShell(), sdk);
+         if (dialog.open() == Window.OK) {
+            sdks.remove(sdk);
+            sdks.add(new HaxeSDK( //
+               asNonNullUnsafe(dialog.sdkName.get()), //
+               asNonNullUnsafe(dialog.sdkPath.get()), //
+               new NekoVM(asNonNullUnsafe(dialog.nekoVMPath.get())) //
+            ));
+         }
       }
    }
 
    private void onButton_Remove() {
-      final var sel = (StructuredSelection) sdkTable.getSelection();
-      if (sel.isEmpty())
-         return;
-      final var sdk = (HaxeSDK) sel.getFirstElement();
-      sdks.remove(sdk);
-      sdkTable.refresh();
+      if (((StructuredSelection) sdkTable.getSelection()).getFirstElement() instanceof final HaxeSDK sdk) {
+         sdks.remove(sdk);
+         sdkTable.refresh();
+      }
    }
 
    @Override

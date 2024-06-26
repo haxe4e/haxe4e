@@ -6,7 +6,7 @@
  */
 package org.haxe4e;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNullUnsafe;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -29,7 +29,7 @@ public class Haxe4EPlugin extends AbstractEclipsePlugin {
    /**
     * during runtime you can get ID with getBundle().getSymbolicName()
     */
-   public static final String PLUGIN_ID = asNonNull(Haxe4EPlugin.class.getPackage()).getName();
+   public static final String PLUGIN_ID = Haxe4EPlugin.class.getPackageName();
 
    private static @Nullable Haxe4EPlugin instance;
 
