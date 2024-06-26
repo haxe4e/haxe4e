@@ -59,11 +59,11 @@
       <import plugin="com.fasterxml.jackson.core.jackson-annotations" version="2.17.1" match="compatible"/>
       <import plugin="com.fasterxml.jackson.core.jackson-core" version="2.17.1" match="compatible"/>
       <import plugin="com.fasterxml.jackson.core.jackson-databind" version="2.17.1" match="compatible"/>
-      <import plugin="org.apache.commons.commons-io" version="2.11.0" match="compatible"/>
+      <import plugin="org.apache.commons.commons-io" version="2.16.1" match="compatible"/>
       <import plugin="org.apache.commons.lang3" version="3.12.0" match="compatible"/>
-      <import plugin="net.sf.jstuff.core" version="7.11.0" match="compatible"/>
-      <import plugin="net.sf.jstuff.xml" version="7.11.0" match="compatible"/>
-      <import plugin="de.sebthom.eclipse.commons" version="1.0.0.20240612-2133" match="compatible"/>
+      <import plugin="net.sf.jstuff.core" version="7.12.0" match="compatible"/>
+      <import plugin="net.sf.jstuff.xml" version="7.12.0" match="compatible"/>
+      <import plugin="de.sebthom.eclipse.commons" version="1.0.0.20240625-1932" match="compatible"/>
    </requires>
 
    <plugin
