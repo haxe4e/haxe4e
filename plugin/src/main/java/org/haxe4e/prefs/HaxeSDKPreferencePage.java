@@ -10,10 +10,8 @@ import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -88,12 +86,6 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
       table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 4));
       table.setHeaderVisible(true);
       table.setLinesVisible(true);
-
-      sdkTable.setContentProvider((IStructuredContentProvider) input -> {
-         @SuppressWarnings("unchecked")
-         final var items = (List<HaxeSDK>) input;
-         return items == null ? new HaxeSDK[0] : items.toArray(new @NonNull HaxeSDK[items.size()]);
-      });
 
       sdkTable.setContentProvider(new IStructuredContentProvider() {
          @Override
