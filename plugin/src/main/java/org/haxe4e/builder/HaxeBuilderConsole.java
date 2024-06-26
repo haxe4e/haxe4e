@@ -6,7 +6,7 @@
  */
 package org.haxe4e.builder;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.*;
+import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNull;
 
 import java.io.IOException;
 import java.time.LocalTime;
@@ -53,22 +53,33 @@ public final class HaxeBuilderConsole extends MessageConsole {
    }
 
    public static HaxeBuilderConsole openConsole(final HaxeBuilder.Context buildContext) {
+      return openConsole(buildContext, true);
+   }
+
+   public static HaxeBuilderConsole openConsole(final HaxeBuilder.Context buildContext, final boolean showConsole) {
       Consoles.closeConsoles(c -> CONSOLE_TYPE.equals(c.getType()) //
-         && ((HaxeBuilderConsole) c).buildContext.project.equals(buildContext.project) //
-         && ((HaxeBuilderConsole) c).buildContext.onTerminated.toCompletableFuture().isDone());
+            && ((HaxeBuilderConsole) c).buildContext.project.equals(buildContext.project) //
+            && ((HaxeBuilderConsole) c).buildContext.onTerminated.toCompletableFuture().isDone());
 
       final var console = new HaxeBuilderConsole(buildContext);
-      Consoles.showConsole(console);
+      if (showConsole) {
+         Consoles.showConsole(console);
+      }
       return console;
    }
 
    public static void runWithConsole(final IProject project, final Processes.Builder processBuilder, final IProgressMonitor monitor)
-      throws CoreException {
+         throws CoreException {
+      runWithConsole(project, processBuilder, monitor, true);
+   }
+
+   public static void runWithConsole(final IProject project, final Processes.Builder processBuilder, final IProgressMonitor monitor,
+         final boolean showConsole) throws CoreException {
 
       monitor.setTaskName("Building project '" + project.getName() + "'");
 
       final var onTerminated = new CompletableFuture<@Nullable Void>();
-      final var console = HaxeBuilderConsole.openConsole(new Context(project, monitor, onTerminated));
+      final var console = openConsole(new Context(project, monitor, onTerminated), showConsole);
 
       try (var out = console.newMessageStream();
            var err = console.newMessageStream()) {

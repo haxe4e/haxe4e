@@ -47,7 +47,7 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
 
    @Override
    protected IProject @Nullable [] build(final int kind, final @Nullable Map<String, String> args, final @Nullable IProgressMonitor monitor)
-      throws CoreException {
+         throws CoreException {
       final var project = getProject();
       final var prefs = HaxeProjectPreference.get(project);
 
@@ -133,13 +133,13 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
       }
 
       if (needsBuild) {
-         buildProject(project, prefs, monitor == null ? new NullProgressMonitor() : monitor);
+         buildProject(kind, project, prefs, monitor == null ? new NullProgressMonitor() : monitor);
       }
       return null;
    }
 
-   private void buildProject(final IProject project, final HaxeProjectPreference prefs, final IProgressMonitor monitor)
-      throws CoreException {
+   private void buildProject(final int kind, final IProject project, final HaxeProjectPreference prefs, final IProgressMonitor monitor)
+         throws CoreException {
       final var haxeSDK = prefs.getEffectiveHaxeSDK();
       if (haxeSDK == null)
          return;
@@ -152,7 +152,7 @@ public final class HaxeBuilder extends IncrementalProjectBuilder {
 
       HaxeBuilderConsole.runWithConsole(project, //
          haxeSDK.getCompilerProcessBuilder(false).withArg(buildFileProjectRelativePath.toOSString()), //
-         monitor);
+         monitor, kind == IncrementalProjectBuilder.CLEAN_BUILD);
    }
 
    @Override
