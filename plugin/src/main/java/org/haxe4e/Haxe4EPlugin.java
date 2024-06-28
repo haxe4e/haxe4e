@@ -6,8 +6,6 @@
  */
 package org.haxe4e;
 
-import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNullUnsafe;
-
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.haxe4e.navigation.HaxeDependenciesUpdater;
@@ -37,8 +35,7 @@ public class Haxe4EPlugin extends AbstractEclipsePlugin {
     * @return the shared instance
     */
    public static Haxe4EPlugin get() {
-      Assert.notNull(instance, "Default plugin instance is still null.");
-      return asNonNullUnsafe(instance);
+      return Assert.notNull(instance, "Default plugin instance is still null.");
    }
 
    public static PluginLogger log() {
