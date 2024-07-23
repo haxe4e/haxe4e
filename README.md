@@ -3,6 +3,7 @@
 [![Build Status](https://github.com/haxe4e/haxe4e/actions/workflows/build.yml/badge.svg)](https://github.com/haxe4e/haxe4e/actions/workflows/build.yml)
 [![License](https://img.shields.io/github/license/haxe4e/haxe4e.svg?color=blue)](LICENSE.txt)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
+[![Eclipse Marketplace](https://img.shields.io/eclipse-marketplace/dt/haxe4e?logo=eclipse&label=Downloads)](https://marketplace.eclipse.org/content/haxe4e)
 
 
 **Feedback and high-quality pull requests are  highly welcome!**
