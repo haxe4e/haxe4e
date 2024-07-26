@@ -6,6 +6,7 @@
  */
 package org.haxe4e.navigation;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.lsp4e.outline.SymbolsLabelProvider;
 import org.eclipse.lsp4e.outline.SymbolsModel.DocumentSymbolWithFile;
@@ -27,7 +28,7 @@ import org.haxe4e.Haxe4EPlugin;
 public final class HaxeOutlineSymbolsProvider extends SymbolsLabelProvider {
 
    @Override
-   public @Nullable Image getImage(final Object item) {
+   public @Nullable Image getImage(final @NonNullByDefault({}) Object item) {
       SymbolKind kind = null;
       if (item instanceof final SymbolInformation symbolInfo) {
          kind = symbolInfo.getKind();
