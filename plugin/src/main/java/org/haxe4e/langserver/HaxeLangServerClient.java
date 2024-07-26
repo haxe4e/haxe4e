@@ -8,8 +8,11 @@ package org.haxe4e.langserver;
 
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
 import org.eclipse.lsp4j.services.LanguageClient;
+import org.haxe4e.Haxe4EPlugin;
 
 /**
+ * https://github.com/vshaxe/haxe-language-server/blob/master/shared/haxeLanguageServer/LanguageServerMethods.hx
+ *
  * @author Sebastian Thomschke
  */
 public interface HaxeLangServerClient extends LanguageClient {
@@ -19,15 +22,21 @@ public interface HaxeLangServerClient extends LanguageClient {
     */
    @SuppressWarnings("javadoc")
    @JsonNotification("haxe/didRunHaxeMethod")
-   void onHaxeDidRunMethod(Object value);
+   default void onHaxeDidRunMethod(final Object value) {
+      Haxe4EPlugin.log().debug("onHaxeDidRunMethod: {0}", value);
+   }
 
    /**
     * only called if {@link HaxeLangServerLauncher#SEND_METHOD_RESULTS} is set to true
     */
    @SuppressWarnings("javadoc")
    @JsonNotification("haxe/didChangeRequestQueue")
-   void onHaxeDidChangeRequestQueue(Object value);
+   default void onHaxeDidChangeRequestQueue(final Object value) {
+      Haxe4EPlugin.log().debug("onHaxeDidChangeRequestQueue: {0}", value);
+   }
 
    @JsonNotification("haxe/cacheBuildFailed")
-   void onHaxeCacheBuildFailed(Object value);
+   default void onHaxeCacheBuildFailed(final Object value) {
+      Haxe4EPlugin.log().warn("onHaxeCacheBuildFailed: {0}", value);
+   }
 }

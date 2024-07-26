@@ -85,6 +85,7 @@
       <server id="org.haxe4e.langserv"
          class="org.haxe4e.langserver.HaxeLangServerLauncher"
          clientImpl="org.haxe4e.langserver.HaxeLangServerClientImpl"
+         serverInterface="org.haxe4e.langserver.HaxeLangServerAPI"
          label="%Label_Haxe_Language_Server" />
       <contentTypeMapping id="org.haxe4e.langserv" contentType="org.haxe4e.content.haxe" />
    </extension>

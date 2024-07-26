@@ -12,7 +12,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.lsp4e.LanguageClientImpl;
 import org.eclipse.lsp4j.DidChangeConfigurationParams;
 import org.eclipse.lsp4j.RegistrationParams;
-import org.haxe4e.Haxe4EPlugin;
 import org.haxe4e.util.TreeBuilder;
 
 /**
@@ -22,21 +21,6 @@ import org.haxe4e.util.TreeBuilder;
 public final class HaxeLangServerClientImpl extends LanguageClientImpl implements HaxeLangServerClient {
 
    private volatile boolean isInitTriggered = false;
-
-   @Override
-   public void onHaxeCacheBuildFailed(final Object value) {
-      Haxe4EPlugin.log().warn("onHaxeCacheBuildFailed: {0}", value);
-   }
-
-   @Override
-   public void onHaxeDidChangeRequestQueue(final Object value) {
-      Haxe4EPlugin.log().debug("onHaxeDidChangeRequestQueue: {0}", value);
-   }
-
-   @Override
-   public void onHaxeDidRunMethod(final Object value) {
-      Haxe4EPlugin.log().debug("onHaxeDidRunMethod: {0}", value);
-   }
 
    @Override
    public @NonNullByDefault({}) CompletableFuture<Void> registerCapability(final RegistrationParams params) {
