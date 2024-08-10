@@ -12,19 +12,19 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.lsp4e.debug.debugmodel.TransportStreams;
 import org.eclipse.lsp4e.debug.debugmodel.TransportStreams.DefaultTransportStreams;
 import org.eclipse.lsp4e.debug.launcher.DSPLaunchDelegate;
-import org.haxe4e.util.io.LinePrefixingTeeInputStream;
-import org.haxe4e.util.io.LinePrefixingTeeOutputStream;
+import org.haxe4e.prefs.HaxeWorkspacePreference;
+import org.haxe4e.util.io.VSCodeJsonRpcLineTracing;
+import org.haxe4e.util.io.VSCodeJsonRpcLineTracing.Source;
+
+import net.sf.jstuff.core.io.stream.LineCapturingInputStream;
+import net.sf.jstuff.core.io.stream.LineCapturingOutputStream;
 
 /**
  * @author Sebastian Thomschke
@@ -32,26 +32,21 @@ import org.haxe4e.util.io.LinePrefixingTeeOutputStream;
 @SuppressWarnings("restriction")
 public class LaunchDebugConfig extends DSPLaunchDelegate {
 
-   private static final boolean TRACE_IO = Platform.getDebugBoolean("org.haxe4e/trace/debugserv/io");
-
    @Override
    @SuppressWarnings("resource")
    @NonNullByDefault({})
    protected IDebugTarget createDebugTarget(final SubMonitor mon, final Supplier<TransportStreams> streamsSupplier, final ILaunch launch,
-      final Map<String, Object> dspParameters) throws CoreException {
-      return TRACE_IO //
-         ? super.createDebugTarget(mon, streamsSupplier, launch, dspParameters)
-         : super.createDebugTarget(mon, (Supplier<TransportStreams>) () -> {
-            final var streams = streamsSupplier.get();
-            return new DefaultTransportStreams( //
-               new LinePrefixingTeeInputStream(asNonNullUnsafe(streams.in), System.out, "SERVER >> "), //
-               new LinePrefixingTeeOutputStream(asNonNullUnsafe(streams.out), System.out, "CLIENT >> "));
-         }, launch, dspParameters);
-   }
-
-   @Override
-   public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
-      final @Nullable IProgressMonitor monitor) throws CoreException {
-      super.launch(configuration, mode, launch, monitor);
+         final Map<String, Object> dspParameters) throws CoreException {
+      final var isTraceIOVerbose = HaxeWorkspacePreference.isDAPTraceIOVerbose();
+      return isTraceIOVerbose || HaxeWorkspacePreference.isDAPTraceIO() //
+            ? super.createDebugTarget(mon, (Supplier<TransportStreams>) () -> {
+               final var streams = streamsSupplier.get();
+               return new DefaultTransportStreams( //
+                  new LineCapturingInputStream(asNonNullUnsafe(streams.in), line -> VSCodeJsonRpcLineTracing.traceLine(Source.SERVER_OUT,
+                     line, isTraceIOVerbose)), //
+                  new LineCapturingOutputStream(asNonNullUnsafe(streams.out), line -> VSCodeJsonRpcLineTracing.traceLine(Source.CLIENT_OUT,
+                     line, isTraceIOVerbose)));
+            }, launch, dspParameters)
+            : super.createDebugTarget(mon, streamsSupplier, launch, dspParameters);
    }
 }

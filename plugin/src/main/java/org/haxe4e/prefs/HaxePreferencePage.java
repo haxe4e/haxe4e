@@ -36,9 +36,18 @@ public class HaxePreferencePage extends FieldEditorPreferencePage implements IWo
       final var parent = getFieldEditorParent();
 
       addField(new GroupFieldEditor("Haxe Language Server - Troubleshooting", parent, group -> List.of( //
-         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_LANGSERV_TRACE_INITOPTS, "Log Init Options", group), //
-         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_LANGSERV_TRACE_IO, "Log client/server communication", group), //
-         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_LANGSERV_TRACE_METHOD_RESULTS, "Log client/server communication", group) //
+         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_LSP_TRACE_INITOPTS, "Log Init Options", group), //
+         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_LSP_TRACE_IO, "Log Language Server Protocol communication", group), //
+         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_LSP_TRACE_METHOD_RESULTS,
+            "Log Language Server Protocol communication (method results)", group), //
+         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_LSP_TRACE_IO_VERBOSE,
+            "Log Language Server Protocol communication (verbose)", group) //
+      )));
+
+      addField(new GroupFieldEditor("Haxe Debug Adapter - Troubleshooting", parent, group -> List.of( //
+         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_DAP_TRACE_IO, "Log Debug Adatper Protocol communication", group), //
+         new BooleanFieldEditor(HaxeWorkspacePreference.PREFKEY_DAP_TRACE_IO_VERBOSE, "Log Debug Adatper Protocol communication (verbose)",
+            group) //
       )));
    }
 }

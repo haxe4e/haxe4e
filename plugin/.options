@@ -1,8 +1,10 @@
 # Debugging options for the haxe4e plug-in
 
-org.haxe4e/trace/debugserv/io=false
-org.haxe4e/trace/langserv/init_options=false
-org.haxe4e/trace/langserv/io=false
-org.haxe4e/trace/langserv/method_results=false
+org.haxe4e/trace/dap/io=false
+org.haxe4e/trace/dap/io/verbose=false
+org.haxe4e/trace/lsp/init_options=false
+org.haxe4e/trace/lsp/io=false
+org.haxe4e/trace/lsp/io/verbose=false
+org.haxe4e/trace/lsp/method_results=false
 org.haxe4e/trace/spellcheck/regions=false
 org.haxe4e/trace/spellcheck/tokens=false

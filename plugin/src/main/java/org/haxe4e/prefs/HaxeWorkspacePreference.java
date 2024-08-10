@@ -49,9 +49,14 @@ public final class HaxeWorkspacePreference {
    static final String PREFKEY_DEFAULT_HAXE_SDK = "haxe.default_sdk";
    static final String PREFKEY_HAXE_SDKS = "haxe.sdks";
    static final String PREFKEY_WARNED_NO_SDK_REGISTERED = "haxe.warned_no_sdk_registered";
-   static final String PREFKEY_LANGSERV_TRACE_INITOPTS = "haxe.langsrv.trace.init_options";
-   static final String PREFKEY_LANGSERV_TRACE_IO = "haxe.langsrv.trace.io";
-   static final String PREFKEY_LANGSERV_TRACE_METHOD_RESULTS = "haxe.langsrv.trace.method_results";
+
+   static final String PREFKEY_DAP_TRACE_IO = "haxe.dap.trace.io";
+   static final String PREFKEY_DAP_TRACE_IO_VERBOSE = "haxe.dap.trace.io.verbose";
+
+   static final String PREFKEY_LSP_TRACE_INITOPTS = "haxe.lsp.trace.init_options";
+   static final String PREFKEY_LSP_TRACE_IO = "haxe.lsp.trace.io";
+   static final String PREFKEY_LSP_TRACE_IO_VERBOSE = "haxe.lsp.trace.io.verbose";
+   static final String PREFKEY_LSP_TRACE_METHOD_RESULTS = "haxe.lsp.trace.method_results";
 
    static {
       // this disables usage of com.fasterxml.jackson.databind.ext.NioPathDeserializer
@@ -183,25 +188,43 @@ public final class HaxeWorkspacePreference {
       }
    }
 
-   public static boolean isLangServTraceIO() {
-      if (STORE.contains(PREFKEY_LANGSERV_TRACE_IO))
-         return STORE.getBoolean(PREFKEY_LANGSERV_TRACE_IO);
-      return Platform.getDebugBoolean("org.haxe4e/trace/langserv/io");
+   public static boolean isDAPTraceIO() {
+      if (STORE.contains(PREFKEY_DAP_TRACE_IO))
+         return STORE.getBoolean(PREFKEY_DAP_TRACE_IO);
+      return Platform.getDebugBoolean("org.haxe4e/trace/dap/io");
    }
 
-   public static boolean isLangServTraceInitOptions() {
-      if (STORE.contains(PREFKEY_LANGSERV_TRACE_INITOPTS))
-         return STORE.getBoolean(PREFKEY_LANGSERV_TRACE_INITOPTS);
-      return Platform.getDebugBoolean("org.haxe4e/trace/langserv/init_options");
+   public static boolean isDAPTraceIOVerbose() {
+      if (STORE.contains(PREFKEY_DAP_TRACE_IO_VERBOSE))
+         return STORE.getBoolean(PREFKEY_DAP_TRACE_IO_VERBOSE);
+      return Platform.getDebugBoolean("org.haxe4e/trace/dap/io/verbose");
+   }
+
+   public static boolean isLSPTraceIO() {
+      if (STORE.contains(PREFKEY_LSP_TRACE_IO))
+         return STORE.getBoolean(PREFKEY_LSP_TRACE_IO);
+      return Platform.getDebugBoolean("org.haxe4e/trace/lsp/io");
+   }
+
+   public static boolean isLSPTraceIOVerbose() {
+      if (STORE.contains(PREFKEY_LSP_TRACE_IO_VERBOSE))
+         return STORE.getBoolean(PREFKEY_LSP_TRACE_IO_VERBOSE);
+      return Platform.getDebugBoolean("org.haxe4e/trace/lsp/io/verbose");
+   }
+
+   public static boolean isLSPTraceInitOptions() {
+      if (STORE.contains(PREFKEY_LSP_TRACE_INITOPTS))
+         return STORE.getBoolean(PREFKEY_LSP_TRACE_INITOPTS);
+      return Platform.getDebugBoolean("org.haxe4e/trace/lsp/init_options");
    }
 
    /**
     * https://github.com/search?q=org%3Avshaxe+sendMethodResults&type=code
     */
-   public static boolean isLangServTraceMethodResults() {
-      if (STORE.contains(PREFKEY_LANGSERV_TRACE_METHOD_RESULTS))
-         return STORE.getBoolean(PREFKEY_LANGSERV_TRACE_METHOD_RESULTS);
-      return Platform.getDebugBoolean("org.haxe4e/trace/langserv/method_results");
+   public static boolean isLSPTraceMethodResults() {
+      if (STORE.contains(PREFKEY_LSP_TRACE_METHOD_RESULTS))
+         return STORE.getBoolean(PREFKEY_LSP_TRACE_METHOD_RESULTS);
+      return Platform.getDebugBoolean("org.haxe4e/trace/lsp/method_results");
    }
 
    public static boolean save() {

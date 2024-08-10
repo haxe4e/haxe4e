@@ -27,11 +27,13 @@ import org.haxe4e.model.HaxeSDK;
 import org.haxe4e.prefs.HaxeProjectPreference;
 import org.haxe4e.prefs.HaxeWorkspacePreference;
 import org.haxe4e.util.TreeBuilder;
-import org.haxe4e.util.io.LinePrefixingTeeInputStream;
-import org.haxe4e.util.io.LinePrefixingTeeOutputStream;
+import org.haxe4e.util.io.VSCodeJsonRpcLineTracing;
+import org.haxe4e.util.io.VSCodeJsonRpcLineTracing.Source;
 
 import de.sebthom.eclipse.commons.resources.Projects;
 import net.sf.jstuff.core.Strings;
+import net.sf.jstuff.core.io.stream.LineCapturingInputStream;
+import net.sf.jstuff.core.io.stream.LineCapturingOutputStream;
 
 /**
  * Runs the node.js based embedded haxe-language-server.
@@ -54,12 +56,13 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    @Override
    public @Nullable InputStream getErrorStream() {
       final var stream = super.getErrorStream();
-      if (!HaxeWorkspacePreference.isLangServTraceIO())
-         return stream;
-
       if (stream == null)
          return null;
-      return new LinePrefixingTeeInputStream(stream, System.out, "SRVERR >> ");
+
+      final var isTraceVerbose = HaxeWorkspacePreference.isLSPTraceIOVerbose();
+      return isTraceVerbose || HaxeWorkspacePreference.isLSPTraceIO() //
+            ? new LineCapturingInputStream(stream, line -> VSCodeJsonRpcLineTracing.traceLine(Source.SERVER_ERR, line, isTraceVerbose))
+            : stream;
    }
 
    @Override
@@ -126,7 +129,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
                leaf.put("PATH", //
                   haxeSDK.getHaxelibExecutable().getParent() // add haxelib to path which is executed by Haxe Display Server
                         + File.pathSeparator //
-                        + (nekoVM == null ? null : nekoVM.getInstallRoot()) // add neko to path which is required by haxelib
+                        + (nekoVM == null ? null : nekoVM.getInstallRoot()) // add Neko to path which is required by haxelib
                );
 
                // required for haxelib process spawned Haxe Display Server to analyze dependencies
@@ -139,10 +142,10 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
          .put("displayArguments", displayServerArgs) //
          // HaxelibConfig https://github.com/vshaxe/haxe-language-server/blob/master/src/haxeLanguageServer/Configuration.hx#L9
          .put("haxelibConfig", "executable", haxeSDK == null ? null : haxeSDK.getHaxelibExecutable().toString()) //
-         .put("sendMethodResults", HaxeWorkspacePreference.isLangServTraceMethodResults()) //
+         .put("sendMethodResults", HaxeWorkspacePreference.isLSPTraceMethodResults()) //
          .getMap();
 
-      if (HaxeWorkspacePreference.isLangServTraceInitOptions()) {
+      if (HaxeWorkspacePreference.isLSPTraceInitOptions()) {
          Haxe4EPlugin.log().info(opts);
       }
       return opts;
@@ -151,21 +154,25 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
    @Override
    public @Nullable InputStream getInputStream() {
       final var stream = super.getInputStream();
+      if (stream == null)
+         return null;
 
-      if (!HaxeWorkspacePreference.isLangServTraceIO())
-         return stream;
-
-      return stream == null ? null : new LinePrefixingTeeInputStream(stream, System.out, "SERVER >> ");
+      final var isTraceVerbose = HaxeWorkspacePreference.isLSPTraceIOVerbose();
+      return isTraceVerbose || HaxeWorkspacePreference.isLSPTraceIO() //
+            ? new LineCapturingInputStream(stream, line -> VSCodeJsonRpcLineTracing.traceLine(Source.SERVER_OUT, line, isTraceVerbose))
+            : stream;
    }
 
    @Override
    public @Nullable OutputStream getOutputStream() {
       final var stream = super.getOutputStream();
+      if (stream == null)
+         return null;
 
-      if (!HaxeWorkspacePreference.isLangServTraceIO())
-         return stream;
-
-      return stream == null ? null : new LinePrefixingTeeOutputStream(stream, System.out, "CLIENT >> ");
+      final var isTraceVerbose = HaxeWorkspacePreference.isLSPTraceIOVerbose();
+      return isTraceVerbose || HaxeWorkspacePreference.isLSPTraceIO() //
+            ? new LineCapturingOutputStream(stream, line -> VSCodeJsonRpcLineTracing.traceLine(Source.CLIENT_OUT, line, isTraceVerbose))
+            : stream;
    }
 
    @Override
