@@ -14,6 +14,8 @@ on:
     - '.git*'
     - '.github/*.yml'
     - '.github/workflows/stale.yml'
+    - '.github/workflows/update-eval-debugger.yml'
+    - '.github/workflows/update-language-server.yml'
   pull_request:
     paths-ignore:
     - '**/*.adoc'
