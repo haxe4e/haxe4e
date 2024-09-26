@@ -29,7 +29,7 @@ public abstract class LaunchConfigurations {
       final var launchMgr = DebugPlugin.getDefault().getLaunchManager();
       final var launchConfigType = launchMgr.getLaunchConfigurationType(Constants.LAUNCH_HAXE_CONFIGURATION_ID);
       final var newLaunchConfig = launchConfigType.newInstance(null, launchMgr.generateLaunchConfigurationName(project.getName() + " ("
-         + buildFile.location.getName() + ")"));
+            + buildFile.location.getName() + ")"));
       LaunchConfigurations.initialize(newLaunchConfig, buildFile);
       return newLaunchConfig;
    }

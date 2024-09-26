@@ -129,7 +129,7 @@ public final class NekoVM implements Comparable<NekoVM> {
          return false;
       final var other = (NekoVM) obj;
       return Objects.equals(name, other.name) //
-         && Objects.equals(installRoot, other.installRoot);
+            && Objects.equals(installRoot, other.installRoot);
    }
 
    @JsonIgnore

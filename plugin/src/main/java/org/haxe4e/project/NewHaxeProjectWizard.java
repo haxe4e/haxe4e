@@ -121,12 +121,12 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
    }
 
    private void createFileFromResource(final String resourceName, final IProject project, final String to,
-      final @Nullable IProgressMonitor monitor) throws CoreException, IOException {
+         final @Nullable IProgressMonitor monitor) throws CoreException, IOException {
       createFileFromResource(resourceName, project, to, false, monitor);
    }
 
    private void createFileFromResource(final String resourceName, final IProject project, final String to, final boolean isBinary,
-      final @Nullable IProgressMonitor monitor) throws CoreException, IOException {
+         final @Nullable IProgressMonitor monitor) throws CoreException, IOException {
       final var f = project.getFile(to);
       createParents(f, monitor);
 

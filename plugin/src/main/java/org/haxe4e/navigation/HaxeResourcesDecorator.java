@@ -98,7 +98,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
 
          if (HaxeProjectNature.hasNature(project)) {
             if (folder.isLinked() //
-               && folder.getName().equals(HaxeDependenciesUpdater.STDLIB_MAGIC_FOLDER_NAME) //
+                  && folder.getName().equals(HaxeDependenciesUpdater.STDLIB_MAGIC_FOLDER_NAME) //
             ) {
                final var prefs = HaxeProjectPreference.get(asNonNullUnsafe(project));
                final var haxeSDK = prefs.getEffectiveHaxeSDK();
@@ -106,7 +106,7 @@ public class HaxeResourcesDecorator extends BaseLabelProvider implements ILabelD
             }
 
             if (folder.isVirtual() //
-               && folder.getName().equals(HaxeDependenciesUpdater.DEPS_MAGIC_FOLDER_NAME) //
+                  && folder.getName().equals(HaxeDependenciesUpdater.DEPS_MAGIC_FOLDER_NAME) //
             ) {
                int depCount = 0;
                try {

@@ -40,7 +40,7 @@ public class LimeBuildFile extends BuildFile {
 
    @Override
    public Set<Haxelib> getDirectDependencies(final HaxeSDK haxeSDK, final IProgressMonitor monitor) throws RuntimeIOException,
-      XMLException {
+         XMLException {
       final var deps = new LinkedHashSet<Haxelib>();
       final var domFile = parseFile();
       for (final var srcNode : domFile.findNodes("/project/haxelib")) {

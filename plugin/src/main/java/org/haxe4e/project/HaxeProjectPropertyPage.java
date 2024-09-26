@@ -59,7 +59,7 @@ public final class HaxeProjectPropertyPage extends org.eclipse.ui.dialogs.Proper
       final var grpBuildFile = new HaxeBuildFileSelectionGroup(container);
       grpBuildFile.setProject(project);
       grpBuildFile.selectedBuildFile.subscribe(buildFile -> prefs.setBuildFilePath(buildFile == null ? null
-         : buildFile.getProjectRelativePath()));
+            : buildFile.getProjectRelativePath()));
 
       grpBuildSystem.selectedBuildSystem.subscribe(selectedBuildSystem -> {
          prefs.setBuildSystem(selectedBuildSystem);

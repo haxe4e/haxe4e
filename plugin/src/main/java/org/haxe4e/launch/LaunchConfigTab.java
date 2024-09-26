@@ -107,7 +107,7 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
    public void performApply(final ILaunchConfigurationWorkingCopy config) {
       config.setAttribute(Constants.LAUNCH_ATTR_PROJECT, selectedProject.get() == null ? null : asNonNull(selectedProject.get()).getName());
       config.setAttribute(Constants.LAUNCH_ATTR_HAXE_BUILD_FILE, selectedBuildFile.get() == null ? null
-         : asNonNull(selectedBuildFile.get()).getProjectRelativePath().toString());
+            : asNonNull(selectedBuildFile.get()).getProjectRelativePath().toString());
       final var altSDK = selectedAltSDK.get();
       config.setAttribute(Constants.LAUNCH_ATTR_HAXE_SDK, altSDK == null ? "" : altSDK.getName());
    }

@@ -107,15 +107,15 @@ public enum BuildSystem {
    }
 
    public List<IFile> findFilesWithBuildFileExtension(final IProject project, final boolean excludeIgnorableBuildFiles)
-      throws CoreException {
+         throws CoreException {
       final var buildFiles = new ArrayList<IFile>();
       project.accept(res -> {
          if (res.isVirtual() || res.isLinked())
             return false;
 
          if (res instanceof final IFile file //
-            && buildFileExtension.equals(file.getFileExtension()) //
-            && (!excludeIgnorableBuildFiles || !ignorableBuildFileNames.contains(file.getName()))) {
+               && buildFileExtension.equals(file.getFileExtension()) //
+               && (!excludeIgnorableBuildFiles || !ignorableBuildFileNames.contains(file.getName()))) {
             buildFiles.add(file);
          }
          return true;

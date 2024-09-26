@@ -112,7 +112,7 @@ public final class HaxeDependenciesUpdater extends AbstractResourcesChangedListe
 
          final var prefs = HaxeProjectPreference.get(project);
          if (prefs.getBuildSystem().getBuildFileExtension().equals(resource.getFileExtension()) //
-            || HaxelibJSON.FILENAME.equals(resource.getName())) {
+               || HaxelibJSON.FILENAME.equals(resource.getName())) {
             changedProjects.add(project);
          }
          return false; // no need to check children
@@ -144,7 +144,7 @@ public final class HaxeDependenciesUpdater extends AbstractResourcesChangedListe
          if (stdLibFolder.exists()) {
             if (!stdLibFolder.isLinked())
                return Haxe4EPlugin.status().createError("Cannot update Haxe standard library folder. Physical folder with name '"
-                  + STDLIB_MAGIC_FOLDER_NAME + "' exists!");
+                     + STDLIB_MAGIC_FOLDER_NAME + "' exists!");
             if (!asNonNull(stdLibFolder.getLocation()).toFile().toPath().equals(sdk.getStandardLibDir())) {
                stdLibFolder.createLink(sdk.getStandardLibDir().toUri(), IResource.REPLACE, monitor);
             }
@@ -169,7 +169,7 @@ public final class HaxeDependenciesUpdater extends AbstractResourcesChangedListe
          if (depsFolder.exists()) {
             if (!depsFolder.isVirtual())
                return Haxe4EPlugin.status().createError("Cannot update 'Haxe Dependencies' list. Physical folder with name '"
-                  + DEPS_MAGIC_FOLDER_NAME + "' exists!");
+                     + DEPS_MAGIC_FOLDER_NAME + "' exists!");
          } else {
             depsFolder.create(IResource.VIRTUAL, true, monitor);
          }

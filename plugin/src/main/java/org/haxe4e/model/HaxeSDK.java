@@ -167,8 +167,8 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
          return false;
       final var other = (HaxeSDK) obj;
       return Objects.equals(name, other.name) //
-         && Objects.equals(installRoot, other.installRoot) //
-         && Objects.equals(nekoVM, other.nekoVM);
+            && Objects.equals(installRoot, other.installRoot) //
+            && Objects.equals(nekoVM, other.nekoVM);
    }
 
    @JsonIgnore
