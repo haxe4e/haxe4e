@@ -59,7 +59,7 @@ public class LaunchConfigTab extends AbstractLaunchConfigurationTab {
    }
 
    @Override
-   public String getId() {
+   public @Nullable String getId() {
       return LaunchConfigTab.class.getName();
    }
 

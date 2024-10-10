@@ -43,7 +43,7 @@ public class HaxeBuildFileSelectionGroup extends Composite {
 
    private @Nullable HaxeProjectPreference projectPrefs;
    private Button btnBrowseForBuildFile;
-   public final MutableObservableRef<@Nullable BuildFile> selectedBuildFile = MutableObservableRef.of(null);
+   public final MutableObservableRef<@Nullable BuildFile> selectedBuildFile = MutableObservableRef.ofNullable(null);
 
    public HaxeBuildFileSelectionGroup(final Composite parent) {
       this(parent, SWT.NONE);
