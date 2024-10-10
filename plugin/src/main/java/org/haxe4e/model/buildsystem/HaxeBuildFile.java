@@ -77,7 +77,7 @@ public class HaxeBuildFile extends BuildFile {
 
       final var args = new ArrayList<String>();
       try (var lines = Files.lines(buildFile)) {
-         final MutableRef<@Nullable Character> quotedWith = MutableRef.of(null);
+         final MutableRef<@Nullable Character> quotedWith = MutableRef.ofNullable(null);
          final var arg = new StringBuilder();
          lines.forEach(line -> {
             for (final var ch : line.toCharArray()) {

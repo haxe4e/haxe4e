@@ -30,7 +30,7 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
  */
 public class HaxeSDKSelectionGroup extends Composite {
 
-   public final MutableObservableRef<@Nullable HaxeSDK> selectedAltSDK = MutableObservableRef.of(null);
+   public final MutableObservableRef<@Nullable HaxeSDK> selectedAltSDK = MutableObservableRef.ofNullable(null);
 
    public HaxeSDKSelectionGroup(final Composite parent) {
       this(parent, SWT.NONE);

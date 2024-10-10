@@ -43,9 +43,9 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
  * @author Sebastian Thomschke
  */
 public class HaxeSDKEditDialog extends TitleAreaDialog {
-   public final MutableObservableRef<@Nullable String> sdkName = MutableObservableRef.of(null);
-   public final MutableObservableRef<@Nullable Path> sdkPath = MutableObservableRef.of(null);
-   public final MutableObservableRef<@Nullable Path> nekoVMPath = MutableObservableRef.of(null);
+   public final MutableObservableRef<@Nullable String> sdkName = MutableObservableRef.ofNullable(null);
+   public final MutableObservableRef<@Nullable Path> sdkPath = MutableObservableRef.ofNullable(null);
+   public final MutableObservableRef<@Nullable Path> nekoVMPath = MutableObservableRef.ofNullable(null);
 
    private boolean isEditSDK;
 

@@ -51,7 +51,7 @@ public class HaxeSDKPreferencePage extends PreferencePage implements IWorkbenchP
 
    private CheckboxTableViewer sdkTable = lateNonNull();
    private final ObservableSet<HaxeSDK> sdks = new ObservableSet<>(new HashSet<>());
-   private final MutableObservableRef<@Nullable HaxeSDK> defaultSDK = MutableObservableRef.of(null);
+   private final MutableObservableRef<@Nullable HaxeSDK> defaultSDK = MutableObservableRef.ofNullable(null);
 
    public HaxeSDKPreferencePage() {
       setDescription(Messages.Prefs_ManageSDKsDescription);

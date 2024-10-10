@@ -30,7 +30,7 @@ import net.sf.jstuff.core.ref.MutableObservableRef;
  */
 public class HaxeProjectSelectionGroup extends Composite {
 
-   public final MutableObservableRef<@Nullable IProject> selectedProject = MutableObservableRef.of(null);
+   public final MutableObservableRef<@Nullable IProject> selectedProject = MutableObservableRef.ofNullable(null);
 
    public HaxeProjectSelectionGroup(final Composite parent) {
       this(parent, SWT.NONE);
