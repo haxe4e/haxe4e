@@ -54,9 +54,6 @@ jobs:
     runs-on: ubuntu-latest
     concurrency: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.target-platform }}
 
-    env:
-      JAVA_VERSION: ${{ matrix.java-version }}
-
     strategy:
       fail-fast: false
       matrix:
@@ -67,6 +64,9 @@ jobs:
             java-version: 21
           - target-platform: unstable
             java-version: 22
+
+    env:
+      JAVA_VERSION: ${{ matrix.java-version }}
 
     steps:
     - name: "Show: GitHub context"
@@ -132,12 +132,6 @@ jobs:
         key: ${{ runner.os }}-repo-tycho-${{ hashFiles(format('target-platforms/{0}.target', matrix.target-platform)) }}
 
 
-    - name: "Install: Maven"
-      uses: stCarolas/setup-maven@v5  # https://github.com/stCarolas/setup-maven
-      with:
-        maven-version: 3.9.9
-
-
     - name: "Build with Maven 🔨"
       continue-on-error: ${{ matrix.target-platform == 'unstable' }}
       id: maven-build
@@ -146,6 +140,11 @@ jobs:
         GITHUB_API_KEY: ${{ github.token }}
       run: |
         set -eu
+
+        #
+        # ensure mnvw is executable
+        #
+        chmod u+x ./mvnw
 
         # https://github.community/t/github-actions-bot-email-address/17204
         git config user.name "github-actions[bot]"
@@ -159,7 +158,7 @@ jobs:
         echo "MAVEN_OPTS: $MAVEN_OPTS"
 
         # prevent "org.eclipse.swt.SWTError: No more handles [gtk_init_check() failed]"
-        xvfb-run mvn \
+        xvfb-run ./mvnw \
           --errors \
           --update-snapshots \
           --batch-mode \
