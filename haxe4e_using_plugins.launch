@@ -30,12 +30,11 @@
     <setAttribute key="selected_target_bundles">
         <setEntry value="bcpg@default:default"/>
         <setEntry value="bcprov@default:default"/>
-        <setEntry value="com.fasterxml.jackson.core.jackson-annotations*2.18.0@default:default"/>
-        <setEntry value="com.fasterxml.jackson.core.jackson-core*2.18.0@default:default"/>
-        <setEntry value="com.fasterxml.jackson.core.jackson-databind*2.18.0@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-annotations*2.18.1@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-core*2.18.1@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-databind*2.18.1@default:default"/>
         <setEntry value="com.google.gson@default:default"/>
-        <setEntry value="com.google.guava*31.1.0.jre@default:default"/>
-        <setEntry value="com.google.guava*32.1.2.jre@default:default"/>
+        <setEntry value="com.google.guava@default:default"/>
         <setEntry value="com.google.guava.failureaccess@default:default"/>
         <setEntry value="com.ibm.icu@default:default"/>
         <setEntry value="com.sun.jna.platform@default:default"/>
