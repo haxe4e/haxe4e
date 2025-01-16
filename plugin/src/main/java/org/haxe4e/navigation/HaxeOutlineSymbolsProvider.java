@@ -9,9 +9,8 @@ package org.haxe4e.navigation;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.lsp4e.outline.SymbolsLabelProvider;
-import org.eclipse.lsp4e.outline.SymbolsModel.DocumentSymbolWithFile;
+import org.eclipse.lsp4e.outline.SymbolsModel.DocumentSymbolWithURI;
 import org.eclipse.lsp4j.DocumentSymbol;
-import org.eclipse.lsp4j.SymbolInformation;
 import org.eclipse.lsp4j.SymbolKind;
 import org.eclipse.lsp4j.WorkspaceSymbol;
 import org.eclipse.swt.graphics.Image;
@@ -24,17 +23,15 @@ import org.haxe4e.Haxe4EPlugin;
  *
  * @author Sebastian Thomschke
  */
-@SuppressWarnings({"deprecation", "removal", "restriction"})
+@SuppressWarnings({"restriction"})
 public final class HaxeOutlineSymbolsProvider extends SymbolsLabelProvider {
 
    @Override
    public @Nullable Image getImage(final @NonNullByDefault({}) Object item) {
       SymbolKind kind = null;
-      if (item instanceof final SymbolInformation symbolInfo) {
-         kind = symbolInfo.getKind();
-      } else if (item instanceof final DocumentSymbol docSymbol) {
+      if (item instanceof final DocumentSymbol docSymbol) {
          kind = docSymbol.getKind();
-      } else if (item instanceof final DocumentSymbolWithFile docSymbol) {
+      } else if (item instanceof final DocumentSymbolWithURI docSymbol) {
          kind = docSymbol.symbol.getKind();
       } else if (item instanceof final WorkspaceSymbol symbol) {
          kind = symbol.getKind();
