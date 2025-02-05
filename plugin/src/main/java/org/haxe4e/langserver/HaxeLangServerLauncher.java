@@ -117,7 +117,7 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
       }
       final var nekoVM = haxeSDK == null ? null : haxeSDK.getNekoVM();
 
-      // InitOptions https://github.com/vshaxe/haxe-language-server/blob/master/src/haxeLanguageServer/Configuration.hx#L87
+      // InitOptions https://github.com/vshaxe/haxe-language-server/blob/master/src/haxeLanguageServer/Configuration.hx#L122
       final var opts = new TreeBuilder<String>() //
          // https://github.com/vshaxe/haxe-language-server/blob/master/shared/haxeLanguageServer/DisplayServerConfig.hx
          .put("displayServerConfig", new TreeBuilder<String>() //
