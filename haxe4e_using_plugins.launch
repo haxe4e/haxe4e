@@ -30,9 +30,9 @@
     <setAttribute key="selected_target_bundles">
         <setEntry value="bcpg@default:default"/>
         <setEntry value="bcprov@default:default"/>
-        <setEntry value="com.fasterxml.jackson.core.jackson-annotations*2.18.1@default:default"/>
-        <setEntry value="com.fasterxml.jackson.core.jackson-core*2.18.1@default:default"/>
-        <setEntry value="com.fasterxml.jackson.core.jackson-databind*2.18.1@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-annotations@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-core@default:default"/>
+        <setEntry value="com.fasterxml.jackson.core.jackson-databind@default:default"/>
         <setEntry value="com.google.gson@default:default"/>
         <setEntry value="com.google.guava@default:default"/>
         <setEntry value="com.google.guava.failureaccess@default:default"/>
@@ -41,9 +41,9 @@
         <setEntry value="com.sun.jna@default:default"/>
         <setEntry value="de.sebthom.eclipse.commons@default:default"/>
         <setEntry value="jakarta.activation-api@default:default"/>
+        <setEntry value="jakarta.annotation-api@default:default"/>
+        <setEntry value="jakarta.inject.jakarta.inject-api@default:default"/>
         <setEntry value="jakarta.xml.bind-api@default:default"/>
-        <setEntry value="javax.annotation@default:default"/>
-        <setEntry value="javax.inject@default:default"/>
         <setEntry value="net.sf.jstuff.core@default:default"/>
         <setEntry value="net.sf.jstuff.xml@default:default"/>
         <setEntry value="org.apache.batik.constants@default:default"/>
@@ -203,12 +203,6 @@
     <stringAttribute key="templateConfig" value="${target_home}\configuration\config.ini"/>
     <booleanAttribute key="tracing" value="true"/>
     <mapAttribute key="tracingOptions">
-        <mapEntry key="org.dart4e/trace/debugserv/io" value="false"/>
-        <mapEntry key="org.dart4e/trace/langserv/init_options" value="false"/>
-        <mapEntry key="org.dart4e/trace/langserv/io" value="false"/>
-        <mapEntry key="org.dart4e/trace/langserv/method_results" value="false"/>
-        <mapEntry key="org.dart4e/trace/spellcheck/regions" value="false"/>
-        <mapEntry key="org.dart4e/trace/spellcheck/tokens" value="false"/>
         <mapEntry key="org.eclipse.cdt.core.native/debug" value="false"/>
         <mapEntry key="org.eclipse.cdt.core.native/debug/spawner" value="false"/>
         <mapEntry key="org.eclipse.cdt.core.native/debug/spawner/details" value="false"/>
@@ -260,6 +254,8 @@
         <mapEntry key="org.eclipse.core.resources/save/syncinfo" value="false"/>
         <mapEntry key="org.eclipse.core.resources/save/tree" value="false"/>
         <mapEntry key="org.eclipse.core.resources/strings" value="false"/>
+        <mapEntry key="org.eclipse.core.resources/tree/immutable" value="false"/>
+        <mapEntry key="org.eclipse.core.resources/tree/immutablestack" value="false"/>
         <mapEntry key="org.eclipse.core.runtime/compatibility/debug" value="false"/>
         <mapEntry key="org.eclipse.core.runtime/debug" value="false"/>
         <mapEntry key="org.eclipse.core.runtime/debug/context" value="false"/>
