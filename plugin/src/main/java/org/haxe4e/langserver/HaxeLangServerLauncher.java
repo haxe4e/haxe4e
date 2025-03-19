@@ -97,6 +97,11 @@ public final class HaxeLangServerLauncher extends ProcessStreamConnectionProvide
                         }
                      }
                   }
+
+                  // Haxe target cannot be set in project.xml file, thus we give the display server a sys target supported by lime
+                  // to prevent "This class is not available on this target" during code completion
+                  displayServerArgs.add("-hl");
+                  displayServerArgs.add("ignored.hl");
                   break;
                case LIX:
                   for (final var source : buildFile.getSourcePaths()) {
