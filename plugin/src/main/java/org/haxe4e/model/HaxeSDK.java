@@ -8,26 +8,28 @@ package org.haxe4e.model;
 
 import static net.sf.jstuff.core.validation.NullAnalysisHelper.asNonNullUnsafe;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.haxe4e.Haxe4EPlugin;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import net.sf.jstuff.core.Strings;
 import net.sf.jstuff.core.SystemUtils;
+import net.sf.jstuff.core.concurrent.Threads;
 import net.sf.jstuff.core.functional.Suppliers;
 import net.sf.jstuff.core.io.Processes;
 import net.sf.jstuff.core.validation.Args;
@@ -35,6 +37,13 @@ import net.sf.jstuff.core.validation.Args;
 /**
  * @author Sebastian Thomschke
  */
+@JsonAutoDetect( //
+   fieldVisibility = JsonAutoDetect.Visibility.NONE, //
+   setterVisibility = JsonAutoDetect.Visibility.NONE, //
+   getterVisibility = JsonAutoDetect.Visibility.NONE, //
+   isGetterVisibility = JsonAutoDetect.Visibility.NONE //
+)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final class HaxeSDK implements Comparable<HaxeSDK> {
 
    /**
@@ -52,7 +61,6 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
     */
    public static final String ENV_HAXE_STD_PATH = "HAXE_STD_PATH";
 
-   @JsonIgnore
    private static final Supplier<@Nullable HaxeSDK> HAXESDK_FROM_PATH = Suppliers.memoize(() -> {
       final var haxepath = SystemUtils.getEnvironmentVariable(ENV_HAXEPATH, "");
       if (Strings.isBlank(haxepath))
@@ -68,40 +76,44 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
 
       sdk = new HaxeSDK(asNonNullUnsafe(haxeCompiler.getParent()), NekoVM.fromPath());
       return sdk.isValid() ? sdk : null;
-   }, (haxeSDK, ageMS) -> ageMS > (haxeSDK == null ? 15_000 : 60_000));
+   }, (haxeSDK, ageMS) -> ageMS > (haxeSDK == null ? 10_000 : 60_000));
 
    /**
     * Tries to locate the Haxe SDK via HAXEPATH and PATH environment variables
     *
     * @return null if not found
     */
-   @Nullable
-   public static HaxeSDK fromPath() {
+   public static @Nullable HaxeSDK fromPath() {
       return HAXESDK_FROM_PATH.get();
    }
 
-   private String name;
-   private Path installRoot;
+   private @JsonProperty String name;
+   private @JsonProperty Path installRoot;
+   private @JsonProperty @Nullable NekoVM nekoVM;
 
-   @Nullable
-   private NekoVM nekoVM;
+   private final Supplier<@Nullable String> getVersionCached = Suppliers.memoize(() -> {
+      final var haxeExe = getCompilerExecutable();
+      if (!Files.isExecutable(haxeExe))
+         return null;
 
-   @JsonIgnore
-   private final Supplier<Boolean> isValidCached = Suppliers.memoize(() -> {
-      final var compiler = getCompilerExecutable();
-      if (!Files.isExecutable(compiler))
-         return false;
-
-      final var processBuilder = Processes.builder(compiler);
-      try (var reader = new BufferedReader(new InputStreamReader(processBuilder.start().getStdOut()))) {
-         final String line = reader.readLine();
-         if (line != null && line.contains("Haxe Compiler"))
-            return true;
+      final var version = new String[1];
+      try {
+         Processes.builder(haxeExe).withArg("--version") //
+            .withRedirectOutput(line -> {
+               if (version[0] == null) {
+                  version[0] = line;
+               }
+            }) //
+            .start() //
+            .waitForExit(10, TimeUnit.SECONDS) //
+            .terminate(5, TimeUnit.SECONDS);
       } catch (final IOException ex) {
-         // ignore
+         Haxe4EPlugin.log().error(ex);
+      } catch (final InterruptedException ex) {
+         Threads.handleInterruptedException(ex);
       }
-      return false;
-   }, (exeIsValid, ageMS) -> ageMS > (exeIsValid ? 60_000 : 15_000));
+      return version[0];
+   }, (version, ageMS) -> ageMS > (version == null ? 10_000 : 60_000));
 
    @SuppressWarnings("unused")
    private HaxeSDK() {
@@ -171,12 +183,10 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
             && Objects.equals(nekoVM, other.nekoVM);
    }
 
-   @JsonIgnore
    public Path getCompilerExecutable() {
       return installRoot.resolve(SystemUtils.IS_OS_WINDOWS ? "haxe.exe" : "haxe");
    }
 
-   @JsonIgnore
    public Processes.Builder getCompilerProcessBuilder(final boolean cleanEnv) {
       return Processes.builder(getCompilerExecutable()) //
          .withEnvironment(env -> {
@@ -187,26 +197,22 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
          });
    }
 
-   @JsonIgnore
    public Path getHaxelibExecutable() {
       return installRoot.resolve(SystemUtils.IS_OS_WINDOWS ? "haxelib.exe" : "haxelib");
    }
 
-   @JsonIgnore
    public Processes.Builder getHaxelibProcessBuilder(final List<Object> args) {
       return Processes.builder(getHaxelibExecutable()) //
          .withArgs(args) //
          .withEnvironment(this::configureEnvVars);
    }
 
-   @JsonIgnore
    public Processes.Builder getHaxelibProcessBuilder(final @NonNull Object... args) {
       return Processes.builder(getHaxelibExecutable()) //
          .withArgs(args) //
          .withEnvironment(this::configureEnvVars);
    }
 
-   @JsonIgnore
    public Path getHaxelibsDir() {
       final var pathFromEnv = System.getenv(ENV_HAXELIB_PATH);
       if (pathFromEnv != null) {
@@ -230,12 +236,10 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
     *
     * @return null if no NekoVM is configured or found on PATH.
     */
-   @Nullable
-   public NekoVM getNekoVM() {
+   public @Nullable NekoVM getNekoVM() {
       return nekoVM == null ? NekoVM.fromPath() : nekoVM;
    }
 
-   @JsonIgnore
    public Path getStandardLibDir() {
       final var pathFromEnv = System.getenv(ENV_HAXE_STD_PATH);
       if (pathFromEnv != null) {
@@ -246,17 +250,8 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
       return installRoot.resolve("std").normalize().toAbsolutePath();
    }
 
-   @Nullable
-   @JsonIgnore
-   public String getVersion() {
-      final var processBuilder = Processes.builder(getCompilerExecutable()).withArg("--version");
-      try (var reader = new BufferedReader(new InputStreamReader(processBuilder.start().getStdOut()))) {
-         final var version = reader.readLine();
-         return Strings.isBlank(version) ? null : version;
-      } catch (final IOException ex) {
-         Haxe4EPlugin.log().error(ex);
-         return null;
-      }
+   public @Nullable String getVersion() {
+      return getVersionCached.get();
    }
 
    @Override
@@ -267,9 +262,8 @@ public final class HaxeSDK implements Comparable<HaxeSDK> {
    /**
     * If <code>installRoot</code> actually points to a valid location containing the Haxe compiler
     */
-   @JsonIgnore
    public boolean isValid() {
-      return isValidCached.get();
+      return getVersion() != null;
    }
 
    public String toShortString() {
