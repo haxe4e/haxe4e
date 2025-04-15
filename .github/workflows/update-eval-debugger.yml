@@ -83,10 +83,10 @@ jobs:
       uses: peter-evans/create-pull-request@v7 # https://github.com/peter-evans/create-pull-request
       if: "${{ steps.update.outputs.updates != '' }}"
       with:
-        title: "chore: Update Haxe Eval Debugger"
+        title: "fix(deps): Update Haxe Eval Debugger"
         author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
         committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
-        commit-message: "chore: Update Haxe Eval Debugger"
+        commit-message: "fix(deps): Update Haxe Eval Debugger"
         body: ${{ steps.update.outputs.updates }}
         add-paths: plugin/src/main/resources/langsrv/haxe-eval-debugger.min.js
         branch: dependencies/haxe_eval_debugger
