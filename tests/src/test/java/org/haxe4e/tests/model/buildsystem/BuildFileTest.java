@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 import org.haxe4e.model.buildsystem.HaxeBuildFile;
 import org.haxe4e.model.buildsystem.LimeBuildFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.sf.jstuff.core.io.RuntimeIOException;
 import net.sf.jstuff.xml.DOMFile;
@@ -26,10 +26,10 @@ import net.sf.jstuff.xml.DOMFile;
 /**
  * @author Sebastian Thomschke
  */
-public class BuildFileTest {
+class BuildFileTest {
 
    @Test
-   public void testHaxeBuildFile() {
+   void testHaxeBuildFile() {
       final var parentMock = asNonNull(mock(IContainer.class));
       final var fileMock = asNonNull(mock(IFile.class));
       when(fileMock.getLocation()).thenReturn(Path.fromOSString("test.hxml"));
@@ -64,7 +64,7 @@ public class BuildFileTest {
    }
 
    @Test
-   public void testLimeBuildFile() {
+   void testLimeBuildFile() {
       final var parentMock = asNonNull(mock(IContainer.class));
       final var fileMock = asNonNull(mock(IFile.class));
       when(fileMock.getLocation()).thenReturn(Path.fromOSString("lime.xml"));
