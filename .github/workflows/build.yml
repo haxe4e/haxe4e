@@ -57,7 +57,7 @@ defaults:
 
 jobs:
   ###########################################################
-  build:
+  eclipse-plugin-build:
   ###########################################################
     uses: sebthom/gha-shared/.github/workflows/reusable.eclipse-plugin-build.yml@v1
     with:
@@ -90,8 +90,8 @@ jobs:
   post-build:
   ##################################################
     runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ needs.build.outputs.release-name == 'stable' }}
+    needs: [eclipse-plugin-build]
+    if: ${{ needs.eclipse-plugin-build.outputs.release-name == 'stable' }}
     steps:
     - name: Generate GitHub Access Token
       uses: tibdex/github-app-token@v2 # https://github.com/tibdex/github-app-token
