@@ -46,11 +46,10 @@ jobs:
 
 
     - name: "Update Syntax Files"
-      continue-on-error: ${{ matrix.target-platform == 'unstable' }}
       id: update
       env:
         GITHUB_USER: ${{ github.actor }}
-        GITHUB_API_KEY: ${{ github.token }}
+        GITHUB_API_KEY: ${{ secrets.GITHUB_TOKEN }}
       run: |
         set -eu
 
@@ -66,14 +65,29 @@ jobs:
         export MAVEN_OPTS
         echo "MAVEN_OPTS: $MAVEN_OPTS"
 
+        cat <<EOF >/tmp/toolchains.xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <toolchains>
+           <toolchain>
+              <type>jdk</type>
+              <provides>
+                 <version>$JAVA_VERSION</version>
+                 <vendor>default</vendor>
+              </provides>
+              <configuration>
+                 <jdkHome>$JAVA_HOME</jdkHome>
+              </configuration>
+           </toolchain>
+        </toolchains>
+        EOF
+
         ./mvnw \
           --errors \
           --update-snapshots \
           --batch-mode \
           --show-version \
           --no-transfer-progress \
-          -s .ci/maven-settings.xml \
-          -t .ci/maven-toolchains.xml \
+          -t /tmp/toolchains.xml \
           -Dtycho.disableP2Mirrors=true \
           process-resources -Dupdate-language-grammar=true -am -pl plugin
       
