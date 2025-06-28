@@ -151,11 +151,14 @@ public final class HaxeDependenciesUpdater extends AbstractResourcesChangedListe
          } else {
             stdLibFolder.createLink(sdk.getStandardLibDir().toUri(), IResource.REPLACE, monitor);
          }
+         if (!stdLibFolder.isDerived()) {
+            stdLibFolder.setDerived(true, monitor);
+         }
+
          /*
           * create/update "Haxe Dependencies" top-level virtual folder
           */
          final var depsFolder = project.getFolder(DEPS_MAGIC_FOLDER_NAME);
-
          final var buildFile = prefs.getBuildFile();
 
          // if no build file exists remove the dependencies folder
@@ -172,6 +175,9 @@ public final class HaxeDependenciesUpdater extends AbstractResourcesChangedListe
                      + DEPS_MAGIC_FOLDER_NAME + "' exists!");
          } else {
             depsFolder.create(IResource.VIRTUAL, true, monitor);
+         }
+         if (!depsFolder.isDerived()) {
+            depsFolder.setDerived(true, monitor);
          }
 
          @SuppressWarnings("null")
