@@ -20,7 +20,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -79,16 +78,16 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
                create.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
 
                final var newProject = this.newProject = (IProject) asNonNullUnsafe(create.getAffectedObjects())[0];
-               HaxeProjectNature.addToProject(newProject);
-               final var prefs = HaxeProjectPreference.get(newProject);
-               prefs.setAlternateHaxeSDK(newHaxeProjectPage.selectedAltSDK.get());
-               prefs.save();
+               newProject.open(monitor);
 
                // may want system to create different types of projects, for now this is better than empty
                createFileFromResource("templates/new-project/default/build.hxml", newProject, "build.hxml", monitor);
                createFileFromResource("templates/new-project/default/src/Main.hx", newProject, "src/Main.hx", monitor);
 
-               newProject.open(monitor);
+               HaxeProjectNature.addToProject(newProject);
+               final var prefs = HaxeProjectPreference.get(newProject);
+               prefs.setAlternateHaxeSDK(newHaxeProjectPage.selectedAltSDK.get());
+               prefs.save();
             } catch (final Exception ex) {
                throw new InvocationTargetException(ex);
             }
@@ -141,7 +140,7 @@ public final class NewHaxeProjectWizard extends Wizard implements INewWizard {
 
    private void createParents(final IResource res, final @Nullable IProgressMonitor monitor) throws CoreException {
       if (!res.exists()) {
-         if (res.getParent() instanceof @NonNull final IFolder folder) {
+         if (res.getParent() instanceof final IFolder folder) {
             createParents(folder, monitor);
             folder.create(true, true, monitor);
          }
