@@ -16,7 +16,7 @@
       </location>
 
       <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-         <repository location="https://download.eclipse.org/eclipse/updates/4.37-I-builds"/>
+         <repository location="https://download.eclipse.org/eclipse/updates/4.38-I-builds"/>
          <unit id="org.eclipse.jface.text.tests" version="0.0.0"/>
          <unit id="org.eclipse.test.feature.group" version="0.0.0"/>
       </location>
