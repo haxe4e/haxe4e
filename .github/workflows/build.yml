@@ -1,7 +1,7 @@
-# https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions
+# https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
 name: Build
 
-on:
+on:  # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
   push:
     branches-ignore:  # build all branches except:
     - "dependabot/**"  # prevent GHA triggered twice (once for commit to the branch and once for opening/syncing the PR)
@@ -29,7 +29,7 @@ on:
     - ".github/workflows/stale.yml"
     - "codecov.yml"
   workflow_dispatch:
-    # https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#workflow_dispatch
+    # https://docs.github.com/en/actions/reference/events-that-trigger-workflows#workflow_dispatch
     inputs:
       extra-maven-args:
         description: "Additional command-line arguments to append to all Maven invocations"
