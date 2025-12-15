@@ -79,7 +79,7 @@ jobs:
 
     - name: Create PR
       id: create-pr
-      uses: peter-evans/create-pull-request@v7  # https://github.com/peter-evans/create-pull-request
+      uses: peter-evans/create-pull-request@v8  # https://github.com/peter-evans/create-pull-request
       if: "${{ steps.update.outputs.updates != '' }}"
       with:
         title: "fix(deps): Update Haxe Language Server"
