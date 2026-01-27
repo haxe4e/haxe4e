@@ -66,7 +66,7 @@ public final class NewHaxeFileWizard extends Wizard implements INewWizard {
                progress.beginTask(NLS.bind(Messages.NewHaxeFile_Creating, fileName), 2);
 
                final var folder = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(folderName));
-               if (!folder.exists() || !(folder instanceof IContainer))
+               if (folder == null || !folder.exists() || !(folder instanceof IContainer))
                   throw new CoreException(Haxe4EPlugin.status().createError(Messages.NewHaxeFile_DirectoryDoesNotExist, folderName));
 
                final var newHaxeFile = ((IContainer) folder).getFile(new Path(fileName));
