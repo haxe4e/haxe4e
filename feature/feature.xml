@@ -61,9 +61,9 @@
       <import plugin="com.fasterxml.jackson.core.jackson-databind" version="2.20.0" match="compatible"/>
       <import plugin="org.apache.commons.commons-io" version="2.20.0" match="compatible"/>
       <import plugin="org.apache.commons.lang3" version="3.19.0" match="compatible"/>
-      <import plugin="net.sf.jstuff.core" version="8.2.0" match="compatible"/>
-      <import plugin="net.sf.jstuff.xml" version="8.2.0" match="compatible"/>
-      <import plugin="de.sebthom.eclipse.commons" version="1.0.0.20250222-0150" match="compatible"/>
+      <import plugin="net.sf.jstuff.core" version="8.2.1" match="compatible"/>
+      <import plugin="net.sf.jstuff.xml" version="8.2.1" match="compatible"/>
+      <import plugin="de.sebthom.eclipse.commons" version="1.0.0.20251127-1946" match="compatible"/>
    </requires>
 
    <plugin
