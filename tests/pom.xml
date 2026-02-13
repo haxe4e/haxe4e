@@ -54,6 +54,9 @@
 
                      <product>org.eclipse.platform.ide</product>
                      <application>org.eclipse.ui.ide.workbench</application>
+
+                     <!-- oldest.target is not compatible with junit6 -->
+                     <providerHint>junit5</providerHint>
                   </configuration>
                </execution>
             </executions>
